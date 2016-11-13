@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sweet.BRE", "Sweet.BRE\Sweet.BRE.csproj", "{5EA8EEC3-4108-410D-BEB9-06108C5D1129}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sweet.BRETest", "Sweet.BRETest\Sweet.BRETest.csproj", "{723D8A32-02C7-4BD5-96B0-D4D13C8A0D44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5EA8EEC3-4108-410D-BEB9-06108C5D1129}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5EA8EEC3-4108-410D-BEB9-06108C5D1129}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5EA8EEC3-4108-410D-BEB9-06108C5D1129}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5EA8EEC3-4108-410D-BEB9-06108C5D1129}.Release|Any CPU.Build.0 = Release|Any CPU
+		{723D8A32-02C7-4BD5-96B0-D4D13C8A0D44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{723D8A32-02C7-4BD5-96B0-D4D13C8A0D44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{723D8A32-02C7-4BD5-96B0-D4D13C8A0D44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{723D8A32-02C7-4BD5-96B0-D4D13C8A0D44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

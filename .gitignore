@@ -1,0 +1,10 @@
+
+*.dll
+
+*.mdb
+
+*.txt
+
+obj/*
+
+*.exe

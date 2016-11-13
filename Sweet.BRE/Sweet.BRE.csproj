@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{5EA8EEC3-4108-410D-BEB9-06108C5D1129}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sweet.BRE</RootNamespace>
+    <AssemblyName>Sweet.BRE</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkSubset>
+    </TargetFrameworkSubset>
+    <StartupObject>
+    </StartupObject>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BRE\Common\Delegates.cs" />
+    <Compile Include="BRE\Common\ReturnType.cs" />
+    <Compile Include="BRE\Common\DecisionValueType.cs" />
+    <Compile Include="BRE\Common\DecisionOperation.cs" />
+    <Compile Include="BRE\Common\FunctionEventArgs.cs" />
+    <Compile Include="BRE\Common\RuleCommon.cs" />
+    <Compile Include="BRE\Common\RuleException.cs" />
+    <Compile Include="BRE\Common\RuleConstants.cs" />
+    <Compile Include="BRE\Decisions\Common\DecisionCell.cs" />
+    <Compile Include="BRE\Decisions\Common\DecisionCellType.cs" />
+    <Compile Include="BRE\Decisions\Common\DecisionActionCell.cs" />
+    <Compile Include="BRE\Decisions\Common\DecisionEvaluator.cs" />
+    <Compile Include="BRE\Decisions\Common\DecisionValueList.cs" />
+    <Compile Include="BRE\Decisions\Common\IDecision.cs" />
+    <Compile Include="BRE\Decisions\Common\IDecisionContainer.cs" />
+    <Compile Include="BRE\Decisions\Table\DecisionColumn.cs" />
+    <Compile Include="BRE\Decisions\Table\DecisionColumnList.cs" />
+    <Compile Include="BRE\Decisions\Common\DecisionConditionCell.cs" />
+    <Compile Include="BRE\Decisions\Table\DecisionRowList.cs" />
+    <Compile Include="BRE\Decisions\Table\DecisionTable.cs" />
+    <Compile Include="BRE\Decisions\Table\DecisionRow.cs" />
+    <Compile Include="BRE\Decisions\Table\DecisionTableEditor.cs" />
+    <Compile Include="BRE\Decisions\Table\TableEvaluator.cs" />
+    <Compile Include="BRE\Decisions\Tree\DecisionConditionNode.cs" />
+    <Compile Include="BRE\Decisions\Tree\DecisionActionNode.cs" />
+    <Compile Include="BRE\Decisions\Tree\DecisionTree.cs" />
+    <Compile Include="BRE\Decisions\Tree\TreeEvaluator.cs" />
+    <Compile Include="BRE\Functions\ArrayFunctions.cs" />
+    <Compile Include="BRE\Functions\DateFunctions.cs" />
+    <Compile Include="BRE\Functions\StringFunctions.cs" />
+    <Compile Include="BRE\Functions\MathFunctions.cs" />
+    <Compile Include="BRE\Functions\FunctionInfo.cs" />
+    <Compile Include="BRE\Functions\InternalFunctions.cs" />
+    <Compile Include="BRE\Functions\IFunctionHandler.cs" />
+    <Compile Include="BRE\Persist\ProjectReader.cs" />
+    <Compile Include="BRE\Persist\ProjectWriter.cs" />
+    <Compile Include="BRE\Project\Project.cs" />
+    <Compile Include="BRE\Project\Rule.cs" />
+    <Compile Include="BRE\Project\RulePriority.cs" />
+    <Compile Include="BRE\Project\Ruleset.cs" />
+    <Compile Include="BRE\Reflection\MemberType.cs" />
+    <Compile Include="BRE\Reflection\MemberNode.cs" />
+    <Compile Include="BRE\Reflection\MemberToken.cs" />
+    <Compile Include="BRE\Reflection\ReflectionCommon.cs" />
+    <Compile Include="BRE\Reflection\ReflectionEvaluator.cs" />
+    <Compile Include="BRE\Reflection\ReflectionParser.cs" />
+    <Compile Include="BRE\Resources\BreResStrings.cs" />
+    <Compile Include="BRE\Runtime\DebugEventArgs.cs" />
+    <Compile Include="BRE\Runtime\DebugStatus.cs" />
+    <Compile Include="BRE\Runtime\DefaultRuleDebugger.cs" />
+    <Compile Include="BRE\Runtime\EvalLog.cs" />
+    <Compile Include="BRE\Runtime\EvaluationScope.cs" />
+    <Compile Include="BRE\Runtime\FactList.cs" />
+    <Compile Include="BRE\Runtime\FunctionInfoBucket.cs" />
+    <Compile Include="BRE\Runtime\EvaluationContext.cs" />
+    <Compile Include="BRE\Runtime\HaltException.cs" />
+    <Compile Include="BRE\Runtime\IRuleDebugger.cs" />
+    <Compile Include="BRE\Runtime\RuleEngineRuntime.cs" />
+    <Compile Include="BRE\Runtime\VariableList.cs" />
+    <Compile Include="BRE\Runtime\Variable.cs" />
+    <Compile Include="BRE\Statements\ContinueStm.cs" />
+    <Compile Include="BRE\Statements\ConditionTestStm.cs" />
+    <Compile Include="BRE\Statements\ContextStm.cs" />
+    <Compile Include="BRE\Statements\FactStm.cs" />
+    <Compile Include="BRE\Statements\ReflectionStm.cs" />
+    <Compile Include="BRE\Statements\ItemOfStm.cs" />
+    <Compile Include="BRE\Statements\SetFactStm.cs" />
+    <Compile Include="BRE\Statements\FinallyStm.cs" />
+    <Compile Include="BRE\Statements\CatchErrorStm.cs" />
+    <Compile Include="BRE\Statements\TryStm.cs" />
+    <Compile Include="BRE\Statements\EvaluateTreeStm.cs" />
+    <Compile Include="BRE\Statements\EvaluateTableStm.cs" />
+    <Compile Include="BRE\Statements\LoopContext.cs" />
+    <Compile Include="BRE\Statements\ActionList.cs" />
+    <Compile Include="BRE\Statements\SetVariableStm.cs" />
+    <Compile Include="BRE\Statements\BreakStm.cs" />
+    <Compile Include="BRE\Statements\ActionContext.cs" />
+    <Compile Include="BRE\Statements\CaseStm.cs" />
+    <Compile Include="BRE\Statements\CallRulesetStm.cs" />
+    <Compile Include="BRE\Statements\ReturnStm.cs" />
+    <Compile Include="BRE\Statements\RaiseErrorStm.cs" />
+    <Compile Include="BRE\Statements\SwitchStm.cs" />
+    <Compile Include="BRE\Statements\ForStm.cs" />
+    <Compile Include="BRE\Statements\RepeatUntilStm.cs" />
+    <Compile Include="BRE\Statements\DefineStm.cs" />
+    <Compile Include="BRE\Statements\HaltStm.cs" />
+    <Compile Include="BRE\Statements\WhileStm.cs" />
+    <Compile Include="BRE\Statements\IfThenStm.cs" />
+    <Compile Include="BRE\Statements\VariableStm.cs" />
+    <Compile Include="Common\BinHexDecoder.cs" />
+    <Compile Include="Common\BinHexEncoder.cs" />
+    <Compile Include="Common\CommonHelper.cs" />
+    <Compile Include="Common\GenericList.cs" />
+    <Compile Include="Common\ReflectionHelper.cs" />
+    <Compile Include="Common\StackList.cs" />
+    <Compile Include="Common\Wildcard.cs" />
+    <Compile Include="Common\Resources\CommonResStrings.cs" />
+    <Compile Include="ExpEval\Common\EvalLogType.cs" />
+    <Compile Include="ExpEval\Common\ExecutionStatus.cs" />
+    <Compile Include="ExpEval\Common\OperationArgs.cs" />
+    <Compile Include="ExpEval\Common\StatementException.cs" />
+    <Compile Include="ExpEval\Common\StmCommon.cs" />
+    <Compile Include="ExpEval\Common\StmConstants.cs" />
+    <Compile Include="ExpEval\Common\ValueType.cs" />
+    <Compile Include="ExpEval\Interfaces\IEvalLog.cs" />
+    <Compile Include="ExpEval\Interfaces\IEvaluationContext.cs" />
+    <Compile Include="ExpEval\Interfaces\IEvaluationScope.cs" />
+    <Compile Include="ExpEval\Interfaces\IFactList.cs" />
+    <Compile Include="ExpEval\Interfaces\IStatement.cs" />
+    <Compile Include="ExpEval\Interfaces\IVariable.cs" />
+    <Compile Include="ExpEval\Interfaces\IVariableList.cs" />
+    <Compile Include="ExpEval\Resources\ExpEvalResStrings.cs" />
+    <Compile Include="ExpEval\Statements\ActionStm.cs" />
+    <Compile Include="ExpEval\Statements\AddStm.cs" />
+    <Compile Include="ExpEval\Statements\AndStm.cs" />
+    <Compile Include="ExpEval\Statements\ArithmeticGroupStm.cs" />
+    <Compile Include="ExpEval\Statements\ArithmeticOperation.cs" />
+    <Compile Include="ExpEval\Statements\ArithmeticStm.cs" />
+    <Compile Include="ExpEval\Statements\BetweenStm.cs" />
+    <Compile Include="ExpEval\Statements\BooleanBinaryStm.cs" />
+    <Compile Include="ExpEval\Statements\BooleanStm.cs" />
+    <Compile Include="ExpEval\Statements\ComparatorStm.cs" />
+    <Compile Include="ExpEval\Statements\DateStm.cs" />
+    <Compile Include="ExpEval\Statements\DivideStm.cs" />
+    <Compile Include="ExpEval\Statements\EqualToStm.cs" />
+    <Compile Include="ExpEval\Statements\FalseStm.cs" />
+    <Compile Include="ExpEval\Statements\FunctionStm.cs" />
+    <Compile Include="ExpEval\Statements\GreaterThanOrEqualsStm.cs" />
+    <Compile Include="ExpEval\Statements\GreaterThanStm.cs" />
+    <Compile Include="ExpEval\Statements\InStm.cs" />
+    <Compile Include="ExpEval\Statements\LessThanOrEqualsStm.cs" />
+    <Compile Include="ExpEval\Statements\LessThanStm.cs" />
+    <Compile Include="ExpEval\Statements\LikeStm.cs" />
+    <Compile Include="ExpEval\Statements\LogicalGroupStm.cs" />
+    <Compile Include="ExpEval\Statements\LogicalOperation.cs" />
+    <Compile Include="ExpEval\Statements\LogicalStm.cs" />
+    <Compile Include="ExpEval\Statements\ModuloStm.cs" />
+    <Compile Include="ExpEval\Statements\MultiplyStm.cs" />
+    <Compile Include="ExpEval\Statements\NotEqualToStm.cs" />
+    <Compile Include="ExpEval\Statements\NotGreaterThanStm.cs" />
+    <Compile Include="ExpEval\Statements\NotInStm.cs" />
+    <Compile Include="ExpEval\Statements\NotLessThanStm.cs" />
+    <Compile Include="ExpEval\Statements\NotLikeStm.cs" />
+    <Compile Include="ExpEval\Statements\NullStm.cs" />
+    <Compile Include="ExpEval\Statements\NumericBinaryStm.cs" />
+    <Compile Include="ExpEval\Statements\NumericStm.cs" />
+    <Compile Include="ExpEval\Statements\OrStm.cs" />
+    <Compile Include="ExpEval\Statements\SetStm.cs" />
+    <Compile Include="ExpEval\Statements\Statement.cs" />
+    <Compile Include="ExpEval\Statements\StatementList.cs" />
+    <Compile Include="ExpEval\Statements\StringStm.cs" />
+    <Compile Include="ExpEval\Statements\SubtractStm.cs" />
+    <Compile Include="ExpEval\Statements\TimeStm.cs" />
+    <Compile Include="ExpEval\Statements\TrueStm.cs" />
+    <Compile Include="ExpEval\Statements\UnaryMinusStm.cs" />
+    <Compile Include="ExpEval\Statements\UnaryNotStm.cs" />
+    <Compile Include="ExpEval\Statements\ValueStm.cs" />
+    <Compile Include="ExpEval\Statements\ValueTStm.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\BREResource.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ExpEvalResource.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\CommonResource.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
