@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class Rule : ActionContext
+    public sealed class Rule : ActionContext, IRule
     {
         private string _name;
         private string _description;
@@ -82,7 +82,7 @@ namespace Sweet.BRE
             }
         }
 
-        public Ruleset Ruleset
+        public IRuleset Ruleset
         {
             get
             {
@@ -102,24 +102,20 @@ namespace Sweet.BRE
             }
         }
 
-        public Rule SetDescription(string description)
+        public IRule SetDescription(string description)
         {
             _description = description;
             return this;
         }
 
-        public Rule SetPriority(RulePriority priority)
+        public IRule SetPriority(RulePriority priority)
         {
             _priority = priority;
             return this;
         }
 
-        internal void SetRuleset(Ruleset project)
-        {
-            _ruleset = project;
-        }
 
-        public Rule SetSubPriority(int subPriority)
+        public IRule SetSubPriority(int subPriority)
         {
             if ((subPriority < 0) || (subPriority > 1000))
             {
@@ -130,12 +126,17 @@ namespace Sweet.BRE
             return this;
         }
 
+        internal void SetRuleset(Ruleset project)
+        {
+            _ruleset = project;
+        }
+
         internal void SetName(string name)
         {
             _name = (name != null ? name.Trim() : null);
         }
 
-        public Rule Do(params ActionStm[] doActions)
+        public IRule Do(params ActionStm[] doActions)
         {
             base.DoAction(doActions);
             return this;

@@ -201,6 +201,9 @@
     <Compile Include="ExpEval\Statements\ValueStm.cs" />
     <Compile Include="ExpEval\Statements\ValueTStm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="BRE\Project\IRule.cs" />
+    <Compile Include="BRE\Project\IRuleset.cs" />
+    <Compile Include="BRE\Project\IProject.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\BREResource.resx">

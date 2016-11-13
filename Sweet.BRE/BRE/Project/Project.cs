@@ -30,10 +30,10 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class Project : ICloneable, IDisposable
+    public sealed class Project : IProject, ICloneable, IDisposable
     {
         private VariableList _variables;
-        private Dictionary<string, Ruleset> _rulesets;
+        private Dictionary<string, IRuleset> _rulesets;
         private Dictionary<string, DecisionTree> _decisionTrees;
         private Dictionary<string, DecisionTable> _decisionTables;
         private Dictionary<string, string> _funcAliases;
@@ -43,7 +43,7 @@ namespace Sweet.BRE
         {
             _variables = new VariableList();
             _funcAliases = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            _rulesets = new Dictionary<string, Ruleset>(StringComparer.OrdinalIgnoreCase);
+            _rulesets = new Dictionary<string, IRuleset>(StringComparer.OrdinalIgnoreCase);
             _decisionTrees = new Dictionary<string, DecisionTree>(StringComparer.OrdinalIgnoreCase);
             _decisionTables = new Dictionary<string, DecisionTable>(StringComparer.OrdinalIgnoreCase);
         }
@@ -102,11 +102,11 @@ namespace Sweet.BRE
             }
         }
 
-        public Ruleset[] Rulesets
+        public IRuleset[] Rulesets
         {
             get
             {
-                Ruleset[] array = new Ruleset[_rulesets.Count];
+                IRuleset[] array = new IRuleset[_rulesets.Count];
                 _rulesets.Values.CopyTo(array, 0);
 
                 return array;
@@ -154,7 +154,7 @@ namespace Sweet.BRE
             }
         }
 
-        public Ruleset this[string rulesetName] 
+        public IRuleset this[string rulesetName] 
         {
             get 
             {
@@ -174,8 +174,12 @@ namespace Sweet.BRE
 
                 _rulesets[rulesetName] = value;
 
-                value.SetProject(this);
-                value.SetName(rulesetName);
+                Ruleset rs = value as Ruleset;
+                if (!ReferenceEquals(rs, null))
+                {
+                    rs.SetProject(this);
+                    rs.SetName(rulesetName);
+                }
             }
         }
 
@@ -184,7 +188,7 @@ namespace Sweet.BRE
             return (name != null ? name.Trim() : String.Empty);
         }
 
-        public Ruleset GetRuleset(string rulesetName)
+        public IRuleset GetRuleset(string rulesetName)
         {
             return _rulesets[NormalizeName(rulesetName)];
         }
@@ -199,7 +203,7 @@ namespace Sweet.BRE
             return _decisionTrees[NormalizeName(treeName)];
         }
 
-        private void Validate(Ruleset ruleset)
+        private void Validate(IRuleset ruleset)
         {
             if ((object)ruleset == null)
             {
@@ -229,7 +233,7 @@ namespace Sweet.BRE
             }
         }
 
-        public Ruleset DefineRuleset(string rulesetName)
+        public IRuleset DefineRuleset(string rulesetName)
         {
             rulesetName = NormalizeName(rulesetName);
 
@@ -284,7 +288,7 @@ namespace Sweet.BRE
             return value;
         }
 
-        public Project AddRuleset(string rulesetName, Ruleset ruleset)
+        public IProject AddRuleset(string rulesetName, IRuleset ruleset)
         {
             rulesetName = NormalizeName(rulesetName);
 
@@ -296,8 +300,12 @@ namespace Sweet.BRE
                 ruleset = (Ruleset)ruleset.Clone();
             }
 
-            ruleset.SetProject(this);
-            ruleset.SetName(rulesetName);
+            Ruleset rs = ruleset as Ruleset;
+            if (!ReferenceEquals(rs, null))
+            {
+                rs.SetProject(this);
+                rs.SetName(rulesetName);
+            }
 
             _rulesets.Add(rulesetName, ruleset);
 
@@ -309,7 +317,7 @@ namespace Sweet.BRE
             return new Project();
         }
 
-        public Project Clear()
+        public IProject Clear()
         {
             _decisionTables.Clear();
             _decisionTrees.Clear();
@@ -404,7 +412,7 @@ namespace Sweet.BRE
             }
         }
 
-        public bool IsEqualTo(Project prj)
+        public bool IsEqualTo(IProject prj)
         {
             if (ReferenceEquals(prj, this))
             {
@@ -432,24 +440,44 @@ namespace Sweet.BRE
             }
 
             // Function Aliases
-            if (_funcAliases.Count != prj._funcAliases.Count)
+            if (prj is Project)
             {
-                return false;
-            }
+                int faCount1 = 0;
+                if (_funcAliases != null)
+                {
+                    faCount1 = _funcAliases.Count;
+                }
 
-            foreach (string alias in _funcAliases.Keys)
-            {
-                if (!prj.FuncAliases.ContainsKey(alias))
+                Dictionary<string, string> _fa = ((Project)prj)._funcAliases;
+
+                int faCount2 = 0;
+                if (_fa != null)
+                {
+                    faCount2 = _fa.Count;
+                }
+
+                if (faCount1 != faCount2)
                 {
                     return false;
                 }
 
-                string func1 = _funcAliases[alias];
-                string func2 = prj.FuncAliases[alias];
-
-                if (func1 != func2)
+                if (faCount1 > 0)
                 {
-                    return false;
+                    foreach (string alias in _funcAliases.Keys)
+                    {
+                        if (!_fa.ContainsKey(alias))
+                        {
+                            return false;
+                        }
+
+                        string func1 = _funcAliases[alias];
+                        string func2 = _fa[alias];
+
+                        if (func1 != func2)
+                        {
+                            return false;
+                        }
+                    }
                 }
             }
 
@@ -491,7 +519,7 @@ namespace Sweet.BRE
 
             foreach (string key in _rulesets.Keys)
             {
-                Ruleset rs = prj.GetRuleset(key);
+                IRuleset rs = prj.GetRuleset(key);
                 if (ReferenceEquals(rs, null) || !rs.IsEqualTo(_rulesets[key]))
                 {
                     return false;
@@ -522,7 +550,7 @@ namespace Sweet.BRE
             }
         }
 
-        public Project RegisterFunctionAlias(string alias, string function)
+        public IProject RegisterFunctionAlias(string alias, string function)
         {
             alias = ((alias != null) ? alias.Trim() : null);
             function = ((function != null) ? function.Trim() : null);
@@ -570,21 +598,25 @@ namespace Sweet.BRE
             return function;
         }
 
-        public Project RemoveRuleset(string rulesetName)
+        public IProject RemoveRuleset(string rulesetName)
         {
             rulesetName = NormalizeName(rulesetName);
             if (ContainsRuleset(rulesetName))
             {
-                Ruleset ruleset = _rulesets[rulesetName];
+                IRuleset ruleset = _rulesets[rulesetName];
                 _rulesets.Remove(rulesetName);
 
-                ruleset.SetProject(null);
+                Ruleset rs = ruleset as Ruleset;
+                if (!ReferenceEquals(rs, null))
+                {
+                    rs.SetProject(null);
+                }
             }
 
             return this;
         }
 
-        public Project RemoveTable(string tableName)
+        public IProject RemoveTable(string tableName)
         {
             tableName = NormalizeName(tableName);
             if (ContainsTable(tableName))
@@ -595,7 +627,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public Project RemoveTree(string treeName)
+        public IProject RemoveTree(string treeName)
         {
             treeName = NormalizeName(treeName);
             if (ContainsTable(treeName))
@@ -606,7 +638,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public Project UnregisterFunctionAlias(string alias, string function)
+        public IProject UnregisterFunctionAlias(string alias, string function)
         {
             alias = ((alias != null) ? alias.Trim() : null);
             function = ((function != null) ? function.Trim() : null);

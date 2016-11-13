@@ -36,10 +36,13 @@ namespace Sweet.BRETest
 {
     class Program
     {
+        private delegate void TestMethod(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger);
+        
         private class Test
         {
             public string Name;
-            public Func<double> Method;
+            public TestMethod Method;
         }
 
         static void Main(string[] args)
@@ -95,8 +98,41 @@ namespace Sweet.BRETest
 
                 try
                 {
-                    double elapsedTime = actions[testNo].Method();
-                    Console.WriteLine("Eval time: {0} ms", elapsedTime);
+                    IRuleset rs;
+                    IFactList facts;
+                    IVariableList vars;
+                    IRuleDebugger debugger;
+
+                    Stopwatch sw = new Stopwatch();
+
+                    sw.Start();
+                    try
+                    {
+                        actions[testNo].Method(out rs, out facts, out vars, out debugger);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                    }
+
+                    if (!ReferenceEquals(rs, null))
+                    {
+                        using (IEvaluationContext ec = RuleEngineRuntime.Initialize((Ruleset)rs, debugger))
+                        {
+                            ec.StopOnError = false;
+                            try
+                            {
+                                sw.Restart();
+                                ec.Evaluate(facts);
+                            }
+                            finally
+                            {
+                                sw.Stop();
+                                Console.WriteLine();
+                            }
+                        }
+                    }
+                    Console.WriteLine("Eval time: {0} ms", sw.Elapsed.TotalMilliseconds);
                 }
                 catch (Exception e)
                 {
@@ -112,15 +148,18 @@ namespace Sweet.BRETest
             }
         }
 
-        private static double IndexTest()
+        private static void IndexTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
+            vars = null;
+
             List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
 
-            IFactList facts = new FactList()
+            facts = new FactList()
                 .Set("fact1", list)
                 .Set("celcius", 18);
 
-            Project project = Project.As()
+            IProject project = Project.As()
                 .RegisterFunctionAlias("Month name", "MonthName")
                 .RegisterFunctionAlias("Convert to string", "String")
                 .RegisterFunctionAlias("Write to console", "WriteLn");
@@ -155,7 +194,7 @@ namespace Sweet.BRETest
                     )
                     ;
 
-            DefaultRuleDebugger debugger = new DefaultRuleDebugger(delegate (object sender, DebugEventArgs e)
+            debugger = new DefaultRuleDebugger(delegate (object sender, DebugEventArgs e)
             {
                 Console.WriteLine(e.Status);
                 if (e.Error != null)
@@ -164,32 +203,19 @@ namespace Sweet.BRETest
                 }
             });
 
-            Stopwatch sw = new Stopwatch();
-
-            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"), debugger))
-            {
-                ec.StopOnError = false;
-                try
-                {
-                    sw.Restart();
-                    ec.Evaluate(facts);
-                }
-                finally
-                {
-                    sw.Stop();
-                    Console.WriteLine();
-                }
-            }
-            return sw.Elapsed.TotalMilliseconds;
+            rs = project.GetRuleset("main");
         }
 
-        private static double CelciusToFahrenheitTest()
+        private static void CelciusToFahrenheitTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
+            vars = null;
+            debugger = null;
+
+            facts = new FactList()
+                .Set("celcius", 18);
+
             Project project = Project.As();
-
-            FactList facts = new FactList();
-
-            facts.Set("celcius", 18);
 
             project
                 .DefineRuleset("main")
@@ -218,29 +244,19 @@ namespace Sweet.BRETest
                     )
                     ;
 
-            Stopwatch sw = new Stopwatch();
-
-            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
-            {
-                try
-                {
-                    sw.Restart();
-                    ec.Evaluate(facts);
-                }
-                finally
-                {
-                    sw.Stop();
-                }
-            }
-            return sw.Elapsed.TotalMilliseconds;
+            rs = project.GetRuleset("main");
         }
 
-        private static double FahrenheitToCelciusTest()
+        private static void FahrenheitToCelciusTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
-            Project project = Project.As();
+            vars = null;
+            debugger = null;
 
-            IFactList facts = new FactList()
+            facts = new FactList()
                 .Set("fahrenheit", 64.4);
+
+            Project project = Project.As();
 
             project.DefineRuleset("main")
                 .DefineRule("main")
@@ -257,28 +273,18 @@ namespace Sweet.BRETest
                 )
                 ;
 
-            Stopwatch sw = new Stopwatch();
-
-            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
-            {
-                try
-                {
-                    sw.Restart();
-                    ec.Evaluate(facts);
-                }
-                finally
-                {
-                    sw.Stop();
-                }
-            }
-            return sw.Elapsed.TotalMilliseconds;
+            rs = project.GetRuleset("main");
         }
 
-        private static double ReflectionTest()
+        private static void ReflectionTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
+            vars = null;
+            debugger = null;
+
             List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
 
-            IFactList facts = new FactList()
+            facts = new FactList()
                 .Set("fact1", list)
                 .Set("fact2", new char[] { ' ' });
 
@@ -296,31 +302,18 @@ namespace Sweet.BRETest
                 )
                 ;
 
-            Stopwatch sw = new Stopwatch();
-
-            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
-            {
-                try
-                {
-                    sw.Restart();
-                    ec.Evaluate(facts);
-                }
-                finally
-                {
-                    sw.Stop();
-                
-                    Console.WriteLine();
-                    Console.WriteLine();
-                }
-            }
-            return sw.Elapsed.TotalMilliseconds;
+            rs = project.GetRuleset("main");
         }
 
-        private static double TryCatchTest()
+        private static void TryCatchTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
+            vars = null;
+            debugger = null;
+
             Project project = Project.As();
 
-            IFactList facts = new FactList()
+            facts = new FactList()
                 .Set("fact1", 7)
                 .Set("project", project)
                 .Set("celcius", 18);
@@ -366,28 +359,23 @@ namespace Sweet.BRETest
                             )
                         );
 
-            Stopwatch sw = new Stopwatch();
-
-            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
-            {
-                try
-                {
-                    sw.Restart();
-                    ec.Evaluate(facts);
-                }
-                finally
-                {
-                    sw.Stop();
-                
-                    Console.WriteLine();
-                    Console.WriteLine();
-                }
-            }
-            return sw.Elapsed.TotalMilliseconds;
+            rs = project.GetRuleset("main");
         }
 
-        private static double GeneralTest()
+        private static void GeneralTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
+            vars = null;
+            facts = null;
+            debugger = null;
+
+            vars = new VariableList()
+                .Set("VarA", 7)
+                .Set("Count", 0)
+                .Set("@var1", 0)
+                .Set("@var2", 0)
+                .Set("@var3", 0);
+
             Project project = Project.As();
 
             // table
@@ -560,40 +548,22 @@ namespace Sweet.BRETest
                 )
                 ;
 
-            IVariableList vars = new VariableList()
-                .Set("VarA", 7)
-                .Set("Count", 0)
-                .Set("@var1", 0)
-                .Set("@var2", 0)
-                .Set("@var3", 0);
-
-            Stopwatch sw = new Stopwatch();
-
-            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
-            {
-                try
-                {
-                    sw.Restart();
-                    ec.Evaluate(vars);
-                }
-                finally
-                {
-                    sw.Stop();
-                
-                    Console.WriteLine();
-                    Console.WriteLine();
-                }
-            }
-            return sw.Elapsed.TotalMilliseconds;
+            rs = project.GetRuleset("main");
         }
 
-        private static double SaveTest()
+        private static void SaveTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
         {
+            rs = null;
+            vars = null;
+            facts = null;
+            debugger = null;
+
             Project project = Project.As();
 
             // Variables
             project.Variables
-                   .Set("@var1", (string)null)
+                    .Set("@var1", (string)null)
                     .Set("@var2", 1)
                     .Set("@bool", true);
 
@@ -802,32 +772,25 @@ namespace Sweet.BRETest
                 )
                 ;
 
-            Stopwatch sw = new Stopwatch();
-
             XmlDocument doc = null;
             try
             {
-                sw.Restart();
                 doc = ProjectWriter.Write(project);
             }
             finally
             {
-                sw.Stop();
                 doc.Save("." + Path.DirectorySeparatorChar.ToString() + "a.xml");
             }
 
             Project prj = null;
             try
             {
-                sw.Start();
                 prj = ProjectReader.Read(doc);
             }
             finally
             {
-                sw.Stop();
                 Console.WriteLine(prj);
             }
-            return sw.Elapsed.TotalMilliseconds;
         }
     }
 }

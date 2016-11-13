@@ -42,7 +42,7 @@ namespace Sweet.BRE
 
         private IRuleDebugger _debugger;
 
-        private Project _project;
+        private IProject _project;
         private ActionStm _actionE;
 
         private FactList _facts;
@@ -64,7 +64,7 @@ namespace Sweet.BRE
             _actionE = actionE;
             if (_actionE is Ruleset)
             {
-                _project = ((Ruleset)_actionE).Project;
+                _project = ((IRuleset)_actionE).Project;
             }
 
             _facts = new FactList();

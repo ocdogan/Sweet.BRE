@@ -160,7 +160,7 @@ namespace Sweet.BRE
             _stack.Push(elm);
         }
 
-        private void WriteRule(Rule rule)
+        private void WriteRule(IRule rule)
         {
             string desc = rule.Description;
             if (!String.IsNullOrEmpty(desc))
@@ -171,7 +171,7 @@ namespace Sweet.BRE
             WriteDo(rule.Actions);
         }
 
-        private void WriteRuleset(Ruleset ruleset)
+        private void WriteRuleset(IRuleset ruleset)
         {
             string desc = ruleset.Description;
             if (!String.IsNullOrEmpty(desc))

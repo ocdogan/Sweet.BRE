@@ -248,7 +248,7 @@ namespace Sweet.BRE
                     if (elm == null)
                         continue;
 
-                    Rule rule = ruleset.DefineRule(elm.GetAttribute(StrName));
+                    IRule rule = ruleset.DefineRule(elm.GetAttribute(StrName));
                     _readStack.Push(rule);
                     try
                     {
@@ -289,7 +289,7 @@ namespace Sweet.BRE
                     if (elm == null)
                         continue;
 
-                    Ruleset ruleset = _project.DefineRuleset(elm.GetAttribute(StrName));
+                    IRuleset ruleset = _project.DefineRuleset(elm.GetAttribute(StrName));
                     _readStack.Push(ruleset);
                     try
                     {

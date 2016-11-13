@@ -84,16 +84,16 @@ namespace Sweet.BRE
             return builder.ToString();
         }
 
-        private Project FindProject(IEvaluationContext context)
+        private IProject FindProject(IEvaluationContext context)
         {
             IStatement[] stack = context.CallStack;
             if (!ReferenceEquals(stack, null))
             {
                 foreach (IStatement e in stack)
                 {
-                    if (e is Ruleset)
+                    if (e is IRuleset)
                     {
-                        return ((Ruleset)e).Project;
+                        return ((IRuleset)e).Project;
                     }
                 }
             }
@@ -122,7 +122,7 @@ namespace Sweet.BRE
                 throw new RuleException(BreResStrings.GetString("CannotCallABlankTreeName"));
             }
 
-            Project project = FindProject(context);
+            IProject project = FindProject(context);
             if (ReferenceEquals(project, null))
             {
                 throw new RuleException(BreResStrings.GetString("CannotFindAProjectInExecutionStack"));

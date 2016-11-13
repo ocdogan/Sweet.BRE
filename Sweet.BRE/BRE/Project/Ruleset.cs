@@ -29,21 +29,21 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public class Ruleset : ActionStm
+    public class Ruleset : ActionStm, IRuleset
     {
         private string _name;
         private string _description;
 
-        private Project _project;
+        private IProject _project;
 
-        private List<Rule> _ruleList;
-        private Dictionary<string, Rule> _rules;
+        private List<IRule> _ruleList;
+        private Dictionary<string, IRule> _rules;
 
         public Ruleset()
             : base()
         {
-            _ruleList = new List<Rule>();
-            _rules = new Dictionary<string, Rule>();
+            _ruleList = new List<IRule>();
+            _rules = new Dictionary<string, IRule>();
         }
 
         internal Ruleset(string name)
@@ -52,7 +52,7 @@ namespace Sweet.BRE
             SetName(name);
         }
 
-        public Rule this[string ruleName]
+        public IRule this[string ruleName]
         {
             get
             {
@@ -67,13 +67,17 @@ namespace Sweet.BRE
 
                 if (!ReferenceEquals(value.Ruleset, null))
                 {
-                    value = (Rule)value.Clone();
+                    value = (IRule)value.Clone();
                 }
 
                 _rules[ruleName] = value;
 
-                value.SetRuleset(this);
-                value.SetName(ruleName);
+                Rule rule = value as Rule;
+                if (!ReferenceEquals(rule, null))
+                {
+                    rule.SetRuleset(this);
+                    rule.SetName(ruleName);
+                }
             }
         }
 
@@ -97,7 +101,7 @@ namespace Sweet.BRE
             }
         }
 
-        public Project Project
+        public IProject Project
         {
             get
             {
@@ -113,14 +117,14 @@ namespace Sweet.BRE
             }
         }
 
-        public Rule[] Rules
+        public IRule[] Rules
         {
             get
             {
-                Rule[] result = _ruleList.ToArray();
+                IRule[] result = _ruleList.ToArray();
                 if (result.Length > 1)
                 {
-                    Array.Sort<Rule>(result, new Comparison<Rule>(CompareRules));
+                    Array.Sort<IRule>(result, new Comparison<IRule>(CompareRules));
                 }
 
                 return result;
@@ -138,7 +142,7 @@ namespace Sweet.BRE
             }
         }
 
-        public Ruleset AddRule(string ruleName, Rule rule)
+        public IRuleset AddRule(string ruleName, IRule rule)
         {
             ruleName = NormalizeName(ruleName);
 
@@ -147,11 +151,15 @@ namespace Sweet.BRE
 
             if (!ReferenceEquals(rule.Ruleset, null))
             {
-                rule = (Rule)rule.Clone();
+                rule = (IRule)rule.Clone();
             }
 
-            rule.SetRuleset(this);
-            rule.SetName(ruleName);
+            Rule rl = rule as Rule;
+            if (!ReferenceEquals(rl, null))
+            {
+                rl.SetRuleset(this);
+                rl.SetName(ruleName);
+            }
 
             _ruleList.Add(rule);
             _rules.Add(ruleName, rule);
@@ -159,13 +167,13 @@ namespace Sweet.BRE
             return this;
         }
 
-        public Ruleset SetDescription(string description)
+        public IRuleset SetDescription(string description)
         {
             _description = description;
             return this;
         }
 
-        internal void SetProject(Project project)
+        internal void SetProject(IProject project)
         {
             _project = project;
         }
@@ -185,16 +193,19 @@ namespace Sweet.BRE
             return new Ruleset();
         }
 
-        public Ruleset Clear()
+        public IRuleset Clear()
         {
-            Rule[] rules = _ruleList.ToArray();
+            IRule[] rules = _ruleList.ToArray();
 
             _rules.Clear();
             _ruleList.Clear();
 
-            foreach (Rule me in rules)
+            foreach (IRule rule in rules)
             {
-                me.SetRuleset(null);
+                if (rule is Rule)
+                {
+                    ((Rule)rule).SetRuleset(null);
+                }
             }
 
             return this;
@@ -218,7 +229,7 @@ namespace Sweet.BRE
             return _rules.ContainsKey(NormalizeName(ruleName));
         }
 
-        public Rule DefineRule(string ruleName)
+        public IRule DefineRule(string ruleName)
         {
             ruleName = NormalizeName(ruleName);
 
@@ -238,26 +249,31 @@ namespace Sweet.BRE
         public override void Dispose()
         {
             // rules
-            Rule[] rules = _ruleList.ToArray();
+            IRule[] rules = _ruleList.ToArray();
 
             _rules.Clear();
             _ruleList.Clear();
 
-            foreach (Rule me in rules)
+            Rule rl;
+            foreach (IRule rule in rules)
             {
-                me.SetRuleset(null);
-                me.Dispose();
+                rl = rule as Rule;
+                if (!ReferenceEquals(rl, null))
+                {
+                    rl.SetRuleset(null);
+                    rl.Dispose();
+                }
             }
 
             base.Dispose();
         }
 
-        public Rule GetRule(string ruleName)
+        public IRule GetRule(string ruleName)
         {
             return _rules[NormalizeName(ruleName)];
         }
 
-        public bool IsEqualTo(Ruleset ruleset)
+        public bool IsEqualTo(IRuleset ruleset)
         {
             if (!ReferenceEquals(ruleset, null))
             {
@@ -265,7 +281,7 @@ namespace Sweet.BRE
                 {
                     foreach (string key in _rules.Keys)
                     {
-                        Rule rule = ruleset.GetRule(key);
+                        IRule rule = ruleset.GetRule(key);
                         if (ReferenceEquals(rule, null) || !object.Equals(rule, _rules[key]))
                         {
                             return false;
@@ -279,23 +295,26 @@ namespace Sweet.BRE
             return false;
         }
 
-        public Ruleset RemoveRule(string ruleName)
+        public IRuleset RemoveRule(string ruleName)
         {
             ruleName = NormalizeName(ruleName);
             if (ContainsRule(ruleName))
             {
-                Rule rule = _rules[ruleName];
+                IRule rule = _rules[ruleName];
                 
                 _rules.Remove(ruleName);
                 _ruleList.Remove(rule);
 
-                rule.SetRuleset(null);
+                if (rule is Rule)
+                {
+                    ((Rule)rule).SetRuleset(null);
+                }
             }
 
             return this;
         }
 
-        private void Validate(Rule rule)
+        private void Validate(IRule rule)
         {
             if (ReferenceEquals(rule, null))
             {
@@ -330,7 +349,7 @@ namespace Sweet.BRE
             return (context.Canceled || context.Halted);
         }
 
-        private int CompareRules(Rule rule1, Rule rule2)
+        private int CompareRules(IRule rule1, IRule rule2)
         {
             int priority1 = (!ReferenceEquals(rule1, null) ? (((10000 * (int)rule1.Priority)) + rule1.SubPriority) : 0);
             int priority2 = (!ReferenceEquals(rule2, null) ? (((10000 * (int)rule2.Priority)) + rule2.SubPriority) : 0);
@@ -351,10 +370,10 @@ namespace Sweet.BRE
         {
             if (!ReferenceEquals(_rules, null) && (_rules.Count > 0))
             {
-                Rule[] rules = _ruleList.ToArray();
+                IRule[] rules = _ruleList.ToArray();
                 if (rules.Length > 1)
                 {
-                    Array.Sort<Rule>(rules, new Comparison<Rule>(CompareRules));
+                    Array.Sort<IRule>(rules, new Comparison<IRule>(CompareRules));
                 }
                 
                 foreach (IStatement e in rules)
