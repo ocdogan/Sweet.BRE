@@ -115,7 +115,7 @@ namespace Sweet.BRETest
                     try
                     {
                         sw.Restart();
-                        ec.Evaluate(facts, null);
+                        ec.Evaluate(facts);
                     }
                     finally
                     {
@@ -188,7 +188,7 @@ namespace Sweet.BRETest
                     try
                     {
                         sw.Restart();
-                        ec.Evaluate(facts, null);
+                        ec.Evaluate(facts);
                     }
                     finally
                     {
@@ -249,7 +249,7 @@ namespace Sweet.BRETest
                     try
                     {
                         sw.Restart();
-                        ec.Evaluate(facts, null);
+                        ec.Evaluate(facts);
                     }
                     finally
                     {
@@ -310,7 +310,7 @@ namespace Sweet.BRETest
                     try
                     {
                         sw.Restart();
-                        ec.Evaluate(facts, null);
+                        ec.Evaluate(facts);
                     }
                     finally
                     {
@@ -398,7 +398,7 @@ namespace Sweet.BRETest
                     try
                     {
                         sw.Restart();
-                        ec.Evaluate(facts, null);
+                        ec.Evaluate(facts);
                     }
                     finally
                     {

@@ -373,6 +373,11 @@ namespace Sweet.BRE
             ((IEvaluationContext)this).Evaluate((IFactList)null, (IVariableList)null);
         }
 
+        void IEvaluationContext.Evaluate(IFactList facts)
+        {
+            ((IEvaluationContext)this).Evaluate(facts, null);
+        }
+
         void IEvaluationContext.Evaluate(IVariableList variables)
         {
             ((IEvaluationContext)this).Evaluate((IFactList)null, variables);

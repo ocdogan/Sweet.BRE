@@ -63,6 +63,7 @@ namespace Sweet.BRE
         IEvaluationScope GetCurrentScope();
 
         void Evaluate();
+        void Evaluate(IFactList facts);
         void Evaluate(IVariableList variables);
         void Evaluate(IFactList facts, IVariableList variables);
 
