@@ -368,6 +368,15 @@ namespace Sweet.BRE
                 return (bool)value;
             }
 
+            if (value is string)
+            {
+                string val = (string)value;
+                if (val == String.Empty)
+                {
+                    return defValue;
+                }
+            }
+
             string s = ToString(value);
             ValueType type = GetType(value);
 
@@ -400,8 +409,28 @@ namespace Sweet.BRE
                     return false;
                 }
 
+                if (CommonHelper.EqualStrings(s, "y", true))
+                {
+                    return true;
+                }
+
+                if (CommonHelper.EqualStrings(s, "n", true))
+                {
+                    return false;
+                }
+
+                if (CommonHelper.EqualStrings(s, "t", true))
+                {
+                    return true;
+                }
+
+                if (CommonHelper.EqualStrings(s, "f", true))
+                {
+                    return false;
+                }
+
                 double d;
-                result = double.TryParse(s, out d) && ((long)d == 1);
+                result = double.TryParse(s, out d) && ((long)d != 0);
             }
 
             return result;
@@ -565,6 +594,11 @@ namespace Sweet.BRE
 
         public static string ToString(object value, string defValue)
         {
+            if (value is string)
+            {                
+                return (string)value;
+            }
+
             if (value is double)
             {
                 if (double.IsNaN((double)value))
