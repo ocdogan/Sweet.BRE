@@ -36,18 +36,83 @@ namespace Sweet.BRETest
 {
     class Program
     {
-        static void Main(string[] args)
+        private class Test
         {
-            // SaveTest();
-            FahrenheitToCelciusTest();
-            // CelciusToFahrenheitTest();
-            // IndexTest();
-            // ReflectionTest();
-            // GeneralTest();
-            // TryCatchTest();
+            public string Name;
+            public Func<double> Method;
         }
 
-        private static void IndexTest()
+        static void Main(string[] args)
+        {
+            List<Test> actions = new List<Test>();
+
+            actions.Add(new Test { Name = "FahrenheitToCelciusTest", Method = FahrenheitToCelciusTest });
+            actions.Add(new Test { Name = "CelciusToFahrenheitTest", Method = CelciusToFahrenheitTest });
+            actions.Add(new Test { Name = "IndexTest", Method = IndexTest });
+            actions.Add(new Test { Name = "ReflectionTest", Method = ReflectionTest });
+            actions.Add(new Test { Name = "TryCatchTest", Method = TryCatchTest });
+            actions.Add(new Test { Name = "GeneralTest", Method = GeneralTest });
+            actions.Add(new Test { Name = "SaveTest", Method = SaveTest });
+
+            while (true)
+            {
+                Console.Clear();
+
+                Console.WriteLine("--------------------------------");
+
+                for (int i = 0; i < actions.Count; i++)
+                {
+                    Console.WriteLine("{0}. {1}", i + 1, actions[i].Name);
+                }
+
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine("Press ESC to exit or select the test to run...");
+                Console.WriteLine();
+
+                ConsoleKey key = Console.ReadKey(true).Key;
+                if (key == ConsoleKey.Escape)
+                    break;
+
+                int testNo = (int)key;
+                if (testNo >= (int)ConsoleKey.D1 && testNo <= (int)ConsoleKey.D9)
+                {
+                    testNo -= (int)ConsoleKey.D1;
+                }
+                else if (testNo >= (int)ConsoleKey.NumPad1 && testNo <= (int)ConsoleKey.NumPad9)
+                {
+                    testNo -= (int)ConsoleKey.NumPad1;
+                }
+                else {
+                    Console.Clear();
+                    Console.WriteLine("Invalid key. Press any key to continue...");
+                    Console.ReadKey(true);
+
+                    continue;
+                }
+
+                Console.WriteLine("Test: " + actions[testNo].Name);
+                Console.WriteLine("--------------------------------");
+
+                try
+                {
+                    double elapsedTime = actions[testNo].Method();
+                    Console.WriteLine("Eval time: {0} ms", elapsedTime);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error:");
+                    Console.WriteLine(e);
+                }
+
+                Console.WriteLine("--------------------------------");
+
+                Console.WriteLine("Press ESC to exit, any key to continue...");
+                if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                    break;
+            }
+        }
+
+        private static double IndexTest()
         {
             List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
 
@@ -90,7 +155,7 @@ namespace Sweet.BRETest
                     )
                     ;
 
-            DefaultRuleDebugger debugger = new DefaultRuleDebugger(delegate(object sender, DebugEventArgs e)
+            DefaultRuleDebugger debugger = new DefaultRuleDebugger(delegate (object sender, DebugEventArgs e)
             {
                 Console.WriteLine(e.Status);
                 if (e.Error != null)
@@ -101,44 +166,24 @@ namespace Sweet.BRETest
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"), debugger))
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"), debugger))
+                ec.StopOnError = false;
+                try
                 {
-                    ec.StopOnError = false;
-                    try
-                    {
-                        sw.Restart();
-                        ec.Evaluate(facts);
-                    }
-                    finally
-                    {
-                        sw.Stop();
-                    }
+                    sw.Restart();
+                    ec.Evaluate(facts);
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("--------------------------------");
-
-
-                Console.WriteLine("Eval time: {0} ms\r\n", sw.Elapsed.TotalMilliseconds);
-
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
+                finally
+                {
+                    sw.Stop();
+                    Console.WriteLine();
+                }
             }
+            return sw.Elapsed.TotalMilliseconds;
         }
 
-        private static void CelciusToFahrenheitTest()
+        private static double CelciusToFahrenheitTest()
         {
             Project project = Project.As();
 
@@ -175,49 +220,27 @@ namespace Sweet.BRETest
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
+                try
                 {
-                    try
-                    {
-                        sw.Restart();
-                        ec.Evaluate(facts);
-                    }
-                    finally
-                    {
-                        sw.Stop();
-                    }
+                    sw.Restart();
+                    ec.Evaluate(facts);
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("--------------------------------");
-
-
-                Console.WriteLine("Eval time: {0}\r\n", sw.ElapsedTicks);
-
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
+                finally
+                {
+                    sw.Stop();
+                }
             }
+            return sw.Elapsed.TotalMilliseconds;
         }
 
-        private static void FahrenheitToCelciusTest()
+        private static double FahrenheitToCelciusTest()
         {
             Project project = Project.As();
 
-            FactList facts = new FactList();
-
-            facts.Set("fahrenheit", 64.4);
+            IFactList facts = new FactList()
+                .Set("fahrenheit", 64.4);
 
             project.DefineRuleset("main")
                 .DefineRule("main")
@@ -236,59 +259,37 @@ namespace Sweet.BRETest
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
+                try
                 {
-                    try
-                    {
-                        sw.Restart();
-                        ec.Evaluate(facts);
-                    }
-                    finally
-                    {
-                        sw.Stop();
-                    }
+                    sw.Restart();
+                    ec.Evaluate(facts);
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("--------------------------------");
-
-
-                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
-
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
+                finally
+                {
+                    sw.Stop();
+                }
             }
+            return sw.Elapsed.TotalMilliseconds;
         }
 
-        private static void ReflectionTest()
+        private static double ReflectionTest()
         {
-            Project project = Project.As();
-
-            FactList facts = new FactList();
-
             List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
 
-            facts.Set("fact1", list);
-            facts.Set("fact2", new char[] {' '});
+            IFactList facts = new FactList()
+                .Set("fact1", list)
+                .Set("fact2", new char[] { ' ' });
+
+            Project project = Project.As();
 
             project.DefineRuleset("main")
                 .DefineRule("main")
                 .Do(
                     ((FunctionStm)"Print")
                         .Params(
-                            ReflectionStm.As((FactStm)"fact1", 
+                            ReflectionStm.As((FactStm)"fact1",
                                 "[2].ToString('s').Replace('T', ' ').Split($0)[1].ToCharArray()[2]",
                                 (FactStm)"fact2")
                         )
@@ -297,43 +298,25 @@ namespace Sweet.BRETest
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
+                try
                 {
-                    try
-                    {
-                        sw.Restart();
-                        ec.Evaluate(facts);
-                    }
-                    finally
-                    {
-                        sw.Stop();
-                    }
+                    sw.Restart();
+                    ec.Evaluate(facts);
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("--------------------------------");
-
-
-                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
-
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
+                finally
+                {
+                    sw.Stop();
+                
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
             }
+            return sw.Elapsed.TotalMilliseconds;
         }
 
-        private static void TryCatchTest()
+        private static double TryCatchTest()
         {
             Project project = Project.As();
 
@@ -385,42 +368,25 @@ namespace Sweet.BRETest
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
+                try
                 {
-                    try
-                    {
-                        sw.Restart();
-                        ec.Evaluate(facts);
-                    }
-                    finally
-                    {
-                        sw.Stop();
-                    }
+                    sw.Restart();
+                    ec.Evaluate(facts);
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("--------------------------------");
-
-                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
-
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
+                finally
+                {
+                    sw.Stop();
+                
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
             }
+            return sw.Elapsed.TotalMilliseconds;
         }
 
-        private static void GeneralTest()
+        private static double GeneralTest()
         {
             Project project = Project.As();
 
@@ -594,71 +560,48 @@ namespace Sweet.BRETest
                 )
                 ;
 
-            IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"));
-
-            VariableList vars = new VariableList();
-
-            vars.Set("VarA", 7);
-            vars.Set("Count", 0);
-
-            vars.Set("@var1", 0);
-            vars.Set("@var2", 0);
-            vars.Set("@var3", 0);
+            IVariableList vars = new VariableList()
+                .Set("VarA", 7)
+                .Set("Count", 0)
+                .Set("@var1", 0)
+                .Set("@var2", 0)
+                .Set("@var3", 0);
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
                 try
                 {
                     sw.Restart();
                     ec.Evaluate(vars);
-                    vars.Copy(ec.Variables);
                 }
                 finally
                 {
                     sw.Stop();
+                
+                    Console.WriteLine();
+                    Console.WriteLine();
                 }
-
-                Console.WriteLine();
-                Console.WriteLine("--------------------------------");
-
-                foreach (IVariable obj in ec.Variables)
-                {
-                    Console.WriteLine("{0} = {1}", obj.Name, obj.Value);
-                }
-
-                Console.WriteLine();
-                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
-
-                Console.WriteLine("--------------------------------");
-                Console.WriteLine();
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
             }
+            return sw.Elapsed.TotalMilliseconds;
         }
 
-        private static void SaveTest()
+        private static double SaveTest()
         {
             Project project = Project.As();
 
             // Variables
-            project.Variables.Set("@var1", (string)null);
-            project.Variables.Set("@var2", 1);
-            project.Variables.Set("@bool", true);
+            project.Variables
+                   .Set("@var1", (string)null)
+                    .Set("@var2", 1)
+                    .Set("@bool", true);
 
             // Function aliases
-            project.RegisterFunctionAlias("Month name", "MonthName");
-            project.RegisterFunctionAlias("Convert to string", "String");
-            project.RegisterFunctionAlias("Write to console", "PrintLine");
+            project
+                .RegisterFunctionAlias("Month name", "MonthName")
+                .RegisterFunctionAlias("Convert to string", "String")
+                .RegisterFunctionAlias("Write to console", "PrintLine");
 
             // table
             DecisionTable table = project.DefineTable("decisionTable1");
@@ -706,9 +649,9 @@ namespace Sweet.BRETest
             // tree
             // row1
             DecisionConditionNode tc1 = project.DefineTree("tree1");
-            tc1.SetVariable("@var1").SetValues(new string[] {"0"});
+            tc1.SetVariable("@var1").SetValues(new string[] { "0" });
 
-            DecisionConditionNode tc2 = new DecisionConditionNode("@var2", new string[] { "0"});
+            DecisionConditionNode tc2 = new DecisionConditionNode("@var2", new string[] { "0" });
             tc1.SetOnMatch(tc2);
 
             DecisionActionNode ta1 = new DecisionActionNode("@var1", "0");
@@ -861,53 +804,30 @@ namespace Sweet.BRETest
 
             Stopwatch sw = new Stopwatch();
 
-            while (true)
+            XmlDocument doc = null;
+            try
             {
-                Console.Clear();
-
-                Console.WriteLine(project);
-                Console.WriteLine();
-                Console.WriteLine("-----------------");
-
-                XmlDocument doc = null;
-                try
-                {
-                    sw.Restart();
-                    doc = ProjectWriter.Write(project);
-                }
-                finally
-                {
-                    sw.Stop();
-                    doc.Save(@"c:\a.xml");
-                }
-
-                double evalTime1 = sw.Elapsed.TotalMilliseconds;
-
-                Project prj = null;
-                try
-                {
-                    sw.Restart();
-                    prj = ProjectReader.Read(doc);
-                }
-                finally
-                {
-                    sw.Stop();
-                    Console.WriteLine(prj);
-                }
-
-                double evalTime2 = sw.Elapsed.TotalMilliseconds;
-
-                Console.WriteLine();
-                Console.WriteLine("-----------------");
-
-                Console.WriteLine("Equal: {0}", prj.IsEqualTo(project)); // (prj.ToString() == project.ToString()));
-                Console.WriteLine("Eval time 1: {0}", evalTime1);
-                Console.WriteLine("Eval time 2: {0}", evalTime2);
-
-                Console.WriteLine("Press ESC to exit, any key to continue.");
-                if (Console.ReadKey().Key == ConsoleKey.Escape)
-                    break;
+                sw.Restart();
+                doc = ProjectWriter.Write(project);
             }
+            finally
+            {
+                sw.Stop();
+                doc.Save("." + Path.DirectorySeparatorChar.ToString() + "a.xml");
+            }
+
+            Project prj = null;
+            try
+            {
+                sw.Start();
+                prj = ProjectReader.Read(doc);
+            }
+            finally
+            {
+                sw.Stop();
+                Console.WriteLine(prj);
+            }
+            return sw.Elapsed.TotalMilliseconds;
         }
     }
 }
