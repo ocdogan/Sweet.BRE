@@ -98,22 +98,27 @@ namespace Sweet.BRE
 
             if (String.IsNullOrEmpty(name))
             {
-                context.Log("Cannot resolve blank variable name.", EvalLogType.Warning);
+                if (context.LoggingEnabled)
+                {
+                    context.Log("Cannot resolve blank variable name.", EvalLogType.Warning);
+                }
                 return null;
             }
 
             IEvaluationScope scope = context.GetCurrentScope();
 
-            IVariable var = scope.Get(name);
-            if (var == null)
+            IVariable vr = scope.Get(name);
+            if (vr == null)
             {
-                context.Log(String.Format("Cannot find variable '{0}'.", name),
-                    EvalLogType.Warning);
-
+                if (context.LoggingEnabled)
+                {
+                    context.Log(String.Format("Cannot find variable '{0}'.", name),
+                        EvalLogType.Warning);
+                }
                 return null;
             }
 
-            return ((var != null) ? var.Value : null);
+            return ((vr != null) ? vr.Value : null);
         }
 
         # region Operators

@@ -32,6 +32,7 @@ namespace Sweet.BRE
 {
     public sealed class EvaluationContext : IEvaluationContext, IDisposable
     {
+        private bool _loggingEnabled = false;
         private bool _breakRequired = false;
         private bool _returnRequired = false;
         private bool _continueRequired = false;
@@ -144,6 +145,12 @@ namespace Sweet.BRE
             {
                 return (_status == ExecutionStatus.Halted);
             }
+        }
+
+        bool IEvaluationContext.LoggingEnabled
+        {
+            get { return _loggingEnabled; }
+            set { _loggingEnabled = value; }
         }
 
         IEvalLog[] IEvaluationContext.Logs
@@ -442,12 +449,18 @@ namespace Sweet.BRE
 
         void IEvaluationContext.Log(string message)
         {
-            _logs.Add(new EvalLog(message, EvalLogType.Info));
+            if (_loggingEnabled)
+            {
+                _logs.Add(new EvalLog(message, EvalLogType.Info));
+            }
         }
 
         void IEvaluationContext.Log(string message, EvalLogType type)
         {
-            _logs.Add(new EvalLog(message, type));
+            if (_loggingEnabled)
+            {
+                _logs.Add(new EvalLog(message, type));
+            }
         }
 
         Exception IEvaluationContext.PopError()

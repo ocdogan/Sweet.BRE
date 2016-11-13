@@ -235,8 +235,11 @@ namespace Sweet.BRE
 
             if (instance == null)
             {
-                context.Log("Cannot evaluate ReflectionStm. Instance parameter evaluated to null.", 
-                    EvalLogType.Warning);
+                if (context.LoggingEnabled)
+                {
+                    context.Log("Cannot evaluate ReflectionStm. Instance parameter evaluated to null.",
+                       EvalLogType.Warning);
+                }
                 return null;
             }
 
@@ -247,8 +250,11 @@ namespace Sweet.BRE
 
             if (String.IsNullOrEmpty(method))
             {
-                context.Log("Cannot evaluate ReflectionStm. Method parameter evaluated as blank.",
-                    EvalLogType.Warning);
+                if (context.LoggingEnabled)
+                {
+                    context.Log("Cannot evaluate ReflectionStm. Method parameter evaluated as blank.",
+                       EvalLogType.Warning);
+                }
                 return instance;
             }
 

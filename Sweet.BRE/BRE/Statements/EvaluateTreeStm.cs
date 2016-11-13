@@ -110,7 +110,10 @@ namespace Sweet.BRE
 
             if (String.IsNullOrEmpty(tree))
             {
-                context.Log("Cannot evaluate decision tree. Name parameter is blank.", EvalLogType.Error);
+                if (context.LoggingEnabled)
+                {
+                   context.Log("Cannot evaluate decision tree. Name parameter is blank.", EvalLogType.Error);
+                }
                 return null;
             }
 

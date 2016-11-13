@@ -33,8 +33,9 @@ namespace Sweet.BRE
     {
         bool Canceled { get; }
         bool Halted { get; }
-        
+
         bool StopOnError { get; set; }
+        bool LoggingEnabled { get; set; }
 
         ExecutionStatus Status { get; }
 

@@ -110,7 +110,10 @@ namespace Sweet.BRE
 
             if (String.IsNullOrEmpty(table))
             {
-                context.Log("Cannot evaluate decision table. Name parameter is blank.", EvalLogType.Error);
+                if (context.LoggingEnabled)
+                {
+                    context.Log("Cannot evaluate decision table. Name parameter is blank.", EvalLogType.Error);
+                }
                 return null;
             }
 

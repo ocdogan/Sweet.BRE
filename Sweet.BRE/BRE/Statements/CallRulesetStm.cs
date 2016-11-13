@@ -115,7 +115,10 @@ namespace Sweet.BRE
 
             if (String.IsNullOrEmpty(ruleset))
             {
-                context.Log("Cannot call ruleset. Name parameter is blank.", EvalLogType.Error);
+                if (context.LoggingEnabled)
+                {
+                    context.Log("Cannot call ruleset. Name parameter is blank.", EvalLogType.Error);
+                }
                 return null;
             }
 

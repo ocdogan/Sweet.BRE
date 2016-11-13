@@ -100,16 +100,21 @@ namespace Sweet.BRE
 
             if (String.IsNullOrEmpty(name))
             {
-                context.Log("Cannot resolve blank fact name.", EvalLogType.Warning);
+                if (context.LoggingEnabled)
+                {
+                    context.Log("Cannot resolve blank fact name.", EvalLogType.Warning);
+                }
                 return null;
             }
 
             IFactList facts = context.Facts;
             if (!facts.Contains(name))
             {
-                context.Log(String.Format("Cannot find fact '{0}'.", name),
-                    EvalLogType.Warning);
-
+                if (context.LoggingEnabled)
+                {
+                    context.Log(String.Format("Cannot find fact '{0}'.", name),
+                        EvalLogType.Warning);
+                }
                 return null;
             }
 
