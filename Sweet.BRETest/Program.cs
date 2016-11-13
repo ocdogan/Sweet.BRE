@@ -45,6 +45,32 @@ namespace Sweet.BRETest
             public TestMethod Method;
         }
 
+        private static ConsoleKey GetTestKey()
+        {
+            while (true)
+            {
+                ConsoleKey key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.Escape)
+                {
+                    return key;
+                }
+
+                int testNo = (int)key;
+                if (testNo >= (int)ConsoleKey.D1 && testNo <= (int)ConsoleKey.D9)
+                {
+                    testNo -= (int)ConsoleKey.D1;
+                    return (ConsoleKey)testNo;
+                }
+
+                if (testNo >= (int)ConsoleKey.NumPad1 && testNo <= (int)ConsoleKey.NumPad9)
+                {
+                    testNo -= (int)ConsoleKey.NumPad1;
+                    return (ConsoleKey)testNo;
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             List<Test> actions = new List<Test>();
@@ -72,26 +98,11 @@ namespace Sweet.BRETest
                 Console.WriteLine("Press ESC to exit or select the test to run...");
                 Console.WriteLine();
 
-                ConsoleKey key = Console.ReadKey(true).Key;
+                ConsoleKey key = GetTestKey();
                 if (key == ConsoleKey.Escape)
                     break;
 
                 int testNo = (int)key;
-                if (testNo >= (int)ConsoleKey.D1 && testNo <= (int)ConsoleKey.D9)
-                {
-                    testNo -= (int)ConsoleKey.D1;
-                }
-                else if (testNo >= (int)ConsoleKey.NumPad1 && testNo <= (int)ConsoleKey.NumPad9)
-                {
-                    testNo -= (int)ConsoleKey.NumPad1;
-                }
-                else {
-                    Console.Clear();
-                    Console.WriteLine("Invalid key. Press any key to continue...");
-                    Console.ReadKey(true);
-
-                    continue;
-                }
 
                 Console.WriteLine("Test: " + actions[testNo].Name);
                 Console.WriteLine("--------------------------------");
