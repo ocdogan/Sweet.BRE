@@ -39,19 +39,21 @@ namespace Sweet.BRE
         IVariable Get(string name);
         bool Contains(string name);
 
-        void Append(IVariable[] objects);
-        void Append(IVariableList context);
+        IVariableList Clear();
 
-        void Copy(IVariable[] objects);
-        void Copy(IVariableList context);
+        IVariableList Append(IVariable[] objects);
+        IVariableList Append(IVariableList context);
 
-        void Set(string name, bool value);
-        void Set(string name, char value);
-        void Set(string name, DateTime value);
-        void Set(string name, double value);
-        void Set(string name, long value);
-        void Set(string name, string value);
-        void Set(string name, TimeSpan value);
+        IVariableList Copy(IVariable[] objects);
+        IVariableList Copy(IVariableList context);
+
+        IVariableList Set(string name, bool value);
+        IVariableList Set(string name, char value);
+        IVariableList Set(string name, DateTime value);
+        IVariableList Set(string name, double value);
+        IVariableList Set(string name, long value);
+        IVariableList Set(string name, string value);
+        IVariableList Set(string name, TimeSpan value);
 
         IVariable[] ToArray();
     }

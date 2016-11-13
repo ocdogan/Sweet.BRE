@@ -96,9 +96,10 @@ namespace Sweet.BRE
             }
         }
 
-        public void Clear()
+        public IVariableList Clear()
         {
             _objList.Clear();
+            return this;
         }
 
         public virtual bool Contains(string name)
@@ -106,7 +107,7 @@ namespace Sweet.BRE
             return _objList.ContainsKey(NormalizeName(name));
         }
 
-        public void Append(IVariableList context)
+        public IVariableList Append(IVariableList context)
         {
             _list.Clear();
             _objList.Clear();
@@ -115,9 +116,10 @@ namespace Sweet.BRE
             {
                 Append(context.ToArray());
             }
+            return this;
         }
 
-        public void Append(IVariable[] objects)
+        public IVariableList Append(IVariable[] objects)
         {
             if (objects != null)
             {
@@ -126,9 +128,10 @@ namespace Sweet.BRE
                     Update(obj.Name, obj.Value);
                 }
             }
+            return this;
         }
 
-        public void Copy(IVariableList context)
+        public IVariableList Copy(IVariableList context)
         {
             _list.Clear();
             _objList.Clear();
@@ -137,9 +140,10 @@ namespace Sweet.BRE
             {
                 Append(context.ToArray());
             }
+            return this;
         }
 
-        public void Copy(IVariable[] objects)
+        public IVariableList Copy(IVariable[] objects)
         {
             _list.Clear();
             _objList.Clear();
@@ -148,6 +152,7 @@ namespace Sweet.BRE
             {
                 Append(objects);
             }
+            return this;
         }
 
         public virtual IVariable Get(string name)
@@ -191,88 +196,95 @@ namespace Sweet.BRE
             _objList[name] = obj;
         }
 
-        public void Set(string name, bool value)
+        public IVariableList Set(string name, bool value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
-        public void Set(string name, char value)
+        public IVariableList Set(string name, char value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
-        public void Set(string name, DateTime value)
+        public IVariableList Set(string name, DateTime value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
-        public void Set(string name, double value)
+        public IVariableList Set(string name, double value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
-        public void Set(string name, long value)
+        public IVariableList Set(string name, long value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
-        public void Set(string name, string value)
+        public IVariableList Set(string name, string value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
-        public void Set(string name, TimeSpan value)
+        public IVariableList Set(string name, TimeSpan value)
         {
             IVariable vr = Get(name);
             if (vr != null)
             {
                 vr.Set(value);
-                return;
+                return this;
             }
 
             Update(name, value);
+            return this;
         }
 
         public virtual object Clone()
