@@ -48,48 +48,46 @@ namespace Sweet.BRETest
 
         private static void IndexTest()
         {
-            Project project = Project.As();
-
-            FactList facts = new FactList();
             List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
 
-            facts.Set("fact1", list);
-            facts.Set("celcius", 18);
+            IFactList facts = new FactList()
+                .Set("fact1", list)
+                .Set("celcius", 18);
 
-            project.RegisterFunctionAlias("Month name", "MonthName");
-            project.RegisterFunctionAlias("Convert to string", "String");
-            project.RegisterFunctionAlias("Write to console", "WriteLn");
+            Project project = Project.As()
+                .RegisterFunctionAlias("Month name", "MonthName")
+                .RegisterFunctionAlias("Convert to string", "String")
+                .RegisterFunctionAlias("Write to console", "WriteLn");
 
-            Ruleset ruleset = project.DefineRuleset("main");
-
-            ruleset.DefineRule("2").Do(
-                    ((FunctionStm)"Write to console")
-                        .Params(
-                            ((FunctionStm)"Round")
-                                .Params(
-                                    DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
-                                    2,
-                                    "awayFromZero"
-                                )
-                        )
-                )
-                .SetSubPriority(46)
-                ;
-
-            ruleset.DefineRule("1").Do(
-                    ((FunctionStm)"Write to console")
-                        .Params(
-                            ((FunctionStm)"Month name")
-                                .Params(
-                                    ((FunctionStm)"Convert to string")
-                                        .Params(
-                                            ItemOfStm.As((FactStm)"fact1", 2)
-                                        )
-                                    , "nl"
+            project
+                .DefineRuleset("main")
+                    .DefineRule("2").Do(
+                        ((FunctionStm)"Write to console")
+                            .Params(
+                                ((FunctionStm)"Round")
+                                    .Params(
+                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                        2,
+                                        "awayFromZero"
                                     )
-                        )
-                )
-                ;
+                            )
+                    )
+                    .SetSubPriority(46)
+                .Ruleset
+                    .DefineRule("1").Do(
+                        ((FunctionStm)"Write to console")
+                            .Params(
+                                ((FunctionStm)"Month name")
+                                    .Params(
+                                        ((FunctionStm)"Convert to string")
+                                            .Params(
+                                                ItemOfStm.As((FactStm)"fact1", 2)
+                                            )
+                                        , "nl"
+                                        )
+                            )
+                    )
+                    ;
 
             DefaultRuleDebugger debugger = new DefaultRuleDebugger();
             debugger.OnDebug += delegate(object sender, DebugEventArgs e)
@@ -149,39 +147,38 @@ namespace Sweet.BRETest
 
             facts.Set("celcius", 18);
 
-            Ruleset ruleset = project.DefineRuleset("main");
-
-            ruleset.DefineRule("1").Do(
-                    ((FunctionStm)"Print")
-                        .Params(
-                            ((FunctionStm)"Round")
-                                .Params(
-                                    DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
-                                    2,
-                                    "awayFromZero"
-                                )
-                        )
-                )
-                ;
-
-            ruleset.DefineRule("2").Do(
-                    ((FunctionStm)"Print")
-                        .Params(
-                            ((FunctionStm)"Round")
-                                .Params(
-                                    DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
-                                    2,
-                                    "awayFromZero"
-                                )
-                        )
-                )
-                ;
+            project
+                .DefineRuleset("main")
+                    .DefineRule("1").Do(
+                        ((FunctionStm)"Print")
+                            .Params(
+                                ((FunctionStm)"Round")
+                                    .Params(
+                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                        2,
+                                        "awayFromZero"
+                                    )
+                            )
+                    )
+                .Ruleset
+                    .DefineRule("2").Do(
+                        ((FunctionStm)"Print")
+                            .Params(
+                                ((FunctionStm)"Round")
+                                    .Params(
+                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                        2,
+                                        "awayFromZero"
+                                    )
+                            )
+                    )
+                    ;
 
             while (true)
             {
                 Console.Clear();
 
-                Console.WriteLine(project.ToString());
+                Console.WriteLine(project);
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
@@ -241,7 +238,7 @@ namespace Sweet.BRETest
             {
                 Console.Clear();
 
-                Console.WriteLine(project.ToString());
+                Console.WriteLine(project);
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
@@ -301,7 +298,7 @@ namespace Sweet.BRETest
             {
                 Console.Clear();
 
-                Console.WriteLine(project.ToString());
+                Console.WriteLine(project);
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
@@ -338,59 +335,57 @@ namespace Sweet.BRETest
         {
             Project project = Project.As();
 
-            FactList facts = new FactList();
+            IFactList facts = new FactList()
+                .Set("fact1", 7)
+                .Set("project", project)
+                .Set("celcius", 18);
 
-            facts.Set("fact1", 7);
-            facts.Set("project", project);
-            facts.Set("celcius", 18);
-
-            Ruleset ruleset = project.DefineRuleset("main");
-
-            ruleset.DefineRule("CelciusToFahrenheit")
-                .Do(
-                    ((FunctionStm)"Print")
-                        .Params(
-                            ((FunctionStm)"Round")
-                                .Params(
-                                    DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
-                                    2,
-                                    "awayFromZero"
-                                )
-                        )
-                )
-                ;
-
-            ruleset.DefineRule("TryCatch")
-                .Do(
-                    TryStm.As()
-                        .Do(
-                            ((FunctionStm)"Print")
-                                .Params(
-                                    (StringStm)"Fact1: " + ReflectionStm.As((FactStm)"fact1", "ToString()")
-                                ),
-                            RaiseErrorStm.As("test")
-                        )
-                        .OnError(
-                            ((FunctionStm)"Print")
-                                .Params(
-                                    "Status: " + ReflectionStm.As(Statement.Null, "Status")
-                                ),
-                            SetFactStm.As("error")
-                                .Set(
-                                    ReflectionStm.As(ContextStm.As(), "GetLastError()")
-                                ),
-                            ((FunctionStm)"Print")
-                                .Params(
-                                    ReflectionStm.As((FactStm)"error", (string)null)
-                                )
-                        )
-                    );
+            project
+                .DefineRuleset("main")
+                   .DefineRule("CelciusToFahrenheit")
+                    .Do(
+                        ((FunctionStm)"Print")
+                            .Params(
+                                ((FunctionStm)"Round")
+                                    .Params(
+                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                        2,
+                                        "awayFromZero"
+                                    )
+                            )
+                          )
+                    .Ruleset
+                    .DefineRule("TryCatch")
+                    .Do(
+                        TryStm.As()
+                            .Do(
+                                ((FunctionStm)"Print")
+                                    .Params(
+                                        (StringStm)"Fact1: " + ReflectionStm.As((FactStm)"fact1", "ToString()")
+                                    ),
+                                RaiseErrorStm.As("test")
+                            )
+                            .OnError(
+                                ((FunctionStm)"Print")
+                                    .Params(
+                                        "Status: " + ReflectionStm.As(Statement.Null, "Status")
+                                    ),
+                                SetFactStm.As("error")
+                                    .Set(
+                                        ReflectionStm.As(ContextStm.As(), "GetLastError()")
+                                    ),
+                                ((FunctionStm)"Print")
+                                    .Params(
+                                        ReflectionStm.As((FactStm)"error", (string)null)
+                                    )
+                            )
+                        );
 
             while (true)
             {
                 Console.Clear();
 
-                Console.WriteLine(project.ToString());
+                Console.WriteLine(project);
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
@@ -612,7 +607,7 @@ namespace Sweet.BRETest
             {
                 Console.Clear();
 
-                Console.WriteLine(project.ToString());
+                Console.WriteLine(project);
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
@@ -750,7 +745,8 @@ namespace Sweet.BRETest
             ta4.SetFurtherMore(new DecisionActionNode("@var2", "0"));
 
             // ruleset
-            project.DefineRuleset("main")
+            project
+                .DefineRuleset("main")
                 .DefineRule("main")
                 .Do(
                     TryStm.As()
@@ -865,7 +861,7 @@ namespace Sweet.BRETest
             {
                 Console.Clear();
 
-                Console.WriteLine(project.ToString());
+                Console.WriteLine(project);
                 Console.WriteLine();
                 Console.WriteLine("-----------------");
 
@@ -894,13 +890,13 @@ namespace Sweet.BRETest
                 finally
                 {
                     evalTime2 = (DateTime.Now - dt2).TotalMilliseconds;
-                    Console.WriteLine(prj.ToString());
+                    Console.WriteLine(prj);
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("-----------------");
 
-                Console.WriteLine("Equal: {0}", prj.IsEqualTo(project).ToString()); // (prj.ToString() == project.ToString()).ToString());
+                Console.WriteLine("Equal: {0}", prj.IsEqualTo(project)); // (prj.ToString() == project.ToString()));
                 Console.WriteLine("Eval time 1: {0}", evalTime1);
                 Console.WriteLine("Eval time 2: {0}", evalTime2);
 

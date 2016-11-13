@@ -498,14 +498,7 @@ namespace Sweet.BRE
 
         private void Debug(IStatement stm, DebugStatus status, Exception e, params object[] args)
         {
-            if (args != null)
-            {
-                RuleEngineRuntime.Debug(this, stm, status, e, args);
-            }
-            else
-            {
-                RuleEngineRuntime.Debug(this, stm, status, e);
-            }
+            RuleEngineRuntime.Debug(this, stm, status, e, args);
         }
     }
 }

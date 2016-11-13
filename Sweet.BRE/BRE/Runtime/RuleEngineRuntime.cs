@@ -136,6 +136,24 @@ namespace Sweet.BRE
             }
         }
 
+        public static IRuleDebugger NewDebugger()
+        {
+            IRuleDebugger debugger = new DefaultRuleDebugger(Guid.NewGuid().ToString("N"));
+            _debuggers.Add(debugger);
+            return debugger;
+        }
+
+        public static IRuleDebugger NewDebugger(string name)
+        {
+            name = name != null ? name.Trim() : null;
+
+            IRuleDebugger debugger = !String.IsNullOrEmpty(name) ? 
+                                            new DefaultRuleDebugger(name) : 
+                                            new DefaultRuleDebugger(Guid.NewGuid().ToString("N"));
+            _debuggers.Add(debugger);
+            return debugger;
+        }
+
         public static void RegisterFunctionAlias(string alias, string function)
         {
             alias = ((alias != null) ? alias.Trim() : null);
@@ -324,9 +342,12 @@ namespace Sweet.BRE
 
         internal static void ContextDisposed(IEvaluationContext context)
         {
-            lock (_instances)
+            if (context != null)
             {
-                _instances.Remove(context);
+                lock (_instances)
+                {
+                    _instances.Remove(context);
+                }
             }
         }
 

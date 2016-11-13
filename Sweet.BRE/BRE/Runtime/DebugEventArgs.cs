@@ -31,6 +31,8 @@ namespace Sweet.BRE
 {
     public sealed class DebugEventArgs : EventArgs, IDisposable
     {
+        private static readonly object[] EmptyArgs = new object[0];
+
         private DebugStatus _status;
         private Exception _error;
 
@@ -45,14 +47,13 @@ namespace Sweet.BRE
 
         internal DebugEventArgs(IEvaluationContext context, IStatement statement, params object[] args)
         {
-            _args = args;
-            _context = context;
-            _statement = statement;
-
             if (ReferenceEquals(context, null))
             {
                 throw new ArgumentNullException("context");
             }
+            _args = args ?? EmptyArgs;
+            _context = context;
+            _statement = statement;
         }
 
         public object[] Args

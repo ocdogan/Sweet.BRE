@@ -522,7 +522,7 @@ namespace Sweet.BRE
             }
         }
 
-        public void RegisterFunctionAlias(string alias, string function)
+        public Project RegisterFunctionAlias(string alias, string function)
         {
             alias = ((alias != null) ? alias.Trim() : null);
             function = ((function != null) ? function.Trim() : null);
@@ -541,6 +541,7 @@ namespace Sweet.BRE
             {
                 _funcAliases[alias] = function;
             }
+            return this;
         }
 
         public string ResolveFunctionAlias(string alias)
@@ -605,7 +606,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public void UnregisterFunctionAlias(string alias, string function)
+        public Project UnregisterFunctionAlias(string alias, string function)
         {
             alias = ((alias != null) ? alias.Trim() : null);
             function = ((function != null) ? function.Trim() : null);
@@ -627,6 +628,7 @@ namespace Sweet.BRE
                     _funcAliases.Remove(alias);
                 }
             }
+            return this;
         }
 
         public override string ToString()

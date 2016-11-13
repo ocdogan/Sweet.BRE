@@ -62,9 +62,10 @@ namespace Sweet.BRE
             return (name != null ? name.Trim() : String.Empty);
         }
 
-        public void Clear()
+        public IFactList Clear()
         {
             _list.Clear();
+            return this;
         }
 
         public bool Contains(string name)
@@ -72,7 +73,7 @@ namespace Sweet.BRE
             return _list.ContainsKey(NormalizeName(name));
         }
 
-        public void Copy(IFactList facts)
+        public IFactList Copy(IFactList facts)
         {
             _list.Clear();
 
@@ -84,6 +85,7 @@ namespace Sweet.BRE
                     _list[name] = facts[key];
                 }
             }
+            return this;
         }
 
         private void Add(string key, object value)
@@ -113,9 +115,10 @@ namespace Sweet.BRE
             return null;
         }
 
-        public void Set(string name, object value)
+        public IFactList Set(string name, object value)
         {
             Add(name, value);
+            return this;
         }
 
         public object Clone()

@@ -36,10 +36,10 @@ namespace Sweet.BRE
 
         bool Contains(string name);
 
-        void Clear();
-        void Copy(IFactList facts);
+        IFactList Clear();
+        IFactList Copy(IFactList facts);
 
         object Get(string name);
-        void Set(string name, object value);
+        IFactList Set(string name, object value);
     }
 }
