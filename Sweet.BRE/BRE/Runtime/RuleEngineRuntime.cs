@@ -367,6 +367,22 @@ namespace Sweet.BRE
             return result;
         }
 
+        public static IEvaluationContext Initialize(Ruleset ruleset, IRuleDebugger debugger)
+        {
+            if (ReferenceEquals(ruleset, null))
+            {
+                throw new ArgumentNullException("ruleset");
+            }
+
+            IEvaluationContext result = new EvaluationContext(ruleset, debugger);
+            lock (_instances)
+            {
+                _instances.Add(result);
+            }
+
+            return result;
+        }
+
         private static void DebugEvaluationByDelegates(DebugEventArgs e)
         {
             if (_debugEventList.Count > 0)

@@ -39,6 +39,8 @@ namespace Sweet.BRE
 
         private ExecutionStatus _status = ExecutionStatus.Initializing;
 
+        private IRuleDebugger _debugger;
+
         private Project _project;
         private ActionStm _actionE;
 
@@ -50,7 +52,14 @@ namespace Sweet.BRE
         private StackList<EvaluationScope> _scopeStack;
 
         internal EvaluationContext(ActionStm actionE)
+            : this(actionE, null)
         {
+        }
+
+        internal EvaluationContext(ActionStm actionE, IRuleDebugger debugger)
+        {
+            _debugger = debugger;
+
             _actionE = actionE;
             if (_actionE is Ruleset)
             {
@@ -74,6 +83,8 @@ namespace Sweet.BRE
             {
                 _status = ExecutionStatus.Disposed;
 
+                _debugger = null;
+
                 _actionE = null;
                 _project = null;
 
@@ -92,6 +103,14 @@ namespace Sweet.BRE
             get
             {
                 return _callStack.ToArray();
+            }
+        }
+
+        IRuleDebugger IEvaluationContext.Debugger
+        {
+            get
+            {
+                return _debugger;
             }
         }
 
@@ -498,6 +517,22 @@ namespace Sweet.BRE
 
         private void Debug(IStatement stm, DebugStatus status, Exception e, params object[] args)
         {
+            if (_debugger != null)
+            {
+                DebugEventArgs debugArgs = new DebugEventArgs(this, stm);
+                if ((args != null) && (args.Length > 0))
+                {
+                    debugArgs = new DebugEventArgs(this, stm, args);
+                }
+
+                using (debugArgs)
+                {
+                    debugArgs.SetError(e);
+                    debugArgs.SetStatus(status);
+
+                    _debugger.Debug(debugArgs);
+                }
+            }
             RuleEngineRuntime.Debug(this, stm, status, e, args);
         }
     }

@@ -25,6 +25,7 @@ THE SOFTWARE.
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -89,17 +90,16 @@ namespace Sweet.BRETest
                     )
                     ;
 
-            DefaultRuleDebugger debugger = new DefaultRuleDebugger();
-            debugger.OnDebug += delegate(object sender, DebugEventArgs e)
+            DefaultRuleDebugger debugger = new DefaultRuleDebugger(delegate(object sender, DebugEventArgs e)
             {
                 Console.WriteLine(e.Status);
                 if (e.Error != null)
                 {
                     Console.WriteLine(e.Error);
                 }
-            };
+            });
 
-            RuleEngineRuntime.RegisterDebugger(debugger);
+            Stopwatch sw = new Stopwatch();
 
             while (true)
             {
@@ -109,26 +109,25 @@ namespace Sweet.BRETest
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
-                IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"));
-                ec.StopOnError = false;
-
-                double evalTime = 0;
-                DateTime dt1 = DateTime.Now;
-
-                try
+                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"), debugger))
                 {
-                    ec.Evaluate(facts, null);
-                }
-                finally
-                {
-                    evalTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    ec.StopOnError = false;
+                    try
+                    {
+                        sw.Restart();
+                        ec.Evaluate(facts, null);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                    }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("--------------------------------");
 
 
-                Console.WriteLine("Eval time: {0} ms\r\n", evalTime);
+                Console.WriteLine("Eval time: {0} ms\r\n", sw.Elapsed.TotalMilliseconds);
 
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
@@ -174,6 +173,8 @@ namespace Sweet.BRETest
                     )
                     ;
 
+            Stopwatch sw = new Stopwatch();
+
             while (true)
             {
                 Console.Clear();
@@ -182,25 +183,24 @@ namespace Sweet.BRETest
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
-                IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"));
-
-                double evalTime = 0;
-                DateTime dt1 = DateTime.Now;
-
-                try
+                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
                 {
-                    ec.Evaluate(facts, null);
-                }
-                finally
-                {
-                    evalTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    try
+                    {
+                        sw.Restart();
+                        ec.Evaluate(facts, null);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                    }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("--------------------------------");
 
 
-                Console.WriteLine("Eval time: {0}\r\n", evalTime);
+                Console.WriteLine("Eval time: {0}\r\n", sw.ElapsedTicks);
 
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
@@ -234,6 +234,8 @@ namespace Sweet.BRETest
                 )
                 ;
 
+            Stopwatch sw = new Stopwatch();
+
             while (true)
             {
                 Console.Clear();
@@ -242,25 +244,24 @@ namespace Sweet.BRETest
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
-                IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"));
-
-                double evalTime = 0;
-                DateTime dt1 = DateTime.Now;
-
-                try
+                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
                 {
-                    ec.Evaluate(facts, null);
-                }
-                finally
-                {
-                    evalTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    try
+                    {
+                        sw.Restart();
+                        ec.Evaluate(facts, null);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                    }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("--------------------------------");
 
 
-                Console.WriteLine("Eval time: {0}\r\n", evalTime);
+                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
 
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
@@ -294,6 +295,8 @@ namespace Sweet.BRETest
                 )
                 ;
 
+            Stopwatch sw = new Stopwatch();
+
             while (true)
             {
                 Console.Clear();
@@ -302,25 +305,24 @@ namespace Sweet.BRETest
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
-                IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"));
-
-                double evalTime = 0;
-                DateTime dt1 = DateTime.Now;
-
-                try
+                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
                 {
-                    ec.Evaluate(facts, null);
-                }
-                finally
-                {
-                    evalTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    try
+                    {
+                        sw.Restart();
+                        ec.Evaluate(facts, null);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                    }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("--------------------------------");
 
 
-                Console.WriteLine("Eval time: {0}\r\n", evalTime);
+                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
 
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
@@ -381,6 +383,8 @@ namespace Sweet.BRETest
                             )
                         );
 
+            Stopwatch sw = new Stopwatch();
+
             while (true)
             {
                 Console.Clear();
@@ -389,25 +393,23 @@ namespace Sweet.BRETest
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
-                IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main"));
-
-                double evalTime = 0;
-                DateTime dt1 = DateTime.Now;
-
-                try
+                using (IEvaluationContext ec = RuleEngineRuntime.Initialize(project.GetRuleset("main")))
                 {
-                    ec.Evaluate(facts, null);
-                }
-                finally
-                {
-                    evalTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    try
+                    {
+                        sw.Restart();
+                        ec.Evaluate(facts, null);
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                    }
                 }
 
                 Console.WriteLine();
                 Console.WriteLine("--------------------------------");
 
-
-                Console.WriteLine("Eval time: {0}\r\n", evalTime);
+                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
 
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
@@ -603,6 +605,8 @@ namespace Sweet.BRETest
             vars.Set("@var2", 0);
             vars.Set("@var3", 0);
 
+            Stopwatch sw = new Stopwatch();
+
             while (true)
             {
                 Console.Clear();
@@ -611,17 +615,15 @@ namespace Sweet.BRETest
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
 
-                double evalTime = 0;
-                DateTime dt1 = DateTime.Now;
-
                 try
                 {
+                    sw.Restart();
                     ec.Evaluate(vars);
                     vars.Copy(ec.Variables);
                 }
                 finally
                 {
-                    evalTime = (DateTime.Now - dt1).TotalMilliseconds;
+                    sw.Stop();
                 }
 
                 Console.WriteLine();
@@ -633,7 +635,7 @@ namespace Sweet.BRETest
                 }
 
                 Console.WriteLine();
-                Console.WriteLine("Eval time: {0}\r\n", evalTime);
+                Console.WriteLine("Eval time: {0}\r\n", sw.Elapsed.TotalMilliseconds);
 
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine();
@@ -857,6 +859,8 @@ namespace Sweet.BRETest
                 )
                 ;
 
+            Stopwatch sw = new Stopwatch();
+
             while (true)
             {
                 Console.Clear();
@@ -865,33 +869,33 @@ namespace Sweet.BRETest
                 Console.WriteLine();
                 Console.WriteLine("-----------------");
 
-                double evalTime1 = 0;
-                DateTime dt1 = DateTime.Now;
-
                 XmlDocument doc = null;
                 try
                 {
+                    sw.Restart();
                     doc = ProjectWriter.Write(project);
                 }
                 finally
                 {
-                    evalTime1 = (DateTime.Now - dt1).TotalMilliseconds;
+                    sw.Stop();
                     doc.Save(@"c:\a.xml");
                 }
 
-                double evalTime2 = 0;
-                DateTime dt2 = DateTime.Now;
+                double evalTime1 = sw.Elapsed.TotalMilliseconds;
 
                 Project prj = null;
                 try
                 {
+                    sw.Restart();
                     prj = ProjectReader.Read(doc);
                 }
                 finally
                 {
-                    evalTime2 = (DateTime.Now - dt2).TotalMilliseconds;
+                    sw.Stop();
                     Console.WriteLine(prj);
                 }
+
+                double evalTime2 = sw.Elapsed.TotalMilliseconds;
 
                 Console.WriteLine();
                 Console.WriteLine("-----------------");

@@ -38,6 +38,8 @@ namespace Sweet.BRE
 
         ExecutionStatus Status { get; }
 
+        IRuleDebugger Debugger { get; }
+
         IStatement[] CallStack { get; }
         IEvaluationScope[] ScopeStack { get; }
         Exception[] ErrorStack { get; }
