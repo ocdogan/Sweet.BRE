@@ -130,7 +130,7 @@ namespace Sweet.BRETest
                     {
                         using (IEvaluationContext ec = RuleEngineRuntime.Initialize((Ruleset)rs, debugger))
                         {
-                            ec.StopOnError = false;
+                            ec.StopOnError = true;
                             try
                             {
                                 sw.Restart();
