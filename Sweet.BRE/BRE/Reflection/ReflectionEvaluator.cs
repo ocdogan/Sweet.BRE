@@ -204,7 +204,18 @@ namespace Sweet.BRE
                     args = new object[] { obj };
                     if ((obj != null) && obj.GetType().IsArray)
                     {
-                        args = (object[])obj;
+                        Array arr = (Array)obj;
+                        if (arr.Length == 0)
+                        {
+                            args = new object[0];
+                        }
+                        else
+                        {
+                            object[] objArr = new object[arr.Length];
+                            Array.Copy(arr, objArr, arr.Length);
+
+                            args = objArr;
+                        }
                     }
                 }
             }
