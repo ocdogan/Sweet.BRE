@@ -34,17 +34,17 @@ namespace Sweet.BRE
     public sealed class ReflectionStm : ActionStm
     {
         private Statement _instance;
-        private Statement _method;
+        private Statement _expression;
 
         private List<Statement> _parameters;
 
-        public ReflectionStm(Statement instance, Statement methodName, params Statement[] parameters) 
+        public ReflectionStm(Statement instance, Statement expression, params Statement[] parameters) 
             : base()
         {
             _parameters = new List<Statement>();
 
             _instance = ReferenceEquals(instance, null) ? Statement.Null : instance;
-            _method = ReferenceEquals(methodName, null) ? Statement.Null : methodName;
+            _expression = ReferenceEquals(expression, null) ? Statement.Null : expression;
 
             Params(parameters);
         }
@@ -57,11 +57,11 @@ namespace Sweet.BRE
             }
         }
 
-        public Statement Method
+        public Statement Expression
         {
             get
             {
-                return _method;
+                return _expression;
             }
         }
 
@@ -78,19 +78,14 @@ namespace Sweet.BRE
             return new ReflectionStm(instance, null, parameters);
         }
 
-        public static ReflectionStm As(string instance, string methodName, params Statement[] parameters)
+        public static ReflectionStm As(string instance, string expression, params Statement[] parameters)
         {
-            return new ReflectionStm(instance, methodName, parameters);
+            return new ReflectionStm(instance, expression, parameters);
         }
 
-        public static ReflectionStm As(Statement instance, params Statement[] parameters)
+        public static ReflectionStm As(Statement instance, Statement expression, params Statement[] parameters)
         {
-            return new ReflectionStm(instance, null, parameters);
-        }
-
-        public static ReflectionStm As(Statement instance, Statement methodName, params Statement[] parameters)
-        {
-            return new ReflectionStm(instance, methodName, parameters);
+            return new ReflectionStm(instance, expression, parameters);
         }
 
         public ReflectionStm Params(params Statement[] parameters)
@@ -125,7 +120,7 @@ namespace Sweet.BRE
             }
 
             return ReflectionStm.As((Statement)_instance.Clone(), 
-                (Statement)_method.Clone(), args);
+                (Statement)_expression.Clone(), args);
         }
 
         public override void Dispose()
@@ -136,10 +131,10 @@ namespace Sweet.BRE
                 _instance = null;
             }
 
-            if (!ReferenceEquals(_method, null))
+            if (!ReferenceEquals(_expression, null))
             {
-                _method.Dispose();
-                _method = null;
+                _expression.Dispose();
+                _expression = null;
             }
 
             if (_parameters != null)
@@ -179,7 +174,7 @@ namespace Sweet.BRE
             ReflectionStm objA = obj as ReflectionStm;
             return ReferenceEquals(obj, this) || (!ReferenceEquals(objA, null) &&
                 object.Equals(_instance, objA.Instance) &&
-                object.Equals(_method, objA.Method) &&
+                object.Equals(_expression, objA.Expression) &&
                 EqualParameters(objA.Parameters));
         }
 
@@ -194,7 +189,7 @@ namespace Sweet.BRE
 
             builder.AppendFormat("{0}({1}, {2}", RuleConstants.REFLECT, 
                 StmCommon.PrepareToString(_instance), 
-                StmCommon.PrepareToString(_method));
+                StmCommon.PrepareToString(_expression));
 
             if ((_parameters != null) && (_parameters.Count > 0))
             {
@@ -243,7 +238,7 @@ namespace Sweet.BRE
                 return null;
             }
 
-            object obj = ((IStatement)_method).Evaluate(context);
+            object obj = ((IStatement)_expression).Evaluate(context);
 
             string method = ((obj != null) ? obj.ToString() : String.Empty);
             method = ((method != null) ? method.Trim() : String.Empty);
@@ -275,9 +270,25 @@ namespace Sweet.BRE
 
         # region Operators
 
-        public static BooleanStm operator ==(ReflectionStm left, ReflectionStm right)
+        /*
+        public static BooleanStm operator ==(ReflectionStm left, Statement right)
         {
             return Statement.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator ==(Statement left, ReflectionStm right)
+        {
+            return Statement.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(ReflectionStm left, Statement right)
+        {
+            return Statement.NotEqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(Statement left, ReflectionStm right)
+        {
+            return Statement.NotEqualTo(left, right);
         }
 
         public static BooleanStm operator >(ReflectionStm left, ReflectionStm right)
@@ -290,11 +301,6 @@ namespace Sweet.BRE
             return Statement.GreaterThanOrEquals(left, right);
         }
 
-        public static BooleanStm operator !=(ReflectionStm left, ReflectionStm right)
-        {
-            return Statement.NotEqualTo(left, right);
-        }
-
         public static BooleanStm operator <(ReflectionStm left, ReflectionStm right)
         {
             return Statement.LessThan(left, right);
@@ -304,6 +310,7 @@ namespace Sweet.BRE
         {
             return Statement.LessThanOrEquals(left, right);
         }
+        */
 
         # endregion
     }
