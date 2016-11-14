@@ -80,16 +80,16 @@ namespace Sweet.BRE
             if ((context != null) && !ExecutionBroken(context))
             {
                 context.EvaluationStarted(this);
-                if (args == null)
+                try
                 {
-                    result = DoEvaluate(context);
+                    result = (args == null) ? 
+                        DoEvaluate(context) : 
+                        DoEvaluate(context, args);
                 }
-                else
+                finally
                 {
-                    result = DoEvaluate(context, args);
+                    context.EvaluationCompleted(this);
                 }
-
-                context.EvaluationCompleted(this);
             }
 
             return result;
