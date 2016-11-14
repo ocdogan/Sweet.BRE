@@ -246,7 +246,7 @@ namespace Sweet.BRE
                     // if o2 is array
                     if (o2.GetType().IsArray)
                     {
-                        object[] a2 = (object[])o2;
+                        Array a2 = (Array)o2;
 
                         foreach (object o3 in a2)
                         {
@@ -263,7 +263,7 @@ namespace Sweet.BRE
             // if o2 is array
             if (o2.GetType().IsArray)
             {
-                object[] a2 = (object[])o2;
+                Array a2 = (Array)o2;
 
                 // if o1 is not an array
                 if (!o1.GetType().IsArray)
@@ -280,7 +280,7 @@ namespace Sweet.BRE
                 }
 
                 // if both o1 and o2 is array
-                object[] a1 = (object[])o1;
+                Array a1 = (Array)o1;
 
                 foreach (object o3 in a1)
                 {
