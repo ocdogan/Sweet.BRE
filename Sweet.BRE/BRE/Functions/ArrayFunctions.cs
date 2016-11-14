@@ -173,7 +173,7 @@ namespace Sweet.BRE
         }
 
         # region Contains
-        private bool ContainsInArray(object[] objs, object item, long start)
+        private bool ContainsInArray(Array objs, object item, long start)
         {
             if ((objs != null) && (objs.Length > start))
             {
@@ -280,7 +280,7 @@ namespace Sweet.BRE
                     if ((o1 is Array) || o1.GetType().IsArray)
                     {
                         e.Handled = true;
-                        return ContainsInArray((object[])o1, item, start);
+                        return ContainsInArray((Array)o1, item, start);
                     }
 
                     if (o1 is IDictionary)
