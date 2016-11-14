@@ -552,7 +552,7 @@ namespace Sweet.BRE
 
         public IProject RegisterFunctionAlias(string alias, string function)
         {
-            alias = ((alias != null) ? alias.Trim() : null);
+            alias = ((alias != null) ? alias.Trim().ToUpperInvariant() : null);
             function = ((function != null) ? function.Trim() : null);
 
             if (String.IsNullOrEmpty(alias))
@@ -581,18 +581,16 @@ namespace Sweet.BRE
                 throw new ArgumentNullException("alias");
             }
 
-            string function = alias;
-
+            string tempFunction;
             lock (_funcAliases)
             {
-                if (_funcAliases.ContainsKey(alias))
-                {
-                    string tempFunction = _funcAliases[alias];
-                    if (!String.IsNullOrEmpty(tempFunction))
-                    {
-                        function = tempFunction;
-                    }
-                }
+                _funcAliases.TryGetValue(alias.ToUpperInvariant(), out tempFunction);
+            }
+
+            string function = alias;
+            if (!String.IsNullOrEmpty(tempFunction))
+            {
+                function = tempFunction;
             }
 
             return function;
@@ -638,21 +636,16 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IProject UnregisterFunctionAlias(string alias, string function)
+        public IProject UnregisterFunctionAlias(string alias)
         {
             alias = ((alias != null) ? alias.Trim() : null);
-            function = ((function != null) ? function.Trim() : null);
 
             if (String.IsNullOrEmpty(alias))
             {
                 throw new ArgumentNullException("alias");
             }
 
-            if (String.IsNullOrEmpty(function))
-            {
-                throw new ArgumentNullException("function");
-            }
-
+            alias = alias.ToUpperInvariant();
             lock (_funcAliases)
             {
                 if (_funcAliases.ContainsKey(alias))

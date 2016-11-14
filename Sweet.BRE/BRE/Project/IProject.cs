@@ -67,7 +67,7 @@ namespace Sweet.BRE
         string[] GetFunctionAliases();
         string ResolveFunctionAlias(string alias);
         IProject RegisterFunctionAlias(string alias, string function);
-        IProject UnregisterFunctionAlias(string alias, string function);
+        IProject UnregisterFunctionAlias(string alias);
 
         IProject RemoveRuleset(string rulesetName);
         IProject RemoveTable(string tableName);
