@@ -32,6 +32,12 @@ namespace Sweet.BRE
 {
     public sealed class MathFunctions : IFunctionHandler
     {
+        private delegate object Fn(FunctionEventArgs e, params object[] args);
+
+        private static readonly Dictionary<string, Fn> _functions = new Dictionary<string, Fn>();
+
+        #region Constants
+
         private const string STR_ABS = "ABS";
         private const string STR_ATAN = "ATAN";
         private const string STR_AVERAGE = "AVERAGE";
@@ -61,7 +67,64 @@ namespace Sweet.BRE
         private const string STR_MAXINTEGER = "MAXINTEGER";
         private const string STR_MININTEGER = "MININTEGER";
 
+        #endregion Constants
+
         private List<FunctionInfo> _info;
+
+        static MathFunctions()
+        {
+            _functions[STR_ABS] = Abs;
+
+            _functions[STR_ATAN] = Atan;
+
+            _functions[STR_AVERAGE] = Mean;
+
+            _functions[STR_CEILING] = Ceiling;
+
+            _functions[STR_COS] = Cos;
+
+            _functions[STR_COSH] = Cosh;
+
+            _functions[STR_FLOOR] = Floor;
+
+            _functions[STR_LOG] = Log;
+
+            _functions[STR_LOGARITHM] = Logarithm;
+
+            _functions[STR_LOG10] = Log10;
+            _functions[STR_LOGARITHM10] = Log10;
+
+            _functions[STR_MAX] = Max;
+
+            _functions[STR_MAXFLOAT] = MaxDouble;
+
+            _functions[STR_MAXINTEGER] = MaxLong;
+
+            _functions[STR_MEAN] = Mean;
+
+            _functions[STR_MEDIAN] = Median;
+
+            _functions[STR_MIN] = Min;
+
+            _functions[STR_MINFLOAT] = MinDouble;
+
+            _functions[STR_MININTEGER] = MinLong;
+
+            _functions[STR_PI] = Pi;
+
+            _functions[STR_POW] = Pow;
+
+            _functions[STR_ROUND] = Round;
+
+            _functions[STR_SIN] = Sin;
+
+            _functions[STR_SUM] = Sum;
+
+            _functions[STR_SQRT] = Sqrt;
+
+            _functions[STR_TAN] = Tan;
+
+            _functions[STR_TRUNCATE] = Truncate;         }
 
         public MathFunctions()
         {
@@ -203,131 +266,23 @@ namespace Sweet.BRE
         public void Eval(FunctionEventArgs e)
         {
             string function = e.Name;
+            function = (function != null ? function.Trim().ToUpperInvariant() : null);
 
-            function = (function != null ? function.Trim().ToUpperInvariant() : String.Empty);
+            e.Handled = false;
+            e.Result = null;
 
-            e.Handled = true;
-            object result = e.Result;
-
-            switch (function)
+            if (!String.IsNullOrEmpty(function))
             {
-                case STR_ABS:
-                    result = Abs(e, e.Args);
-                    break;
-
-                case STR_ATAN:
-                    result = Atan(e, e.Args);
-                    break;
-
-                case STR_AVERAGE:
-                    result = Mean(e, e.Args);
-                    break;
-
-                case STR_CEILING:
-                    result = Ceiling(e, e.Args);
-                    break;
-
-                case STR_COS:
-                    result = Cos(e, e.Args);
-                    break;
-
-                case STR_COSH:
-                    result = Cosh(e, e.Args);
-                    break;
-
-                case STR_FLOOR:
-                    result = Floor(e, e.Args);
-                    break;
-
-                case STR_LOG:
-                    result = Log(e, e.Args);
-                    break;
-
-                case STR_LOGARITHM:
-                    result = Logarithm(e, e.Args);
-                    break;
-
-                case STR_LOG10:
-                case STR_LOGARITHM10:
-                    result = Log10(e, e.Args);
-                    break;
-
-                case STR_MAX:
-                    result = Max(e, e.Args);
-                    break;
-
-                case STR_MAXFLOAT:
-                    result = double.MaxValue;
-                    break;
-
-                case STR_MAXINTEGER:
-                    result = long.MaxValue;
-                    break;
-
-                case STR_MEAN:
-                    result = Mean(e, e.Args);
-                    break;
-
-                case STR_MEDIAN:
-                    result = Median(e, e.Args);
-                    break;
-
-                case STR_MIN:
-                    result = Min(e, e.Args);
-                    break;
-
-                case STR_MINFLOAT:
-                    result = double.MinValue;
-                    break;
-
-                case STR_MININTEGER:
-                    result = long.MinValue;
-                    break;
-
-                case STR_PI:
-                    result = Math.PI;
-                    break;
-
-                case STR_POW:
-                    result = Pow(e, e.Args);
-                    break;
-
-                case STR_ROUND:
-                    result = Round(e, e.Args);
-                    break;
-
-                case STR_SIN:
-                    result = Sin(e, e.Args);
-                    break;
-
-                case STR_SUM:
-                    result = Sum(e, e.Args);
-                    break;
-
-                case STR_SQRT:
-                    result = Sqrt(e, e.Args);
-                    break;
-
-                case STR_TAN:
-                    result = Tan(e, e.Args);
-                    break;
-
-                case STR_TRUNCATE:
-                    result = Truncate(e, e.Args);
-                    break;
-
-                default:
-                    e.Handled = false;
-                    break;
-            }
-
-            if (e.Handled)
-            {
-                e.Result = result;
+                Fn f;
+                if (_functions.TryGetValue(function, out f) && (f != null))
+                {
+                    e.Result = f(e, e.Args);
+                    e.Handled = true;
+                }
             }
         }
 
-        public double Abs(FunctionEventArgs e, params object[] args)
+        public static object Abs(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -341,7 +296,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Atan(FunctionEventArgs e, params object[] args)
+        public static object Atan(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -355,7 +310,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Ceiling(FunctionEventArgs e, params object[] args)
+        public static object Ceiling(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false; 
             if ((args != null) && (args.Length > 0))
@@ -369,7 +324,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Cos(FunctionEventArgs e, params object[] args)
+        public static object Cos(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -383,7 +338,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Cosh(FunctionEventArgs e, params object[] args)
+        public static object Cosh(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -397,7 +352,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Floor(FunctionEventArgs e, params object[] args)
+        public static object Floor(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -411,7 +366,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Log(FunctionEventArgs e, params object[] args)
+        public static object Log(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -443,7 +398,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Log10(FunctionEventArgs e, params object[] args)
+        public static object Log10(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -457,7 +412,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Logarithm(FunctionEventArgs e, params object[] args)
+        public static object Logarithm(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -471,7 +426,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Max(FunctionEventArgs e, params object[] args)
+        public static object Max(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -497,19 +452,19 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Mean(FunctionEventArgs e, params object[] args)
+        public static object Mean(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
             {
                 e.Handled = true;
-                return Sum(e, args) / args.Length;
+                return (double)Sum(e, args) / args.Length;
             }
 
             return 0;
         }
 
-        public double Median(FunctionEventArgs e, params object[] args)
+        public static object Median(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -548,7 +503,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Min(FunctionEventArgs e, params object[] args)
+        public static object Min(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -572,7 +527,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Pow(FunctionEventArgs e, params object[] args)
+        public static object Pow(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -588,7 +543,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Round(FunctionEventArgs e, params object[] args)
+        public static object Round(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -633,7 +588,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Sin(FunctionEventArgs e, params object[] args)
+        public static object Sin(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -647,7 +602,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Sum(FunctionEventArgs e, params object[] args)
+        public static object Sum(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -670,7 +625,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Sqrt(FunctionEventArgs e, params object[] args)
+        public static object Sqrt(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -684,7 +639,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double Tan(FunctionEventArgs e, params object[] args)
+        public static object Tan(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -697,8 +652,8 @@ namespace Sweet.BRE
 
             return 0;
         }
-
-        public double Truncate(FunctionEventArgs e, params object[] args)
+        
+        public static object Truncate(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -710,6 +665,31 @@ namespace Sweet.BRE
             }
 
             return 0;
+        }
+
+        public static object Pi(FunctionEventArgs e, params object[] args)
+        {
+            return Math.PI;
+        }
+
+        public static object MaxDouble(FunctionEventArgs e, params object[] args)
+        {
+            return double.MaxValue;
+        }
+
+        public static object MinDouble(FunctionEventArgs e, params object[] args)
+        {
+            return double.MinValue;
+        }
+
+        public static object MaxLong(FunctionEventArgs e, params object[] args)
+        {
+            return long.MaxValue;
+        }
+
+        public static object MinLong(FunctionEventArgs e, params object[] args)
+        {
+            return long.MinValue;
         }
     }
 }

@@ -37,6 +37,12 @@ namespace Sweet.BRE
 {
     public sealed class InternalFunctions : IFunctionHandler
     {
+        private delegate object Fn(FunctionEventArgs e, params object[] args);
+
+        private static readonly Dictionary<string, Fn> _functions = new Dictionary<string, Fn>();
+
+        #region Constants
+
         private const string STR_ASBOOLEAN = "ASBOOLEAN";
         private const string STR_ASDATE = "ASDATE";
         private const string STR_ASDOUBLE = "ASDOUBLE";
@@ -64,6 +70,11 @@ namespace Sweet.BRE
         private const string STR_PRINT = "PRINT";
         private const string STR_PRINTLINE = "PRINTLINE";
         private const string STR_PRINTLN = "PRINTLN";
+        private const string STR_PRINTF = "PRINTF";
+        private const string STR_PRINTFORMAT = "PRINTFORMAT";
+        private const string STR_PRINTFORMATLINE = "PRINTFORMATLINE";
+        private const string STR_PRINTFORMATLN = "PRINTFORMATLN";
+        private const string STR_PRINTFLN = "PRINTFLN";
         private const string STR_SLEEP = "SLEEP";
         private const string STR_STRING = "STRING";
         private const string STR_TIME = "TIME";
@@ -81,8 +92,91 @@ namespace Sweet.BRE
         private const string STR_WRITE = "WRITE";
         private const string STR_WRITELINE = "WRITELINE";
         private const string STR_WRITELN = "WRITELN";
+        private const string STR_WRITEF = "WRITEF";
+        private const string STR_WRITEFORMAT = "WRITEFORMAT";
+        private const string STR_WRITEFORMATLINE = "WRITEFORMATLINE";
+        private const string STR_WRITEFORMATLN = "WRITEFORMATLN";
+        private const string STR_WRITEFLN = "WRITEFLN";
+
+        #endregion Constants
 
         private List<FunctionInfo> _info;
+
+        static InternalFunctions()
+        {
+            _functions[STR_COMPARE] = Compare;
+
+            _functions[STR_DEBUG] = WriteToDebug;
+
+            _functions[STR_ENVIRONMENT] = EnvironmentVariable;
+            _functions[STR_GETENVIRONMENT] = EnvironmentVariable;
+            _functions[STR_GETENVIRONMENTVARIABLE] = EnvironmentVariable;
+
+            _functions[STR_EQUALS] = Equals;
+
+            _functions[STR_ISNULL] = IsNull;
+
+            _functions[STR_ISNUMBER] = IsNumber;
+
+            _functions[STR_NEWGUID] = NewGuid;
+            _functions[STR_NEWUUID] = NewGuid;
+
+            _functions[STR_PRINT] = Print;
+            _functions[STR_WRITE] = Print;
+
+            _functions[STR_PRINTF] = Printf;
+            _functions[STR_PRINTFORMAT] = Printf;
+            _functions[STR_WRITEF] = Printf;
+            _functions[STR_WRITEFORMAT] = Printf;
+
+            _functions[STR_PRINTLN] = PrintLine;
+            _functions[STR_PRINTLINE] = PrintLine;
+            _functions[STR_WRITELN] = PrintLine;
+            _functions[STR_WRITELINE] = PrintLine;
+
+            _functions[STR_PRINTFLN] = Printfln;
+            _functions[STR_PRINTFORMATLN] = Printfln;
+            _functions[STR_PRINTFORMATLINE] = Printfln;
+            _functions[STR_WRITEFLN] = Printfln;
+            _functions[STR_WRITEFORMATLN] = Printfln;
+            _functions[STR_WRITEFORMATLINE] = Printfln;
+
+            _functions[STR_SLEEP] = Sleep;
+
+            _functions[STR_ASBOOLEAN] = ToBoolean;
+            _functions[STR_BOOLEAN] = ToBoolean;
+            _functions[STR_TOBOOLEAN] = ToBoolean;
+
+            _functions[STR_ASDATE] = ToDate;
+            _functions[STR_DATE] = ToDate;
+            _functions[STR_TODATE] = ToDate;
+
+            _functions[STR_ASDOUBLE] = ToDouble;
+            _functions[STR_DOUBLE] = ToDouble;
+            _functions[STR_TODOUBLE] = ToDouble;
+
+            _functions[STR_ASGUID] = ToGuid;
+            _functions[STR_ASUUID] = ToGuid;
+            _functions[STR_GUID] = ToGuid;
+            _functions[STR_TOGUID] = ToGuid;
+            _functions[STR_UUID] = ToGuid;
+            _functions[STR_TOUUID] = ToGuid;
+
+            _functions[STR_ASINTEGER] = ToInteger;
+            _functions[STR_INTEGER] = ToInteger;
+            _functions[STR_TOINTEGER] = ToInteger;
+
+            _functions[STR_ASSTRING] = ToString;
+            _functions[STR_STRING] = ToString;
+            _functions[STR_TOSTRING] = ToString;
+
+            _functions[STR_ASTIME] = ToTime;
+            _functions[STR_TIME] = ToTime;
+            _functions[STR_TOTIME] = ToTime;
+
+            _functions[STR_TRACE] = WriteToTrace;
+            _functions[STR_TRACERT] = WriteToTrace;
+        }
 
         public InternalFunctions()
         {
@@ -151,12 +245,24 @@ namespace Sweet.BRE
                         },
                         ReturnType.Void)
                             .AddAlias("Write"),
+                    new FunctionInfo("Printf", 0, 1, new ValueType[]
+                        {
+                            ValueType.Object
+                        },
+                        ReturnType.Void)
+                            .AddAliases(new string[] { "PrintFormat", "Writef", "WriteFormat" }),
                     new FunctionInfo("PrintLine", 0, 1, new ValueType[] 
                         {
                             ValueType.Object
                         },
                         ReturnType.Void)
                             .AddAliases(new string[] { "PrintLn", "WriteLn", "WriteLine" }),
+                    new FunctionInfo("Printfln", 0, 1, new ValueType[]
+                        {
+                            ValueType.Object
+                        },
+                        ReturnType.Void)
+                            .AddAliases(new string[] { "PrintFormatLine", "PrintFormatLn", "Writefln", "WriteFormatLine", "WriteFormatLn" }),
                     new FunctionInfo("Sleep", 1, 1, new ValueType[] 
                         {
                             ValueType.Integer
@@ -219,123 +325,23 @@ namespace Sweet.BRE
         public void Eval(FunctionEventArgs e)
         {
             string function = e.Name;
+            function = (function != null ? function.Trim().ToUpperInvariant() : null);
 
-            function = (function != null ? function.Trim().ToUpperInvariant() : String.Empty);
+            e.Handled = false;
+            e.Result = null;
 
-            e.Handled = true;
-            object result = e.Result;
-
-            switch (function)
+            if (!String.IsNullOrEmpty(function))
             {
-                case STR_COMPARE:
-                    result = Compare(e, e.Args);
-                    break;
-
-                case STR_DEBUG:
-                    result = WriteToDebug(e, e.Args);
-                    break;
-
-                case STR_ENVIRONMENT:
-                case STR_GETENVIRONMENT:
-                case STR_GETENVIRONMENTVARIABLE:
-                    result = EnvironmentVariable(e, e.Args);
-                    break;
-
-                case STR_EQUALS:
-                    result = (Compare(e, e.Args) == 0);
-                    break;
-
-                case STR_ISNULL:
-                    result = IsNull(e, e.Args);
-                    break;
-
-                case STR_ISNUMBER:
-                    result = IsNumber(e, e.Args);
-                    break;
-
-                case STR_NEWGUID:
-                case STR_NEWUUID:
-                    result = Guid.NewGuid().ToString("N");
-                    break;
-
-                case STR_PRINT:
-                case STR_WRITE:
-                    result = Print(e, e.Args);
-                    break;
-
-                case STR_PRINTLN:
-                case STR_PRINTLINE:
-                case STR_WRITELN:
-                case STR_WRITELINE:
-                    result = PrintLine(e, e.Args);
-                    break;
-
-                case STR_SLEEP:
-                    result = Sleep(e, e.Args);
-                    break;
-
-                case STR_ASBOOLEAN:
-                case STR_BOOLEAN:
-                case STR_TOBOOLEAN:
-                    result = ToBoolean(e, e.Args);
-                    break;
-
-                case STR_ASDATE:
-                case STR_DATE:
-                case STR_TODATE:
-                    result = ToDate(e, e.Args);
-                    break;
-
-                case STR_ASDOUBLE:
-                case STR_DOUBLE:
-                case STR_TODOUBLE:
-                    result = ToDouble(e, e.Args);
-                    break;
-
-                case STR_ASGUID:
-                case STR_ASUUID:
-                case STR_GUID:
-                case STR_TOGUID:
-                case STR_UUID:
-                case STR_TOUUID:
-                    result = ToGuid(e, e.Args);
-                    break;
-                
-                case STR_ASINTEGER:
-                case STR_INTEGER:
-                case STR_TOINTEGER:
-                    result = ToInteger(e, e.Args);
-                    break;
-
-                case STR_ASSTRING:
-                case STR_STRING:
-                case STR_TOSTRING:
-                    result = ToString(e, e.Args);
-                    break;
-
-                case STR_ASTIME:
-                case STR_TIME:
-                case STR_TOTIME:
-                    result = ToTime(e, e.Args);
-                    break;
-
-                case STR_TRACE:
-                case STR_TRACERT:
-                    result = WriteToTrace(e, e.Args);
-                    break;
-
-                default:
-                    e.Handled = false;
-                    break;
-            }
-
-            if (e.Handled)
-            {
-                e.Result = result;
+                Fn f;
+                if (_functions.TryGetValue(function, out f) && (f != null))
+                {
+                    e.Result = f(e, e.Args);
+                    e.Handled = true;
+                }
             }
         }
 
-        public int Compare(FunctionEventArgs e, params object[] args)
+        public static object Compare(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -347,7 +353,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public double WriteToDebug(FunctionEventArgs e, params object[] args)
+        public static object WriteToDebug(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -368,7 +374,7 @@ namespace Sweet.BRE
             return double.NaN;
         }
 
-        public string EnvironmentVariable(FunctionEventArgs e, params object[] args)
+        public static object EnvironmentVariable(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -385,23 +391,19 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public bool Equals(FunctionEventArgs e, params object[] args)
+        public static object Equals(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
-            if ((args != null) && (args.Length > 1))
+            if ((args != null) && (args.Length > 0))
             {
                 e.Handled = true;
-
-                string s1 = StmCommon.ToString(args[0]);
-                string s2 = StmCommon.ToString(args[1]);
-
-                return String.Equals(s1, s2);
+                return StmCommon.Compare(args[0], (args.Length > 1) ? args[1] : null) == 0;
             }
 
             return false;
         }
 
-        public bool IsNull(FunctionEventArgs e, params object[] args)
+        public static object IsNull(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -418,7 +420,12 @@ namespace Sweet.BRE
             return true;
         }
 
-        public bool IsNumber(FunctionEventArgs e, params object[] args)
+        public static object NewGuid(FunctionEventArgs e, params object[] args)
+        {
+            return Guid.NewGuid();
+        }
+
+        public static object IsNumber(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -439,7 +446,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        public object Print(FunctionEventArgs e, params object[] args)
+        public static object Print(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
@@ -453,10 +460,56 @@ namespace Sweet.BRE
             return null;
         }
 
-        public object PrintLine(FunctionEventArgs e, params object[] args)
+        public static object Printf(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
+            {
+                e.Handled = true;
+
+                string format = StmCommon.ToString(args[0]);
+                if (!String.IsNullOrEmpty(format))
+                {
+                    string[] sa = new string[args.Length - 1];
+                    for (int i = 1; i < args.Length; i++)
+                    {
+                        sa[i - 1] = StmCommon.ToString(args[i]);
+                    }
+
+                    Console.Write(String.Format(format, sa));
+                }
+            }
+
+            return null;
+        }
+
+        public static object Printfln(FunctionEventArgs e, params object[] args)
+        {
+            e.Handled = true;
+            if ((args != null) && (args.Length > 0))
+            {
+                e.Handled = true;
+
+                string format = StmCommon.ToString(args[0]);
+                if (!String.IsNullOrEmpty(format))
+                {
+                    string[] sa = new string[args.Length - 1];
+                    for (int i = 1; i < args.Length; i++)
+                    {
+                        sa[i - 1] = StmCommon.ToString(args[i]);
+                    }
+
+                    Console.WriteLine(String.Format(format, sa));
+                }
+            }
+
+            return null;
+        }
+
+        public static object PrintLine(FunctionEventArgs e, params object[] args)
+        {
+            e.Handled = true;
+            if (args != null)
             {
                 if (args.Length == 0)
                 {
@@ -466,15 +519,16 @@ namespace Sweet.BRE
                 {
                     foreach (object o1 in args)
                     {
-                        Console.WriteLine(StmCommon.ToString(o1));
+                        Console.Write(StmCommon.ToString(o1));
                     }
+                    Console.WriteLine();
                 }
             }
 
             return null;
         }
 
-        public object Sleep(FunctionEventArgs e, params object[] args)
+        public static object Sleep(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -488,7 +542,7 @@ namespace Sweet.BRE
             return null;
         }
 
-        public bool ToBoolean(FunctionEventArgs e, params object[] args)
+        public static object ToBoolean(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
@@ -499,7 +553,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        public DateTime ToDate(FunctionEventArgs e, params object[] args)
+        public static object ToDate(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
@@ -510,7 +564,7 @@ namespace Sweet.BRE
             return DateTime.MinValue;
         }
 
-        public double ToDouble(FunctionEventArgs e, params object[] args)
+        public static object ToDouble(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             double result = 0;
@@ -527,7 +581,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public Guid ToGuid(FunctionEventArgs e, params object[] args)
+        public static object ToGuid(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
@@ -538,7 +592,7 @@ namespace Sweet.BRE
             return Guid.Empty;
         }
 
-        public long ToInteger(FunctionEventArgs e, params object[] args)
+        public static object ToInteger(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             long result = 0;
@@ -555,7 +609,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public string ToString(FunctionEventArgs e, params object[] args)
+        public static object ToString(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
@@ -595,7 +649,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public TimeSpan ToTime(FunctionEventArgs e, params object[] args)
+        public static object ToTime(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             TimeSpan result = TimeSpan.Zero;
@@ -612,7 +666,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public double WriteToTrace(FunctionEventArgs e, params object[] args)
+        public static object WriteToTrace(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))

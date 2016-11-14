@@ -32,6 +32,12 @@ namespace Sweet.BRE
 {
     public sealed class StringFunctions : IFunctionHandler
     {
+        private delegate object Fn(FunctionEventArgs e, params object[] args);
+
+        private static readonly Dictionary<string, Fn> _functions = new Dictionary<string, Fn>();
+
+        #region Constants
+
         private const string STR_CONCAT = "CONCAT";
         private const string STR_STRCONTAINS = "STRCONTAINS";
         private const string STR_ENDSWITH = "ENDSWITH";
@@ -62,7 +68,61 @@ namespace Sweet.BRE
         private const string STR_TRIMEND = "TRIMEND";
         private const string STR_TRIMSTART = "TRIMSTART";
 
+        #endregion Constants
+
         private List<FunctionInfo> _info;
+
+        static StringFunctions()
+        {
+            _functions[STR_CONCAT] = Concat;
+
+            _functions[STR_STRCONTAINS] = Contains;
+
+            _functions[STR_ENDSWITH] = EndsWith;
+
+            _functions[STR_FORMAT] = Format;
+
+            _functions[STR_STRINDEX] = IndexOf;
+            _functions[STR_STRINDEXOF] = IndexOf;
+            _functions[STR_STRPOS] = IndexOf;
+            _functions[STR_STRPOSITION] = IndexOf;
+            _functions[STR_STRPOSITIONOF] = IndexOf;
+
+            _functions[STR_INSERT] = Insert;
+
+            _functions[STR_ISNULLOREMPTY] = IsNullOrEmpty;
+
+            _functions[STR_JOIN] = Join;
+
+            _functions[STR_STRLASTINDEX] = LastIndexOf;
+            _functions[STR_STRLASTINDEXOF] = LastIndexOf;
+            _functions[STR_STRLASTPOS] = LastIndexOf;
+            _functions[STR_STRLASTPOSITION] = LastIndexOf;
+            _functions[STR_STRLASTPOSITIONOF] = LastIndexOf;
+
+            _functions[STR_PADLEFT] = PadLeft;
+
+            _functions[STR_PADRIGHT] = PadRight;
+
+            _functions[STR_REMOVE] = Remove;
+
+            _functions[STR_REPLACE] = Replace;
+
+            _functions[STR_SPLIT] = Split;
+
+            _functions[STR_STARTSWITH] = StartsWith;
+
+            _functions[STR_SUBSTRING] = Substring;
+
+            _functions[STR_TOLOWER] = ToLower;
+
+            _functions[STR_TOUPPER] = ToUpper;
+
+            _functions[STR_TRIM] = Trim;
+
+            _functions[STR_TRIMEND] = TrimEnd;
+
+            _functions[STR_TRIMSTART] = TrimStart;         }
 
         public StringFunctions()
         {
@@ -220,118 +280,23 @@ namespace Sweet.BRE
         public void Eval(FunctionEventArgs e)
         {
             string function = e.Name;
+            function = (function != null ? function.Trim().ToUpperInvariant() : null);
 
-            function = (function != null ? function.Trim().ToUpperInvariant() : String.Empty);
+            e.Handled = false;
+            e.Result = null;
 
-            e.Handled = true;
-            object result = e.Result;
-
-            switch (function)
+            if (!String.IsNullOrEmpty(function))
             {
-                case STR_CONCAT:
-                    result = Concat(e, e.Args);
-                    break;
-
-                case STR_STRCONTAINS:
-                    result = Contains(e, e.Args);
-                    break;
-
-                case STR_ENDSWITH:
-                    result = EndsWith(e, e.Args);
-                    break;
-
-                case STR_FORMAT:
-                    result = Format(e, e.Args);
-                    break;
-
-                case STR_STRINDEX:
-                case STR_STRINDEXOF:
-                case STR_STRPOS:
-                case STR_STRPOSITION:
-                case STR_STRPOSITIONOF:
-                    result = IndexOf(e, e.Args);
-                    break;
-
-                case STR_INSERT:
-                    result = Insert(e, e.Args);
-                    break;
-
-                case STR_ISNULLOREMPTY:
-                    result = IsNullOrEmpty(e, e.Args);
-                    break;
-
-                case STR_JOIN:
-                    result = Join(e, e.Args);
-                    break;
-
-                case STR_STRLASTINDEX:
-                case STR_STRLASTINDEXOF:
-                case STR_STRLASTPOS:
-                case STR_STRLASTPOSITION:
-                case STR_STRLASTPOSITIONOF:
-                    result = LastIndexOf(e, e.Args);
-                    break;
-
-                case STR_PADLEFT:
-                    result = PadLeft(e, e.Args);
-                    break;
-
-                case STR_PADRIGHT:
-                    result = PadRight(e, e.Args);
-                    break;
-
-                case STR_REMOVE:
-                    result = Remove(e, e.Args);
-                    break;
-
-                case STR_REPLACE:
-                    result = Replace(e, e.Args);
-                    break;
-
-                case STR_SPLIT:
-                    result = Split(e, e.Args);
-                    break;
-
-                case STR_STARTSWITH:
-                    result = StartsWith(e, e.Args);
-                    break;
-
-                case STR_SUBSTRING:
-                    result = Substring(e, e.Args);
-                    break;
-
-                case STR_TOLOWER:
-                    result = ToLower(e, e.Args);
-                    break;
-
-                case STR_TOUPPER:
-                    result = ToUpper(e, e.Args);
-                    break;
-
-                case STR_TRIM:
-                    result = Trim(e, e.Args);
-                    break;
-
-                case STR_TRIMEND:
-                    result = TrimEnd(e, e.Args);
-                    break;
-
-                case STR_TRIMSTART:
-                    result = TrimStart(e, e.Args);
-                    break;
-
-                default:
-                    e.Handled = false;
-                    break;
-            }
-
-            if (e.Handled)
-            {
-                e.Result = result;
+                Fn f;
+                if (_functions.TryGetValue(function, out f) && (f != null))
+                {
+                    e.Result = f(e, e.Args);
+                    e.Handled = true;
+                }
             }
         }
 
-        public string Concat(FunctionEventArgs e, params object[] args)
+        public static object Concat(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
 
@@ -347,7 +312,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public bool Contains(FunctionEventArgs e, params object[] args)
+        public static object Contains(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -366,7 +331,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        public bool EndsWith(FunctionEventArgs e, params object[] args)
+        public static object EndsWith(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -384,14 +349,19 @@ namespace Sweet.BRE
             return false;
         }
 
-        public string Format(FunctionEventArgs e, params object[] args)
+        public static object Format(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
-            if ((args != null) && (args.Length > 1))
+            if ((args != null) && (args.Length > 0))
             {
                 e.Handled = true;
 
                 string format = StmCommon.ToString(args[0]);
+                if (args.Length == 1)
+                {
+                    return format;
+                }
+
                 if (!String.IsNullOrEmpty(format))
                 {
                     string[] sa = new string[args.Length - 1];
@@ -407,7 +377,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public int IndexOf(FunctionEventArgs e, params object[] args)
+        public static object IndexOf(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 1))
@@ -429,7 +399,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        public string Insert(FunctionEventArgs e, params object[] args)
+        public static object Insert(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 2))
@@ -456,7 +426,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public bool IsNullOrEmpty(FunctionEventArgs e, params object[] args)
+        public static object IsNullOrEmpty(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 0))
@@ -467,7 +437,7 @@ namespace Sweet.BRE
             return true;
         }
 
-        public string Join(FunctionEventArgs e, params object[] args)
+        public static object Join(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 2))
@@ -490,7 +460,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public int LastIndexOf(FunctionEventArgs e, params object[] args)
+        public static object LastIndexOf(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
             if ((args != null) && (args.Length > 1))
@@ -512,7 +482,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        public string PadLeft(FunctionEventArgs e, params object[] args)
+        public static object PadLeft(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -544,7 +514,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public string PadRight(FunctionEventArgs e, params object[] args)
+        public static object PadRight(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -576,7 +546,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public string Remove(FunctionEventArgs e, params object[] args)
+        public static object Remove(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -614,7 +584,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public string Replace(FunctionEventArgs e, params object[] args)
+        public static object Replace(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 2))
@@ -635,7 +605,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public string[] Split(FunctionEventArgs e, params object[] args)
+        public static object Split(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -659,7 +629,7 @@ namespace Sweet.BRE
             return (new string[0]);
         }
 
-        public bool StartsWith(FunctionEventArgs e, params object[] args)
+        public static object StartsWith(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -677,7 +647,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        public string Substring(FunctionEventArgs e, params object[] args)
+        public static object Substring(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -715,7 +685,7 @@ namespace Sweet.BRE
             return String.Empty;
         }
 
-        public string ToLower(FunctionEventArgs e, params object[] args)
+        public static object ToLower(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
 
@@ -732,7 +702,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public string ToUpper(FunctionEventArgs e, params object[] args)
+        public static object ToUpper(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
 
@@ -749,7 +719,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public string Trim(FunctionEventArgs e, params object[] args)
+        public static object Trim(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
 
@@ -766,7 +736,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public string TrimEnd(FunctionEventArgs e, params object[] args)
+        public static object TrimEnd(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
 
@@ -783,7 +753,7 @@ namespace Sweet.BRE
             return result;
         }
 
-        public string TrimStart(FunctionEventArgs e, params object[] args)
+        public static object TrimStart(FunctionEventArgs e, params object[] args)
         {
             e.Handled = true;
 

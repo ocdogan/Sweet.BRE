@@ -34,6 +34,13 @@ namespace Sweet.BRE
 {
     public sealed class ArrayFunctions : IFunctionHandler
     {
+
+        private delegate object Fn(FunctionEventArgs e, params object[] args);
+
+        private static readonly Dictionary<string, Fn> _functions = new Dictionary<string, Fn>();
+
+        #region Constants
+
         private const string STR_CONTAINS = "CONTAINS";
         private const string STR_COUNT = "COUNT";
         private const string STR_COUNTOF = "COUNTOF";
@@ -55,7 +62,36 @@ namespace Sweet.BRE
         private const string STR_POSITION = "POSITION";
         private const string STR_POSITIONOF = "POSITIONOF";
 
+        #endregion Constants
+
         private List<FunctionInfo> _info;
+
+        static ArrayFunctions()
+        {
+            _functions[STR_CONTAINS] = Contains;
+            _functions[STR_HAS] = Contains;
+
+            _functions[STR_COUNT] = Count;
+            _functions[STR_COUNTOF] = Count;
+
+            _functions[STR_INDEX] = IndexOf;
+            _functions[STR_INDEXOF] = IndexOf;
+            _functions[STR_POS] = IndexOf;
+            _functions[STR_POSOF] = IndexOf;
+            _functions[STR_POSITION] = IndexOf;
+            _functions[STR_POSITIONOF] = IndexOf;
+
+            _functions[STR_LASTINDEX] = LastIndexOf;
+            _functions[STR_LASTINDEXOF] = LastIndexOf;
+            _functions[STR_LASTPOS] = LastIndexOf;
+            _functions[STR_LASTPOSOF] = LastIndexOf;
+            _functions[STR_LASTPOSITION] = LastIndexOf;
+            _functions[STR_LASTPOSITIONOF] = LastIndexOf;
+
+            _functions[STR_LEN] = Length;
+            _functions[STR_LENGTH] = Length;
+            _functions[STR_LENOF] = Length;
+            _functions[STR_LENGTHOF] = Length;         }
 
         public ArrayFunctions()
         {
@@ -115,65 +151,29 @@ namespace Sweet.BRE
                 );
         }
 
+
         public void Eval(FunctionEventArgs e)
         {
             string function = e.Name;
+            function = (function != null ? function.Trim().ToUpperInvariant() : null);
 
-            function = (function != null ? function.Trim().ToUpperInvariant() : String.Empty);
+            e.Handled = false;
+            e.Result = null;
 
-            e.Handled = true;
-            object result = e.Result;
-
-            switch (function)
+            if (!String.IsNullOrEmpty(function))
             {
-                case STR_CONTAINS:
-                case STR_HAS:
-                    result = Contains(e, e.Args);
-                    break;
-
-                case STR_COUNT:
-                case STR_COUNTOF:
-                    result = Count(e, e.Args);
-                    break;
-
-                case STR_INDEX:
-                case STR_INDEXOF:
-                case STR_POS:
-                case STR_POSOF:
-                case STR_POSITION:
-                case STR_POSITIONOF:
-                    result = IndexOf(e, e.Args);
-                    break;
-
-                case STR_LASTINDEX:
-                case STR_LASTINDEXOF:
-                case STR_LASTPOS:
-                case STR_LASTPOSOF:
-                case STR_LASTPOSITION:
-                case STR_LASTPOSITIONOF:
-                    result = LastIndexOf(e, e.Args);
-                    break;
-
-                case STR_LEN:
-                case STR_LENGTH:
-                case STR_LENOF:
-                case STR_LENGTHOF:
-                    result = Length(e, e.Args);
-                    break;
-
-                default:
-                    e.Handled = false;
-                    break;
-            }
-
-            if (e.Handled)
-            {
-                e.Result = result;
+                Fn f;
+                if (_functions.TryGetValue(function, out f) && (f != null))
+                {
+                    e.Result = f(e, e.Args);
+                    e.Handled = true;
+                }
             }
         }
 
         # region Contains
-        private bool ContainsInArray(Array objs, object item, long start)
+
+        private static bool ContainsInArray(Array objs, object item, long start)
         {
             if ((objs != null) && (objs.Length > start))
             {
@@ -190,7 +190,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        private bool ContainsInICollection(ICollection list, object item, long start)
+        private static bool ContainsInICollection(ICollection list, object item, long start)
         {
             if ((list != null) && (list.Count > start))
             {
@@ -207,7 +207,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        private bool ContainsInIDictionary(IDictionary list, object item, long start)
+        private static bool ContainsInIDictionary(IDictionary list, object item, long start)
         {
             if (list != null)
             {
@@ -232,7 +232,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        private bool ContainsInIList(IList list, object item, long start)
+        private static bool ContainsInIList(IList list, object item, long start)
         {
             if (list != null)
             {
@@ -257,7 +257,7 @@ namespace Sweet.BRE
             return false;
         }
 
-        public bool Contains(FunctionEventArgs e, params object[] args)
+        public static object Contains(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -320,7 +320,8 @@ namespace Sweet.BRE
         # endregion
 
         # region IndexOf
-        private long IndexOfInArray(Array objs, object item, long start)
+
+        private static long IndexOfInArray(Array objs, object item, long start)
         {
             if ((objs != null) && (objs.Length > start))
             {
@@ -339,7 +340,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        private long IndexOfInICollection(ICollection list, object item, long start)
+        private static long IndexOfInICollection(ICollection list, object item, long start)
         {
             if ((list != null) && (list.Count > start))
             {
@@ -358,7 +359,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        private long IndexOfInIList(IList list, object item, long start)
+        private static long IndexOfInIList(IList list, object item, long start)
         {
             if ((list != null) && (list.Count > start))
             {
@@ -377,7 +378,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        public long IndexOf(FunctionEventArgs e, params object[] args)
+        public static object IndexOf(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -434,7 +435,8 @@ namespace Sweet.BRE
         # endregion
 
         # region LastIndexOf
-        private long LastIndexOfInArray(Array objs, object item, long start)
+
+        private static long LastIndexOfInArray(Array objs, object item, long start)
         {
             if ((objs != null) && (objs.Length > start))
             {
@@ -457,7 +459,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        private long LastIndexOfInICollection(ICollection list, object item, long start)
+        private static long LastIndexOfInICollection(ICollection list, object item, long start)
         {
             if ((list != null) && (list.Count > start))
             {
@@ -485,7 +487,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        private long LastIndexOfInIList(IList list, object item, long start)
+        private static long LastIndexOfInIList(IList list, object item, long start)
         {
             if ((list != null) && (list.Count > start))
             {
@@ -511,7 +513,7 @@ namespace Sweet.BRE
             return -1;
         }
 
-        public long LastIndexOf(FunctionEventArgs e, params object[] args)
+        public static object LastIndexOf(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 1))
@@ -567,7 +569,7 @@ namespace Sweet.BRE
         }
         # endregion
 
-        public int Count(FunctionEventArgs e, params object[] args)
+        public static object Count(FunctionEventArgs e, params object[] args)
         {
             e.Handled = false;
             if ((args != null) && (args.Length > 0))
@@ -610,7 +612,7 @@ namespace Sweet.BRE
             return 0;
         }
 
-        public int Length(FunctionEventArgs e, params object[] args)
+        public static object Length(FunctionEventArgs e, params object[] args)
         {
             return Count(e, args);
         }
