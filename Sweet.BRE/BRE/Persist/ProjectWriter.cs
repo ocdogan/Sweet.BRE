@@ -167,7 +167,8 @@ namespace Sweet.BRE
             {
                 WriteElement("Description", desc, false);
             }
-            
+
+            WriteIf(rule.Condition);
             WriteDo(rule.Actions);
         }
 
@@ -537,6 +538,17 @@ namespace Sweet.BRE
                 WriteElement("Right");
                 WriteStatement(stm.Right);
                 PopElement();
+            }
+        }
+
+        private void WriteIf(BooleanStm condition)
+        {
+            if (!ReferenceEquals(condition, null))
+            {
+                using (WriteElement("If"))
+                {
+                    WriteStatement(condition);
+                }
             }
         }
 
@@ -1026,7 +1038,7 @@ namespace Sweet.BRE
                 PopElement();
 
                 WriteElement("Method");
-                WriteStatement(stm.Method);
+                WriteStatement(stm.Expression);
                 PopElement();
 
                 Statement[] prms = stm.Parameters;

@@ -39,12 +39,14 @@ namespace Sweet.BRE
 
         int SubPriority { get; set; }
 
+        BooleanStm Condition { get; }
         ActionList Actions { get; }
 
         IRule SetDescription(string description);
         IRule SetPriority(RulePriority priority);
         IRule SetSubPriority(int subPriority);
 
+        IRule If(BooleanStm condition);
         IRule Do(params ActionStm[] doActions);
     }
 }

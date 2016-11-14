@@ -38,6 +38,7 @@ namespace Sweet.BRE
         private int _subPriority = 50;
 
         private Ruleset _ruleset;
+        private BooleanStm _condition;
 
         public Rule()
             : base()
@@ -79,6 +80,14 @@ namespace Sweet.BRE
             set
             {
                 SetPriority(value);
+            }
+        }
+
+        public BooleanStm Condition
+        {
+            get
+            {
+                return _condition;
             }
         }
 
@@ -136,6 +145,12 @@ namespace Sweet.BRE
             _name = (name != null ? name.Trim() : null);
         }
 
+        public IRule If(BooleanStm condition)
+        {
+            _condition = condition;
+            return this;
+        }
+
         public IRule Do(params ActionStm[] doActions)
         {
             base.DoAction(doActions);
@@ -181,6 +196,12 @@ namespace Sweet.BRE
                 _ruleset = null;
             }
 
+            if (!ReferenceEquals(_condition, null))
+            {
+                _condition.Dispose();
+                _condition = null;
+            }
+
             base.Dispose();
         }
 
@@ -205,8 +226,21 @@ namespace Sweet.BRE
                 _priority.ToString(), 
                 _subPriority.ToString());
 
+            bool hasCondition = !ReferenceEquals(_condition, null);
+
+            if (hasCondition)
+            {
+                builder.AppendLine();
+                builder.AppendFormat("If {0} Then", _condition);
+            }
+
             builder.AppendLine();
             builder.Append(base.ToString());
+
+            if (hasCondition)
+            {
+                builder.AppendLine(RuleConstants.END + " ");
+            }
 
             builder.Append(RuleConstants.END + " ");
 
@@ -216,6 +250,20 @@ namespace Sweet.BRE
         protected override bool ExecutionBroken(IEvaluationContext context)
         {
             return (context.Canceled || context.Halted || context.InReturn);
+        }
+
+        protected override object Evaluate(IEvaluationContext context, params object[] args)
+        {
+            if (!ReferenceEquals(_condition, null))
+            {
+                object val = ((IStatement)_condition).Evaluate(context, args);
+                if (!StmCommon.ToBoolean(val))
+                {
+                    return double.NaN;
+                }
+            }
+
+            return base.Evaluate(context, args);
         }
     }
 }

@@ -254,9 +254,19 @@ namespace Sweet.BRE
                     {
                         rule.SetDescription(ReadText(elm, "Description"));
 
+                        XmlElement[] elms = ReadParameters(elm, "If");
+                        if ((elms != null) && (elms.Length > 0))
+                        {                            
+                            BooleanStm condition = ReadStatement(elms[0]) as BooleanStm;
+                            if (!ReferenceEquals(condition, null))
+                            {
+                                rule.If(condition);
+                            }
+                        }
+
                         ActionStm[] actions = new ActionStm[0];
 
-                        XmlElement[] elms = ReadParameters(elm, "Do");
+                        elms = ReadParameters(elm, "Do");
                         if ((elms != null) && (elms.Length > 0))
                         {
                             actions = new ActionStm[elms.Length];
