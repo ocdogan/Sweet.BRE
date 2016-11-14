@@ -156,7 +156,7 @@ namespace Sweet.BRE
 
         public static void RegisterFunctionAlias(string alias, string function)
         {
-            alias = ((alias != null) ? alias.Trim() : null);
+            alias = ((alias != null) ? alias.Trim().ToUpperInvariant() : null);
             function = ((function != null) ? function.Trim() : null);
 
             if (String.IsNullOrEmpty(alias))
@@ -204,7 +204,7 @@ namespace Sweet.BRE
             foreach (string fn in nameList)
             {
                 string function = fn;
-                function = ((function != null) ? function.Trim() : null);
+                function = ((function != null) ? function.Trim().ToUpperInvariant() : null);
 
                 if (!String.IsNullOrEmpty(function))
                 {
@@ -263,19 +263,13 @@ namespace Sweet.BRE
             }
         }
 
-        public static void UnregisterFunctionAlias(string alias, string function)
+        public static void UnregisterFunctionAlias(string alias)
         {
-            alias = ((alias != null) ? alias.Trim() : null);
-            function = ((function != null) ? function.Trim() : null);
+            alias = ((alias != null) ? alias.Trim().ToUpperInvariant() : null);
 
             if (String.IsNullOrEmpty(alias))
             {
                 throw new ArgumentNullException("alias");
-            }
-
-            if (String.IsNullOrEmpty(function))
-            {
-                throw new ArgumentNullException("function");
             }
 
             lock (_funcAliases)
@@ -297,23 +291,26 @@ namespace Sweet.BRE
             foreach (string fn in nameList)
             {
                 string function = fn;
-                function = ((function != null) ? function.Trim() : null);
+                function = ((function != null) ? function.Trim().ToUpperInvariant() : null);
 
-                if (!String.IsNullOrEmpty(function) && _funcInformations.ContainsKey(function))
+                if (!String.IsNullOrEmpty(function))
                 {
-                    List<FunctionInfoBucket> infoList = _funcInformations[function];
-                    for (int i = infoList.Count - 1; i > -1; i--)
+                    List<FunctionInfoBucket> infoList;
+                    if (_funcInformations.TryGetValue(function, out infoList))
                     {
-                        FunctionInfoBucket bucket = infoList[i];
-                        if (handler == bucket.Handler)
+                        for (int i = infoList.Count - 1; i > -1; i--)
                         {
-                            infoList.RemoveAt(i);
+                            FunctionInfoBucket bucket = infoList[i];
+                            if (handler == bucket.Handler)
+                            {
+                                infoList.RemoveAt(i);
+                            }
                         }
-                    }
 
-                    if (infoList.Count == 0)
-                    {
-                        _funcInformations.Remove(function);
+                        if (infoList.Count == 0)
+                        {
+                            _funcInformations.Remove(function);
+                        }
                     }
                 }
             }
@@ -443,7 +440,7 @@ namespace Sweet.BRE
 
         private static void EvaluateFunctionByHandlers(FunctionEventArgs e)
         {
-            string function = e.Name;
+            string function = e.Name.ToUpperInvariant();
 
             e.Handled = false;
             e.Result = double.NaN;
@@ -503,7 +500,7 @@ namespace Sweet.BRE
             string realFunction = function;
 
             if ((_funcAliases.Count > 0) &&
-                !_funcAliases.TryGetValue(function, out realFunction))
+                !_funcAliases.TryGetValue(function.ToUpperInvariant(), out realFunction))
             {
                 realFunction = function;
             }
