@@ -45,6 +45,12 @@ namespace Sweet.BRE
 {
     public static class CommonHelper
     {
+        private class EnumCache
+        {
+            public object Default;
+            public Dictionary<string, object> Values;
+        }
+
         private static string _basePath = null;
 
         private static CultureInfo enCulture = new CultureInfo("en");
@@ -57,6 +63,7 @@ namespace Sweet.BRE
 
         private static object _syncObject;
         private static Dictionary<string, Type> _typeCache = new Dictionary<string, Type>();
+        private static Dictionary<Type, EnumCache> _enumCache = new Dictionary<Type, EnumCache>();
 
         public static int SignedHiword(int n)
         {
@@ -1226,22 +1233,39 @@ namespace Sweet.BRE
             value = null;
             if ((enumType != null) && enumType.IsEnum)
             {
-                Array arr = Enum.GetValues(enumType);
-                if ((arr != null) && (arr.Length > 0))
+                EnumCache enums;
+                if (!_enumCache.TryGetValue(enumType, out enums))
                 {
-                    value = (Enum)arr.GetValue(0);
+                    enums = new EnumCache();
+                    enums.Values = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+                    Array values = Enum.GetValues(enumType);
+                    if ((values != null) && (values.Length > 0))
+                    {
+                        enums.Default = values.GetValue(0);
+
+                        string[] names = Enum.GetNames(enumType);
+
+                        int len = values.Length;
+                        for (int i = 0; i < len; i++)
+                        {
+                            enums.Values.Add(names[i], values.GetValue(i));
+                        }
+                    }
+
+                    _enumCache[enumType] = enums;
                 }
+
+                value = enums.Default;
 
                 str = ((str != null) ? str.Trim() : str);
                 if (!String.IsNullOrEmpty(str))
                 {
-                    foreach (object obj in arr)
+                    object enumVal;
+                    if (enums.Values.TryGetValue(str, out enumVal))
                     {
-                        if (String.Compare(str, obj.ToString(), true) == 0)
-                        {
-                            value = (Enum)obj;
-                            return true;
-                        }
+                        value = enumVal;
+                        return true;
                     }
                 }
             }
