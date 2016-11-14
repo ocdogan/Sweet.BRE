@@ -134,7 +134,7 @@ namespace Sweet.BRETest
                             try
                             {
                                 sw.Restart();
-                                ec.Evaluate(facts);
+                                ec.Evaluate(facts, vars);
                             }
                             finally
                             {
