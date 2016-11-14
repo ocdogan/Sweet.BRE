@@ -81,31 +81,6 @@ namespace Sweet.BRE
 
         # region Operators
 
-        public static BooleanStm operator &(BooleanStm left, BooleanStm right)
-        {
-            return Statement.And(left, right);
-        }
-
-        public static BooleanStm operator |(BooleanStm left, BooleanStm right)
-        {
-            return Statement.Or(left, right);
-        }
-
-        public static UnaryNotStm operator !(BooleanStm target)
-        {
-            return Statement.Not(target);
-        }
-
-        public static BooleanStm operator ==(BooleanStm left, BooleanStm right)
-        {
-            return Statement.EqualTo(left, right);
-        }
-
-        public static BooleanStm operator !=(BooleanStm left, BooleanStm right)
-        {
-            return Statement.Not(EqualTo(left, right));
-        }
-
         public static implicit operator BooleanStm(bool value)
         {
             return (value ? BooleanStm.True : BooleanStm.False);
@@ -269,6 +244,43 @@ namespace Sweet.BRE
         {
             return (ReferenceEquals(value, null) ? TimeStm.Zero : (value.Value ? TimeStm.As(1) : TimeStm.Zero));
         }
+
+        /*
+        public static BooleanStm operator &(BooleanStm left, BooleanStm right)
+        {
+            return Statement.And(left, right);
+        }
+
+        public static BooleanStm operator |(BooleanStm left, BooleanStm right)
+        {
+            return Statement.Or(left, right);
+        }
+
+        public static UnaryNotStm operator !(BooleanStm target)
+        {
+            return Statement.Not(target);
+        }
+
+        public static BooleanStm operator ==(BooleanStm left, Statement right)
+        {
+            return Statement.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator ==(Statement left, BooleanStm right)
+        {
+            return Statement.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(BooleanStm left, Statement right)
+        {
+            return Statement.Not(EqualTo(left, right));
+        }
+
+        public static BooleanStm operator !=(Statement left, BooleanStm right)
+        {
+            return Statement.Not(EqualTo(left, right));
+        }
+        */
 
         # endregion
     }

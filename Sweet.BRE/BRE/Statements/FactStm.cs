@@ -128,9 +128,100 @@ namespace Sweet.BRE
             return new FactStm(name);
         }
 
-        public static BooleanStm operator ==(FactStm left, FactStm right)
+        public static implicit operator FactStm(bool value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(byte value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(char value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(DateTime value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(decimal value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(double value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(short value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(int value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(long value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(sbyte value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(float value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(TimeSpan value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(ushort value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(uint value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        public static implicit operator FactStm(ulong value)
+        {
+            return new FactStm(value.ToString());
+        }
+
+        /*
+        public static BooleanStm operator ==(FactStm left, Statement right)
         {
             return StringStm.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator ==(Statement left, FactStm right)
+        {
+            return StringStm.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(FactStm left, Statement right)
+        {
+            return StringStm.NotEqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(Statement left, FactStm right)
+        {
+            return StringStm.NotEqualTo(left, right);
         }
 
         public static BooleanStm operator >(FactStm left, FactStm right)
@@ -143,11 +234,6 @@ namespace Sweet.BRE
             return StringStm.GreaterThanOrEquals(left, right);
         }
 
-        public static BooleanStm operator !=(FactStm left, FactStm right)
-        {
-            return StringStm.NotEqualTo(left, right);
-        }
-
         public static BooleanStm operator <(FactStm left, FactStm right)
         {
             return StringStm.LessThan(left, right);
@@ -157,6 +243,7 @@ namespace Sweet.BRE
         {
             return StringStm.LessThanOrEquals(left, right);
         }
+        */
 
         # endregion
     }

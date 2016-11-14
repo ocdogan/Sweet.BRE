@@ -128,9 +128,100 @@ namespace Sweet.BRE
             return new VariableStm(name);
         }
 
-        public static BooleanStm operator ==(VariableStm left, VariableStm right)
+        public static implicit operator VariableStm(bool value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(byte value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(char value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(DateTime value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(decimal value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(double value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(short value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(int value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(long value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(sbyte value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(float value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(TimeSpan value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(ushort value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(uint value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        public static implicit operator VariableStm(ulong value)
+        {
+            return new VariableStm(value.ToString());
+        }
+
+        /*
+        public static BooleanStm operator ==(VariableStm left, Statement right)
         {
             return StringStm.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator ==(Statement left, VariableStm right)
+        {
+            return StringStm.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(VariableStm left, Statement right)
+        {
+            return StringStm.NotEqualTo(left, right);
+        }
+
+        public static BooleanStm operator !=(Statement left, VariableStm right)
+        {
+            return StringStm.NotEqualTo(left, right);
         }
 
         public static BooleanStm operator >(VariableStm left, VariableStm right)
@@ -143,11 +234,6 @@ namespace Sweet.BRE
             return StringStm.GreaterThanOrEquals(left, right);
         }
 
-        public static BooleanStm operator !=(VariableStm left, VariableStm right)
-        {
-            return StringStm.NotEqualTo(left, right);
-        }
-
         public static BooleanStm operator <(VariableStm left, VariableStm right)
         {
             return StringStm.LessThan(left, right);
@@ -157,6 +243,7 @@ namespace Sweet.BRE
         {
             return StringStm.LessThanOrEquals(left, right);
         }
+        */
 
         # endregion
     }

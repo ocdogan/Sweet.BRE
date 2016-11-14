@@ -281,61 +281,6 @@ namespace Sweet.BRE
 
         # region Operators
 
-        public static BooleanStm operator ==(Statement left, Statement right)
-        {
-            return Statement.EqualTo(left, right);
-        }
-
-        public static BooleanStm operator >(Statement left, Statement right)
-        {
-            return Statement.GreaterThan(left, right);
-        }
-
-        public static BooleanStm operator >=(Statement left, Statement right)
-        {
-            return Statement.GreaterThanOrEquals(left, right);
-        }
-
-        public static BooleanStm operator !=(Statement left, Statement right)
-        {
-            return Statement.NotEqualTo(left, right);
-        }
-
-        public static BooleanStm operator <(Statement left, Statement right)
-        {
-            return Statement.LessThan(left, right);
-        }
-
-        public static BooleanStm operator <=(Statement left, Statement right)
-        {
-            return Statement.LessThanOrEquals(left, right);
-        }
-
-        public static AddStm operator +(Statement left, Statement right)
-        {
-            return Statement.Add(left, right);
-        }
-
-        public static SubtractStm operator -(Statement left, Statement right)
-        {
-            return Statement.Subtract(left, right);
-        }
-
-        public static DivideStm operator /(Statement left, Statement right)
-        {
-            return Statement.Divide(left, right);
-        }
-
-        public static MultiplyStm operator *(Statement left, Statement right)
-        {
-            return Statement.Multiply(left, right);
-        }
-
-        public static ModuloStm operator %(Statement left, Statement right)
-        {
-            return Statement.Mod(left, right);
-        }
-
         public static implicit operator Statement(bool value)
         {
             return (value ? BooleanStm.True : BooleanStm.False);
@@ -414,6 +359,61 @@ namespace Sweet.BRE
         public static implicit operator Statement(ulong value)
         {
             return new NumericStm(value);
+        }
+
+        public static BooleanStm operator ==(Statement left, Statement right)
+        {
+            return Statement.EqualTo(left, right);
+        }
+
+        public static BooleanStm operator >(Statement left, Statement right)
+        {
+            return Statement.GreaterThan(left, right);
+        }
+
+        public static BooleanStm operator >=(Statement left, Statement right)
+        {
+            return Statement.GreaterThanOrEquals(left, right);
+        }
+
+        public static BooleanStm operator !=(Statement left, Statement right)
+        {
+            return Statement.NotEqualTo(left, right);
+        }
+
+        public static BooleanStm operator <(Statement left, Statement right)
+        {
+            return Statement.LessThan(left, right);
+        }
+
+        public static BooleanStm operator <=(Statement left, Statement right)
+        {
+            return Statement.LessThanOrEquals(left, right);
+        }
+
+        public static AddStm operator +(Statement left, Statement right)
+        {
+            return Statement.Add(left, right);
+        }
+
+        public static SubtractStm operator -(Statement left, Statement right)
+        {
+            return Statement.Subtract(left, right);
+        }
+
+        public static DivideStm operator /(Statement left, Statement right)
+        {
+            return Statement.Divide(left, right);
+        }
+
+        public static MultiplyStm operator *(Statement left, Statement right)
+        {
+            return Statement.Multiply(left, right);
+        }
+
+        public static ModuloStm operator %(Statement left, Statement right)
+        {
+            return Statement.Mod(left, right);
         }
 
         # endregion
