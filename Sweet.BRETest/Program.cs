@@ -224,15 +224,19 @@ namespace Sweet.BRETest
             debugger = null;
 
             facts = new FactList()
+                .Set("fahrenheit", 64)
                 .Set("celcius", 18);
 
             Project project = Project.As();
 
             project
                 .DefineRuleset("main")
-                    .DefineRule("1").Do(
-                        ((FunctionStm)"Print")
+                    .DefineRule("1")
+                    .If((FactStm)"celcius" == 18)
+                    .Do(
+                        ((FunctionStm)"PrintLine")
                             .Params(
+                                "Fahrenheit: ",
                                 ((FunctionStm)"Round")
                                     .Params(
                                         DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
@@ -242,12 +246,15 @@ namespace Sweet.BRETest
                             )
                     )
                 .Ruleset
-                    .DefineRule("2").Do(
-                        ((FunctionStm)"Print")
+                    .DefineRule("2")
+                    .If((FactStm)"fahrenheit" == (NumericStm)64)
+                    .Do(
+                        ((FunctionStm)"PrintLine")
                             .Params(
+                                "Celcius: ",
                                 ((FunctionStm)"Round")
                                     .Params(
-                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                        MultiplyStm.As((FactStm)"fahrenheit" - 32, 5) / 9,
                                         2,
                                         "awayFromZero"
                                     )
@@ -293,25 +300,40 @@ namespace Sweet.BRETest
             vars = null;
             debugger = null;
 
-            List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
+            DateTime now = DateTime.Now;
+            List<object> list = new List<object>(new object[] { 1, "a", now, double.NaN });
 
             facts = new FactList()
                 .Set("fact1", list)
-                .Set("fact2", new char[] { ' ' });
+                .Set("fact2", new char[] { ' ' })
+                .Set("fact3", now);
 
             Project project = Project.As();
 
-            project.DefineRuleset("main")
-                .DefineRule("main")
-                .Do(
-                    ((FunctionStm)"Print")
-                        .Params(
-                            ReflectionStm.As((FactStm)"fact1",
-                                "[2].ToString('s').Replace('T', ' ').Split($0)[1].ToCharArray()[2]",
-                                (FactStm)"fact2")
-                        )
-                )
-                ;
+            project
+                .DefineRuleset("main")
+                    .DefineRule("1")
+                    .Do(
+                        ((FunctionStm)"PrintLine")
+                            .Params(
+                                ((FunctionStm)"Format")
+                                    .Params(
+                                        (FactStm)"fact3",
+                                        "s"
+                                    )
+                            )
+                    )
+                .Ruleset
+                    .DefineRule("2")
+                    .Do(
+                        ((FunctionStm)"PrintLine")
+                            .Params(
+                                ReflectionStm.As((FactStm)"fact1",
+                                    "[2].ToString('s').Replace('T', ' ').Split($0)[1].ToCharArray()[2]",
+                                    (FactStm)"fact2")
+                            )
+                    )
+                    ;
 
             rs = project.GetRuleset("main");
         }
@@ -674,6 +696,7 @@ namespace Sweet.BRETest
             project
                 .DefineRuleset("main")
                 .DefineRule("main")
+                .If((VariableStm)"@var2" == 1)
                 .Do(
                     TryStm.As()
                         .Do(
