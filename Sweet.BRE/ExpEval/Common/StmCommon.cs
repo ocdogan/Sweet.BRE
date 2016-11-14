@@ -522,6 +522,34 @@ namespace Sweet.BRE
             return result;
         }
 
+        public static Guid ToGuid(object value)
+        {
+            return ToGuid(value, Guid.Empty);
+        }
+
+        public static Guid ToGuid(object value, Guid defValue)
+        {
+            if (value == null)
+            {
+                return defValue;
+            }
+
+            if (value is Guid)
+            {
+                return (Guid)value;
+            }
+
+            string s = ToString(value);
+
+            Guid result = defValue;
+            if (!Guid.TryParse(s, out result))
+            {
+                result = defValue;
+            }
+
+            return result;
+        }
+
         public static long ToInteger(object value)
         {
             return ToInteger(value, 0);

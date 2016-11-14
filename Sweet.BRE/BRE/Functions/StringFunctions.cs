@@ -36,13 +36,21 @@ namespace Sweet.BRE
         private const string STR_STRCONTAINS = "STRCONTAINS";
         private const string STR_ENDSWITH = "ENDSWITH";
         private const string STR_FORMAT = "FORMAT";
+        private const string STR_STRINDEX = "STRINDEX";
         private const string STR_STRINDEXOF = "STRINDEXOF";
         private const string STR_INSERT = "INSERT";
         private const string STR_ISNULLOREMPTY = "ISNULLOREMPTY";
         private const string STR_JOIN = "JOIN";
+        private const string STR_STRLASTINDEX = "STRLASTINDEX";
         private const string STR_STRLASTINDEXOF = "STRLASTINDEXOF";
+        private const string STR_STRLASTPOS = "STRLASTPOS";
+        private const string STR_STRLASTPOSITION = "STRLASTPOSITION";
+        private const string STR_STRLASTPOSITIONOF = "STRLASTPOSITIONOF";
         private const string STR_PADLEFT = "PADLEFT";
         private const string STR_PADRIGHT = "PADRIGHT";
+        private const string STR_STRPOS = "STRPOS";
+        private const string STR_STRPOSITION = "STRPOSITION";
+        private const string STR_STRPOSITIONOF = "STRPOSITIONOF";
         private const string STR_REMOVE = "REMOVE";
         private const string STR_REPLACE = "REPLACE";
         private const string STR_SPLIT = "SPLIT";
@@ -99,7 +107,7 @@ namespace Sweet.BRE
                             ValueType.String,
                             ValueType.String
                         },
-                        ReturnType.String), 
+                        ReturnType.String),
                     new FunctionInfo("Insert", 2, 3, new ValueType[] 
                         {
                             ValueType.String,
@@ -164,14 +172,15 @@ namespace Sweet.BRE
                             ValueType.String,
                             ValueType.Integer
                         },
-                        ReturnType.String), 
+                        ReturnType.String)
+                            .AddAliases(new string[] { "StrIndex", "StrPos", "StrPosition", "StrPositionOf" }),
                     new FunctionInfo("StrLastIndexOf", 2, 3, new ValueType[] 
                         {
                             ValueType.String,
                             ValueType.String,
                             ValueType.Integer
                         },
-                        ReturnType.String), 
+                        ReturnType.String),
                     new FunctionInfo("Substring", 2, 3, new ValueType[] 
                         {
                             ValueType.String,
@@ -235,7 +244,11 @@ namespace Sweet.BRE
                     result = Format(e, e.Args);
                     break;
 
+                case STR_STRINDEX:
                 case STR_STRINDEXOF:
+                case STR_STRPOS:
+                case STR_STRPOSITION:
+                case STR_STRPOSITIONOF:
                     result = IndexOf(e, e.Args);
                     break;
 
@@ -251,7 +264,11 @@ namespace Sweet.BRE
                     result = Join(e, e.Args);
                     break;
 
+                case STR_STRLASTINDEX:
                 case STR_STRLASTINDEXOF:
+                case STR_STRLASTPOS:
+                case STR_STRLASTPOSITION:
+                case STR_STRLASTPOSITIONOF:
                     result = LastIndexOf(e, e.Args);
                     break;
 

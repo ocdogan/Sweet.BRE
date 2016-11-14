@@ -36,9 +36,24 @@ namespace Sweet.BRE
     {
         private const string STR_CONTAINS = "CONTAINS";
         private const string STR_COUNT = "COUNT";
+        private const string STR_COUNTOF = "COUNTOF";
+        private const string STR_HAS = "HAS";
+        private const string STR_INDEX = "INDEX";
         private const string STR_INDEXOF = "INDEXOF";
+        private const string STR_LASTINDEX = "LASTINDEX";
         private const string STR_LASTINDEXOF = "LASTINDEXOF";
+        private const string STR_LASTPOS = "LASTPOS";
+        private const string STR_LASTPOSOF = "LASTPOSOF";
+        private const string STR_LASTPOSITION = "LASTPOSITION";
+        private const string STR_LASTPOSITIONOF = "LASTPOSITIONOF";
+        private const string STR_LEN = "LEN";
+        private const string STR_LENOF = "LENOF";
         private const string STR_LENGTH = "LENGTH";
+        private const string STR_LENGTHOF = "LENGTHOF";
+        private const string STR_POS = "POS";
+        private const string STR_POSOF = "POSOF";
+        private const string STR_POSITION = "POSITION";
+        private const string STR_POSITIONOF = "POSITIONOF";
 
         private List<FunctionInfo> _info;
 
@@ -66,31 +81,36 @@ namespace Sweet.BRE
                             ValueType.Object,
                             ValueType.Integer
                         },
-                        ReturnType.Boolean), 
+                        ReturnType.Boolean)
+                            .AddAlias("Has"), 
                     new FunctionInfo("Count", 1, 1, new ValueType[] 
                         {
                             ValueType.Object
                         },
-                        ReturnType.Integer),
+                        ReturnType.Integer)
+                            .AddAlias("CountOf"),
                     new FunctionInfo("IndexOf", 2, 3, new ValueType[] 
                         {
                             ValueType.Object,
                             ValueType.Object,
                             ValueType.Integer
                         },
-                        ReturnType.Integer), 
+                        ReturnType.Integer)
+                            .AddAliases(new string[] { "Index", "Pos", "PosOf", "Position", "PositionOf" }),
                     new FunctionInfo("LastIndexOf", 2, 3, new ValueType[] 
                         {
                             ValueType.Object,
                             ValueType.Object,
                             ValueType.Integer
                         },
-                        ReturnType.Integer), 
+                        ReturnType.Integer)
+                            .AddAliases(new string[] { "LastIndex", "LastPos", "LastPosOf", "LastPosition", "LastPositionOf" }),
                     new FunctionInfo("Length", 1, 1, new ValueType[] 
                         {
                             ValueType.Object
                         },
                         ReturnType.Integer)
+                            .AddAliases(new string[] { "Len", "LenOf", "LengthOf" })
                 }
                 );
         }
@@ -107,22 +127,37 @@ namespace Sweet.BRE
             switch (function)
             {
                 case STR_CONTAINS:
+                case STR_HAS:
                     result = Contains(e, e.Args);
                     break;
 
                 case STR_COUNT:
+                case STR_COUNTOF:
                     result = Count(e, e.Args);
                     break;
 
+                case STR_INDEX:
                 case STR_INDEXOF:
+                case STR_POS:
+                case STR_POSOF:
+                case STR_POSITION:
+                case STR_POSITIONOF:
                     result = IndexOf(e, e.Args);
                     break;
 
+                case STR_LASTINDEX:
                 case STR_LASTINDEXOF:
+                case STR_LASTPOS:
+                case STR_LASTPOSOF:
+                case STR_LASTPOSITION:
+                case STR_LASTPOSITIONOF:
                     result = LastIndexOf(e, e.Args);
                     break;
 
+                case STR_LEN:
                 case STR_LENGTH:
+                case STR_LENOF:
+                case STR_LENGTHOF:
                     result = Length(e, e.Args);
                     break;
 
@@ -180,7 +215,8 @@ namespace Sweet.BRE
                 {
                     return list.Contains(item);
                 }
-                else if (list.Count > start)
+
+                if (list.Count > start)
                 {
                     long index = 0;
                     foreach (object o in list.Keys)
@@ -204,7 +240,8 @@ namespace Sweet.BRE
                 {
                     return list.Contains(item);
                 }
-                else if (list.Count > start)
+
+                if (list.Count > start)
                 {
                     long index = 0;
                     foreach (object o in list)

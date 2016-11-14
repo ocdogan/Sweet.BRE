@@ -40,9 +40,11 @@ namespace Sweet.BRE
         private const string STR_ASBOOLEAN = "ASBOOLEAN";
         private const string STR_ASDATE = "ASDATE";
         private const string STR_ASDOUBLE = "ASDOUBLE";
+        private const string STR_ASGUID = "ASGUID";
         private const string STR_ASINTEGER = "ASINTEGER";
         private const string STR_ASSTRING = "ASSTRING";
         private const string STR_ASTIME = "ASTIME";
+        private const string STR_ASUUID = "ASUUID";
         private const string STR_BOOLEAN = "BOOLEAN";
         private const string STR_COMPARE = "COMPARE";
         private const string STR_DATE = "DATE";
@@ -57,6 +59,8 @@ namespace Sweet.BRE
         private const string STR_ISNULL = "ISNULL";
         private const string STR_ISNUMBER = "ISNUMBER";
         private const string STR_LOG = "LOG";
+        private const string STR_NEWGUID = "NEWGUID";
+        private const string STR_NEWUUID = "NEWUUID";
         private const string STR_PRINT = "PRINT";
         private const string STR_PRINTLINE = "PRINTLINE";
         private const string STR_PRINTLN = "PRINTLN";
@@ -66,11 +70,14 @@ namespace Sweet.BRE
         private const string STR_TOBOOLEAN = "TOBOOLEAN";
         private const string STR_TODATE = "TODATE";
         private const string STR_TODOUBLE = "TODOUBLE";
+        private const string STR_TOGUID = "TOGUID";
         private const string STR_TOINTEGER = "TOINTEGER";
         private const string STR_TOSTRING = "TOSTRING";
         private const string STR_TOTIME = "TOTIME";
+        private const string STR_TOUUID = "TOUUID";
         private const string STR_TRACE = "TRACE";
         private const string STR_TRACERT = "TRACERT";
+        private const string STR_UUID = "UUID";
         private const string STR_WRITE = "WRITE";
         private const string STR_WRITELINE = "WRITELINE";
         private const string STR_WRITELN = "WRITELN";
@@ -120,7 +127,6 @@ namespace Sweet.BRE
                             ValueType.Object
                         },
                         ReturnType.Boolean), 
-                    new FunctionInfo("Guid", 0, 0, null, ReturnType.String), 
                     new FunctionInfo("IsNull", 1, 1, new ValueType[] 
                         {
                             ValueType.Object
@@ -136,7 +142,9 @@ namespace Sweet.BRE
                             ValueType.Object,
                             ValueType.Object
                         },
-                        ReturnType.Void), 
+                        ReturnType.Void),
+                    new FunctionInfo("NewGuid", 0, 0, null, ReturnType.String)
+                            .AddAlias("NewUuid"),
                     new FunctionInfo("Print", 1, 1, new ValueType[] 
                         {
                             ValueType.Object
@@ -171,7 +179,13 @@ namespace Sweet.BRE
                             ValueType.Object
                         },
                         ReturnType.Float)
-                            .AddAliases(new string[] { "AsDouble", "Double" }), 
+                            .AddAliases(new string[] { "AsDouble", "Double" }),
+                    new FunctionInfo("ToGuid", 1, 1, new ValueType[]
+                        {
+                            ValueType.Object
+                        },
+                        ReturnType.Integer)
+                            .AddAliases(new string[] { "AsGuid", "Guid", "AsUuid", "Uuid", "ToUuid" }),
                     new FunctionInfo("ToInteger", 1, 1, new ValueType[] 
                         {
                             ValueType.Object
@@ -231,16 +245,17 @@ namespace Sweet.BRE
                     result = (Compare(e, e.Args) == 0);
                     break;
 
-                case STR_GUID:
-                    result = Guid.NewGuid().ToString();
-                    break;
-
                 case STR_ISNULL:
                     result = IsNull(e, e.Args);
                     break;
 
                 case STR_ISNUMBER:
                     result = IsNumber(e, e.Args);
+                    break;
+
+                case STR_NEWGUID:
+                case STR_NEWUUID:
+                    result = Guid.NewGuid().ToString("N");
                     break;
 
                 case STR_PRINT:
@@ -277,6 +292,15 @@ namespace Sweet.BRE
                     result = ToDouble(e, e.Args);
                     break;
 
+                case STR_ASGUID:
+                case STR_ASUUID:
+                case STR_GUID:
+                case STR_TOGUID:
+                case STR_UUID:
+                case STR_TOUUID:
+                    result = ToGuid(e, e.Args);
+                    break;
+                
                 case STR_ASINTEGER:
                 case STR_INTEGER:
                 case STR_TOINTEGER:
@@ -501,6 +525,17 @@ namespace Sweet.BRE
             }
 
             return result;
+        }
+
+        public Guid ToGuid(FunctionEventArgs e, params object[] args)
+        {
+            e.Handled = true;
+            if ((args != null) && (args.Length > 0))
+            {
+                return StmCommon.ToGuid(args[0]);
+            }
+
+            return Guid.Empty;
         }
 
         public long ToInteger(FunctionEventArgs e, params object[] args)
