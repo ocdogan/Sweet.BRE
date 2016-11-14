@@ -193,7 +193,12 @@ namespace Sweet.BRE
             List<string> nameList = new List<string>();
             
             nameList.Add(info.Name);
-            nameList.AddRange(info.Aliases);
+
+            string[] aliases = info.Aliases;
+            if ((aliases != null) && (aliases.Length > 0))
+            {
+                nameList.AddRange(aliases);
+            }
 
             List<FunctionInfoBucket> infoList = null;
             foreach (string fn in nameList)
@@ -495,10 +500,12 @@ namespace Sweet.BRE
                 return new ArgumentNullException("function");
             }
 
-            string realFunction;
-            if (!_funcAliases.TryGetValue(function, out realFunction))
+            string realFunction = function;
+
+            if ((_funcAliases.Count > 0) &&
+                !_funcAliases.TryGetValue(function, out realFunction))
             {
-                throw new RuleException(String.Format(BreResStrings.GetString("FunctionCanNotBeHandled"), function));
+                realFunction = function;
             }
 
             if (!_funcInformations.ContainsKey(realFunction))
