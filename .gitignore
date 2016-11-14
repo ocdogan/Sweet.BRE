@@ -5,7 +5,7 @@
 
 *.txt
 
-obj/*
+obj\*
 
 *.exe
 
@@ -16,3 +16,7 @@ obj/*
 *.resources
 
 *.xml
+
+*.AssemblyAttribute.cs
+
+.#*.cs
