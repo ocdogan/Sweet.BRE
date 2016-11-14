@@ -195,6 +195,7 @@ namespace Sweet.BRE
             nameList.Add(info.Name);
             nameList.AddRange(info.Aliases);
 
+            List<FunctionInfoBucket> infoList = null;
             foreach (string fn in nameList)
             {
                 string function = fn;
@@ -202,12 +203,7 @@ namespace Sweet.BRE
 
                 if (!String.IsNullOrEmpty(function))
                 {
-                    List<FunctionInfoBucket> infoList = null;
-                    if (_funcInformations.ContainsKey(function))
-                    {
-                        infoList = _funcInformations[function];
-                    }
-                    else
+                    if (!_funcInformations.TryGetValue(function, out infoList))
                     {
                         infoList = new List<FunctionInfoBucket>();
                         _funcInformations[function] = infoList;
@@ -227,17 +223,22 @@ namespace Sweet.BRE
 
             lock (_funcInformations)
             {
-                if (!_funcHandlerTypes.Contains(handler.GetType()))
+                Type ht = handler.GetType();
+                if (!_funcHandlerTypes.Contains(ht))
                 {
-                    _funcHandlerTypes.Add(handler.GetType());
+                    _funcHandlerTypes.Add(ht);
 
                     FunctionInfo[] functions = handler.HandledFunctions;
-                    foreach (FunctionInfo info in functions)
+
+                    if ((functions != null) && (functions.Length > 0))
                     {
-                        if (info != null)
+                        foreach (FunctionInfo info in functions)
                         {
-                            _registeredFunctions.Add(info);
-                            RegisterFunctionInfo(handler, info);
+                            if (info != null)
+                            {
+                                _registeredFunctions.Add(info);
+                                RegisterFunctionInfo(handler, info);
+                            }
                         }
                     }
                 }
@@ -439,25 +440,24 @@ namespace Sweet.BRE
         {
             string function = e.Name;
 
-            if (_funcInformations.ContainsKey(function))
+            e.Handled = false;
+            e.Result = double.NaN;
+
+            List<FunctionInfoBucket> bucketList;
+
+            if (_funcInformations.TryGetValue(function, out bucketList) &&
+                (bucketList != null) && (bucketList.Count > 0))
             {
-                e.Handled = false;
-                e.Result = double.NaN;
-
-                List<FunctionInfoBucket> bucketList = _funcInformations[function];
-
-                if (bucketList != null)
+                IFunctionHandler handler;
+                foreach (FunctionInfoBucket bucket in bucketList)
                 {
-                    foreach (FunctionInfoBucket bucket in bucketList)
-                    {
-                        IFunctionHandler handler = bucket.Handler;
+                    handler = bucket.Handler;
 
-                        if (handler != null)
-                        {
-                            handler.Eval(e);
-                            if (e.Handled)
-                                break;
-                        }
+                    if (handler != null)
+                    {
+                        handler.Eval(e);
+                        if (e.Handled)
+                            break;
                     }
                 }
             }
@@ -465,11 +465,11 @@ namespace Sweet.BRE
 
         private static void EvaluateFunctionByDelegates(FunctionEventArgs e)
         {
+            e.Handled = false;
+            e.Result = double.NaN;
+
             if (_evalFuncEventList.Count > 0)
             {
-                e.Handled = false;
-                e.Result = double.NaN;
-
                 IEvaluationContext context = e.Context;
 
                 foreach (EventHandler<FunctionEventArgs> eventHandler in _evalFuncEventList)
@@ -495,21 +495,20 @@ namespace Sweet.BRE
                 return new ArgumentNullException("function");
             }
 
-            if (_funcAliases.ContainsKey(function))
-            {
-                function = _funcAliases[function];
-            }
-
-            if (!_funcInformations.ContainsKey(function))
+            string realFunction;
+            if (!_funcAliases.TryGetValue(function, out realFunction))
             {
                 throw new RuleException(String.Format(BreResStrings.GetString("FunctionCanNotBeHandled"), function));
             }
 
-            FunctionEventArgs eArgs = new FunctionEventArgs(context, function);
-            if ((args != null) && (args.Length > 0))
+            if (!_funcInformations.ContainsKey(realFunction))
             {
-                eArgs = new FunctionEventArgs(context, function, args);
+                throw new RuleException(String.Format(BreResStrings.GetString("FunctionCanNotBeHandled"), function));
             }
+
+            FunctionEventArgs eArgs = ((args != null) && (args.Length > 0)) ? 
+                new FunctionEventArgs(context, realFunction, args) :
+                new FunctionEventArgs(context, realFunction);
 
             object result = double.NaN;
             try
@@ -520,15 +519,12 @@ namespace Sweet.BRE
                     EvaluateFunctionByDelegates(eArgs);
                 }
 
-                if (eArgs.Handled)
-                {
-                    result = eArgs.Result;
-                }
-
                 if (!eArgs.Handled)
                 {
                     throw new RuleException(String.Format(BreResStrings.GetString("FunctionCanNotBeHandled"), function));
                 }
+
+                result = eArgs.Result;
             }
             finally
             {

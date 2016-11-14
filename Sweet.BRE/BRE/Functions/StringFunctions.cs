@@ -212,8 +212,7 @@ namespace Sweet.BRE
         {
             string function = e.Name;
 
-            function = (function != null ? function.Trim() : String.Empty);
-            function = function.ToUpperInvariant();
+            function = (function != null ? function.Trim().ToUpperInvariant() : String.Empty);
 
             e.Handled = true;
             object result = e.Result;
