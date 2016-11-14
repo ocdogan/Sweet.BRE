@@ -320,7 +320,7 @@ namespace Sweet.BRE
         # endregion
 
         # region IndexOf
-        private long IndexOfInArray(object[] objs, object item, long start)
+        private long IndexOfInArray(Array objs, object item, long start)
         {
             if ((objs != null) && (objs.Length > start))
             {
@@ -400,7 +400,7 @@ namespace Sweet.BRE
                     if ((o1 is Array) || o1.GetType().IsArray)
                     {
                         e.Handled = true;
-                        return IndexOfInArray((object[])o1, item, start);
+                        return IndexOfInArray((Array)o1, item, start);
                     }
 
                     if (o1 is IList)
@@ -434,7 +434,7 @@ namespace Sweet.BRE
         # endregion
 
         # region LastIndexOf
-        private long LastIndexOfInArray(object[] objs, object item, long start)
+        private long LastIndexOfInArray(Array objs, object item, long start)
         {
             if ((objs != null) && (objs.Length > start))
             {
@@ -534,7 +534,7 @@ namespace Sweet.BRE
                     if ((o1 is Array) || o1.GetType().IsArray)
                     {
                         e.Handled = true;
-                        return LastIndexOfInArray((object[])o1, item, start);
+                        return LastIndexOfInArray((Array)o1, item, start);
                     }
 
                     if (o1 is IList)
@@ -575,29 +575,35 @@ namespace Sweet.BRE
                 object o1 = args[0];
                 if (o1 != null)
                 {
+                    e.Handled = true;
+
                     if ((o1 is Array) || o1.GetType().IsArray)
                     {
-                        e.Handled = true;
-                        return ((object[])o1).Length;
+                        return ((Array)o1).Length;
                     }
 
                     if (o1 is IList)
                     {
-                        e.Handled = true;
                         return ((IList)o1).Count;
                     }
 
                     if (o1 is ICollection)
                     {
-                        e.Handled = true;
                         return ((ICollection)o1).Count;
                     }
 
                     if (o1 is IDictionary)
                     {
-                        e.Handled = true;
                         return ((IDictionary)o1).Count;
                     }
+
+                    string str = o1.ToString();
+                    if (str != null)
+                    {
+                        return str.Length;
+                    }
+
+                    return 0;
                 }
             }
 
@@ -606,31 +612,7 @@ namespace Sweet.BRE
 
         public int Length(FunctionEventArgs e, params object[] args)
         {
-            e.Handled = false;
-            if ((args != null) && (args.Length > 0))
-            {
-                object o1 = args[0];
-                if (o1 != null)
-                {
-                    e.Handled = true;
-
-                    if ((o1 is Array) || o1.GetType().IsArray)
-                        return ((object[])o1).Length;
-
-                    if (o1 is IList)
-                        return ((IList)o1).Count;
-
-                    if (o1 is ICollection)
-                        return ((ICollection)o1).Count;
-
-                    if (o1 is IDictionary)
-                        return ((IDictionary)o1).Count;
-
-                    return o1.ToString().Length;
-                }
-            }
-
-            return 0;
+            return Count(e, args);
         }
     }
 }
