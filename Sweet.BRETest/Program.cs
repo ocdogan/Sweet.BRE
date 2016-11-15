@@ -36,13 +36,16 @@ namespace Sweet.BRETest
 {
     class Program
     {
-        private delegate void TestMethod(out IRuleset rs, out IFactList facts, out IVariableList vars,
+        private delegate void RunTestMethod(out IRuleset rs, out IFactList facts, out IVariableList vars,
                                          out IRuleDebugger debugger);
-        
+
+        private delegate IProject ProjectMethod();
+
         private class Test
         {
             public string Name;
-            public TestMethod Method;
+            public RunTestMethod RunMethod;
+            public ProjectMethod ProjectMethod;
         }
 
         private static List<Test> testMethods = new List<Test>();
@@ -73,20 +76,76 @@ namespace Sweet.BRETest
             }
         }
 
+        private static ConsoleKey GetTypeKey()
+        {
+            while (true)
+            {
+                ConsoleKey key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.Escape)
+                {
+                    return key;
+                }
+
+                int testNo = (int)key;
+                if (testNo == (int)ConsoleKey.D1 || testNo == (int)ConsoleKey.D2)
+                {
+                    testNo -= (int)ConsoleKey.D1;
+                    return (ConsoleKey)testNo;
+                }
+
+                if (testNo == (int)ConsoleKey.NumPad1 || testNo == (int)ConsoleKey.NumPad2)
+                {
+                    testNo -= (int)ConsoleKey.NumPad1;
+                    return (ConsoleKey)testNo;
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
-            testMethods.Add(new Test { Name = "FahrenheitToCelciusTest", Method = FahrenheitToCelciusTest });
-            testMethods.Add(new Test { Name = "CelciusToFahrenheitTest", Method = CelciusToFahrenheitTest });
-            testMethods.Add(new Test { Name = "IndexTest", Method = IndexTest });
-            testMethods.Add(new Test { Name = "ReflectionTest", Method = ReflectionTest });
-            testMethods.Add(new Test { Name = "TryCatchTest", Method = TryCatchTest });
-            testMethods.Add(new Test { Name = "GeneralTest", Method = GeneralTest });
-            testMethods.Add(new Test { Name = "SaveTest", Method = SaveTest });
+            testMethods.Add(new Test { Name = "Fahrenheit to Celcius Test", RunMethod = FahrenheitToCelciusTest, ProjectMethod = FahrenheitToCelciusTestProject });
+            testMethods.Add(new Test { Name = "Celcius to Fahrenheit Test", RunMethod = CelciusToFahrenheitTest, ProjectMethod = CelciusToFahrenheitTestProject });
+            testMethods.Add(new Test { Name = "Index Test", RunMethod = IndexTest, ProjectMethod = IndexTestProject });
+            testMethods.Add(new Test { Name = "Reflection Test", RunMethod = ReflectionTest, ProjectMethod = ReflectionTestProject });
+            testMethods.Add(new Test { Name = "Try & Catch Test", RunMethod = TryCatchTest, ProjectMethod = TryCatchTestProject });
+            testMethods.Add(new Test { Name = "General Test", RunMethod = GeneralTest, ProjectMethod = GeneralTestProject });
+            testMethods.Add(new Test { Name = "Save Test", RunMethod = SaveTest, ProjectMethod = SaveTestProject });
 
             while (true)
             {
                 Console.Clear();
 
+                Console.WriteLine("Select an action:");
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine("1. Run project");
+                Console.WriteLine("2. Print project");
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine("Press ESC to exit or select the test to run...");
+                Console.WriteLine();
+
+                ConsoleKey key = GetTypeKey();
+                if (key == ConsoleKey.Escape)
+                    break;
+
+                int testNo = (int)key;
+                if (testNo == 0)
+                {
+                    RunTests();
+                }
+                else {
+                    PrintTests();
+                }
+            }
+        }
+
+        private static void RunTests()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.WriteLine("RUN");
                 Console.WriteLine("--------------------------------");
 
                 for (int i = 0; i < testMethods.Count; i++)
@@ -119,7 +178,7 @@ namespace Sweet.BRETest
                     sw.Start();
                     try
                     {
-                        testMethods[testNo].Method(out rs, out facts, out vars, out debugger);
+                        testMethods[testNo].RunMethod(out rs, out facts, out vars, out debugger);
                     }
                     finally
                     {
@@ -159,17 +218,59 @@ namespace Sweet.BRETest
             }
         }
 
-        private static void IndexTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
-                                         out IRuleDebugger debugger)
+        private static void PrintTests()
         {
-            vars = null;
+            while (true)
+            {
+                Console.Clear();
 
-            List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
+                Console.WriteLine("PRINT");
+                Console.WriteLine("--------------------------------");
 
-            facts = new FactList()
-                .Set("fact1", list)
-                .Set("celcius", 18);
+                for (int i = 0; i < testMethods.Count; i++)
+                {
+                    Console.WriteLine("{0}. {1}", i + 1, testMethods[i].Name);
+                }
 
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine("Press ESC to exit or select the test to print...");
+                Console.WriteLine();
+
+                ConsoleKey key = GetTestKey();
+                if (key == ConsoleKey.Escape)
+                    break;
+
+                int testNo = (int)key;
+
+                Console.Clear();
+                Console.WriteLine("Project: " + testMethods[testNo].Name);
+                Console.WriteLine("--------------------------------");
+
+                try
+                {
+                    IProject project = testMethods[testNo].ProjectMethod();
+
+                    if (!ReferenceEquals(project, null))
+                    {
+                        Console.WriteLine(project);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error:");
+                    Console.WriteLine(e);
+                }
+
+                Console.WriteLine("--------------------------------");
+
+                Console.WriteLine("Press ESC to exit, any key to continue...");
+                if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                    break;
+            }
+        }
+
+        private static IProject IndexTestProject()
+        {
             IProject project = Project.As()
                 .RegisterFunctionAlias("Month name", "MonthName")
                 .RegisterFunctionAlias("Convert to string", "String")
@@ -204,6 +305,19 @@ namespace Sweet.BRETest
                             )
                     )
                     ;
+            return project;
+        }
+
+        private static void IndexTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
+        {
+            vars = null;
+
+            List<object> list = new List<object>(new object[] { 1, "a", DateTime.Now, double.NaN });
+
+            facts = new FactList()
+                .Set("fact1", list)
+                .Set("celcius", 18);
 
             debugger = new DefaultRuleDebugger(delegate (object sender, DebugEventArgs e)
             {
@@ -214,20 +328,12 @@ namespace Sweet.BRETest
                 }
             });
 
-            rs = project.GetRuleset("main");
+            rs = IndexTestProject().GetRuleset("main");
         }
 
-        private static void CelciusToFahrenheitTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
-                                         out IRuleDebugger debugger)
+        private static IProject CelciusToFahrenheitTestProject()
         {
-            vars = null;
-            debugger = null;
-
-            facts = new FactList()
-                .Set("fahrenheit", 64)
-                .Set("celcius", 18);
-
-            Project project = Project.As();
+            IProject project = Project.As();
 
             project
                 .DefineRuleset("main")
@@ -261,8 +367,42 @@ namespace Sweet.BRETest
                             )
                     )
                     ;
+            return project;
+        }
 
-            rs = project.GetRuleset("main");
+        private static void CelciusToFahrenheitTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
+        {
+            vars = null;
+            debugger = null;
+
+            facts = new FactList()
+                .Set("fahrenheit", 64)
+                .Set("celcius", 18);
+
+            rs = CelciusToFahrenheitTestProject().GetRuleset("main");
+        }
+
+        private static IProject FahrenheitToCelciusTestProject()
+        {
+            IProject project = Project.As();
+
+            project
+                .DefineRuleset("main")
+                    .DefineRule("main")
+                    .Do(
+                        ((FunctionStm)"Print")
+                            .Params(
+                                ((FunctionStm)"Round")
+                                    .Params(
+                                        MultiplyStm.As((FactStm)"fahrenheit" - 32, 5) / 9,
+                                        2,
+                                        "awayFromZero"
+                                    )
+                            )
+                    )
+                    ;
+            return project;
         }
 
         private static void FahrenheitToCelciusTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
@@ -274,41 +414,12 @@ namespace Sweet.BRETest
             facts = new FactList()
                 .Set("fahrenheit", 64.4);
 
-            Project project = Project.As();
-
-            project.DefineRuleset("main")
-                .DefineRule("main")
-                .Do(
-                    ((FunctionStm)"Print")
-                        .Params(
-                            ((FunctionStm)"Round")
-                                .Params(
-                                    MultiplyStm.As((FactStm)"fahrenheit" - 32, 5) / 9,
-                                    2,
-                                    "awayFromZero"
-                                )
-                        )
-                )
-                ;
-
-            rs = project.GetRuleset("main");
+            rs = FahrenheitToCelciusTestProject().GetRuleset("main");
         }
 
-        private static void ReflectionTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
-                                         out IRuleDebugger debugger)
+        private static IProject ReflectionTestProject()
         {
-            vars = null;
-            debugger = null;
-
-            DateTime now = DateTime.Now;
-            List<object> list = new List<object>(new object[] { 1, "a", now, double.NaN });
-
-            facts = new FactList()
-                .Set("fact1", list)
-                .Set("fact2", new char[] { ' ' })
-                .Set("fact3", now);
-
-            Project project = Project.As();
+            IProject project = Project.As();
 
             project
                 .DefineRuleset("main")
@@ -334,22 +445,29 @@ namespace Sweet.BRETest
                             )
                     )
                     ;
-
-            rs = project.GetRuleset("main");
+            return project;
         }
 
-        private static void TryCatchTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+        private static void ReflectionTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
                                          out IRuleDebugger debugger)
         {
             vars = null;
             debugger = null;
 
-            Project project = Project.As();
+            DateTime now = DateTime.Now;
+            List<object> list = new List<object>(new object[] { 1, "a", now, double.NaN });
 
             facts = new FactList()
-                .Set("fact1", 7)
-                .Set("project", project)
-                .Set("celcius", 18);
+                .Set("fact1", list)
+                .Set("fact2", new char[] { ' ' })
+                .Set("fact3", now);
+
+            rs = ReflectionTestProject().GetRuleset("main");
+        }
+
+        private static IProject TryCatchTestProject()
+        {
+            IProject project = Project.As();
 
             project
                 .DefineRuleset("main")
@@ -391,25 +509,28 @@ namespace Sweet.BRETest
                                     )
                             )
                         );
+            return project;
+        }
+
+        private static void TryCatchTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
+        {
+            vars = null;
+            debugger = null;
+
+            IProject project = TryCatchTestProject();
+
+            facts = new FactList()
+                .Set("fact1", 7)
+                .Set("project", project)
+                .Set("celcius", 18);
 
             rs = project.GetRuleset("main");
         }
 
-        private static void GeneralTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
-                                         out IRuleDebugger debugger)
+        private static IProject GeneralTestProject()
         {
-            vars = null;
-            facts = null;
-            debugger = null;
-
-            vars = new VariableList()
-                .Set("VarA", 7)
-                .Set("Count", 0)
-                .Set("@var1", 0)
-                .Set("@var2", 0)
-                .Set("@var3", 0);
-
-            Project project = Project.As();
+            IProject project = Project.As();
 
             // table
             DecisionTable table = project.DefineTable("decisionTable1");
@@ -580,19 +701,29 @@ namespace Sweet.BRETest
                     )
                 )
                 ;
-
-            rs = project.GetRuleset("main");
+            return project;
         }
 
-        private static void SaveTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+        private static void GeneralTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
                                          out IRuleDebugger debugger)
         {
-            rs = null;
             vars = null;
             facts = null;
             debugger = null;
 
-            Project project = Project.As();
+            vars = new VariableList()
+                .Set("VarA", 7)
+                .Set("Count", 0)
+                .Set("@var1", 0)
+                .Set("@var2", 0)
+                .Set("@var3", 0);
+
+            rs = GeneralTestProject().GetRuleset("main");
+        }
+
+        private static IProject SaveTestProject()
+        {
+            IProject project = Project.As();
 
             // Variables
             project.Variables
@@ -805,11 +936,23 @@ namespace Sweet.BRETest
                     )
                 )
                 ;
+            return project;
+        }
+
+        private static void SaveTest(out IRuleset rs, out IFactList facts, out IVariableList vars,
+                                         out IRuleDebugger debugger)
+        {
+            rs = null;
+            vars = null;
+            facts = null;
+            debugger = null;
+
+            IProject project = SaveTestProject();
 
             XmlDocument doc = null;
             try
             {
-                doc = ProjectWriter.Write(project);
+                doc = ProjectWriter.Write((Project)project);
             }
             finally
             {
