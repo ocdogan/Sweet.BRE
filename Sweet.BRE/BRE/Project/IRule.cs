@@ -46,7 +46,7 @@ namespace Sweet.BRE
         IRule SetPriority(RulePriority priority);
         IRule SetSubPriority(int subPriority);
 
-        IRule If(BooleanStm condition);
+        IRule When(BooleanStm condition);
         IRule Do(params ActionStm[] doActions);
     }
 }

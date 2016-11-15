@@ -232,7 +232,7 @@ namespace Sweet.BRETest
             project
                 .DefineRuleset("main")
                     .DefineRule("1")
-                    .If((FactStm)"celcius" == 18)
+                    .When((FactStm)"celcius" == 18)
                     .Do(
                         ((FunctionStm)"PrintLine")
                             .Params(
@@ -247,7 +247,7 @@ namespace Sweet.BRETest
                     )
                 .Ruleset
                     .DefineRule("2")
-                    .If((FactStm)"fahrenheit" == (NumericStm)64)
+                    .When((FactStm)"fahrenheit" == (NumericStm)64)
                     .Do(
                         ((FunctionStm)"PrintLine")
                             .Params(
@@ -696,7 +696,7 @@ namespace Sweet.BRETest
             project
                 .DefineRuleset("main")
                 .DefineRule("main")
-                .If((VariableStm)"@var2" == 1)
+                .When((VariableStm)"@var2" == 1)
                 .Do(
                     TryStm.As()
                         .Do(

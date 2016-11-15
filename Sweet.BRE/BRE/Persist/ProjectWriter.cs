@@ -168,7 +168,7 @@ namespace Sweet.BRE
                 WriteElement("Description", desc, false);
             }
 
-            WriteIf(rule.Condition);
+            WriteWhen(rule.Condition);
             WriteDo(rule.Actions);
         }
 
@@ -541,11 +541,11 @@ namespace Sweet.BRE
             }
         }
 
-        private void WriteIf(BooleanStm condition)
+        private void WriteWhen(BooleanStm condition)
         {
             if (!ReferenceEquals(condition, null))
             {
-                using (WriteElement("If"))
+                using (WriteElement("When"))
                 {
                     WriteStatement(condition);
                 }

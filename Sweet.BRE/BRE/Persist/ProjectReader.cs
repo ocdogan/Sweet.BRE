@@ -254,13 +254,13 @@ namespace Sweet.BRE
                     {
                         rule.SetDescription(ReadText(elm, "Description"));
 
-                        XmlElement[] elms = ReadParameters(elm, "If");
+                        XmlElement[] elms = ReadParameters(elm, "When");
                         if ((elms != null) && (elms.Length > 0))
                         {                            
                             BooleanStm condition = ReadStatement(elms[0]) as BooleanStm;
                             if (!ReferenceEquals(condition, null))
                             {
-                                rule.If(condition);
+                                rule.When(condition);
                             }
                         }
 

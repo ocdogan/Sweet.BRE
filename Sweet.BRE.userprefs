@@ -1,13 +1,7 @@
 ﻿<Properties StartupItem="Sweet.BRETest/Sweet.BRETest.csproj">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Sweet.BRE/BRE/Runtime/FactList.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Sweet.BRETest/Program.cs">
     <Files>
-      <File FileName="Sweet.BRETest/Program.cs" Line="36" Column="2" />
-      <File FileName="Sweet.BRE/BRE/Runtime/FactList.cs" Line="71" Column="42" />
-      <File FileName="Sweet.BRE/ExpEval/Interfaces/IFactList.cs" Line="40" Column="18" />
-      <File FileName="Sweet.BRE/BRE/Runtime/RuleEngineRuntime.cs" Line="411" Column="77" />
-      <File FileName="Sweet.BRE/BRE/Runtime/EvaluationContext.cs" Line="87" Column="17" />
-      <File FileName="Sweet.BRE/ExpEval/Interfaces/IEvaluationContext.cs" Line="41" Column="23" />
-      <File FileName="Sweet.BRE/BRE/Runtime/DefaultRuleDebugger.cs" Line="42" Column="48" />
+      <File FileName="Sweet.BRETest/Program.cs" Line="420" Column="13" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />

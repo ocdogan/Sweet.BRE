@@ -145,7 +145,7 @@ namespace Sweet.BRE
             _name = (name != null ? name.Trim() : null);
         }
 
-        public IRule If(BooleanStm condition)
+        public IRule When(BooleanStm condition)
         {
             _condition = condition;
             return this;
