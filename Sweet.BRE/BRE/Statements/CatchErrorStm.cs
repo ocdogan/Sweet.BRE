@@ -106,8 +106,17 @@ namespace Sweet.BRE
         {
             StringBuilder builder = new StringBuilder();
 
-            builder.AppendFormat("{0}({1}): ", RuleConstants.HANDLE_ERROR, 
-                StmCommon.PrepareToString(_onError));
+            var strOnError = StmCommon.PrepareToString(_onError);
+            if (String.IsNullOrEmpty(strOnError))
+            {
+                builder.Append(RuleConstants.HANDLE_ERROR);
+                builder.Append(' ');
+            }
+            else
+            {
+                builder.AppendFormat("{0} '{1}' ", RuleConstants.HANDLE_ERROR, strOnError);
+            }
+
             builder.AppendLine();
 
             builder.Append(base.ToString());

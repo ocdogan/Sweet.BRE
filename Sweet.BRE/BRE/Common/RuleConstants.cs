@@ -53,7 +53,7 @@ namespace Sweet.BRE
         public const string SET = "Set";
 
         public const string TRY = "Try";
-        public const string HANDLE_ERROR = "Handle";
+        public const string HANDLE_ERROR = "OnError";
         public const string FINALLY = "Finally";
 
         public const string HALT = "Halt";
