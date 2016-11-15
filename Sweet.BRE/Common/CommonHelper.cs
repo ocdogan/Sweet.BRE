@@ -1285,7 +1285,7 @@ namespace Sweet.BRE
                     characterSet = "ISO-8859-1";
                 }
 
-                int pos = lconType.IndexOf(";");
+                int pos = lconType.IndexOf(';');
                 if (pos > 0)
                 {
                     while ((pos = lconType.IndexOf("charset", pos)) >= 0)

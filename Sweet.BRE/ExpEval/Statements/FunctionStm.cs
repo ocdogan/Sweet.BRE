@@ -164,7 +164,7 @@ namespace Sweet.BRE
             string name = _name.ToString();
             name = (name != null ? name.Trim() : String.Empty);
 
-            int pos = name.IndexOf("(");
+            int pos = name.IndexOf('(');
             if (pos > -1)
             {
                 name = name.Substring(0, pos - 1);
@@ -209,7 +209,7 @@ namespace Sweet.BRE
             string function = (obj != null ? obj.ToString() : null);
             function = (function != null ? function.Trim() : String.Empty);
 
-            int pos = function.IndexOf("(");
+            int pos = function.IndexOf('(');
             if (pos > -1)
             {
                 function = function.Substring(0, pos - 1);
