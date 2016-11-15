@@ -45,6 +45,8 @@ namespace Sweet.BRETest
             public TestMethod Method;
         }
 
+        private static List<Test> testMethods = new List<Test>();
+
         private static ConsoleKey GetTestKey()
         {
             while (true)
@@ -57,13 +59,13 @@ namespace Sweet.BRETest
                 }
 
                 int testNo = (int)key;
-                if (testNo >= (int)ConsoleKey.D1 && testNo <= (int)ConsoleKey.D9)
+                if (testNo >= (int)ConsoleKey.D1 && testNo <= ((int)ConsoleKey.D0 + testMethods.Count))
                 {
                     testNo -= (int)ConsoleKey.D1;
                     return (ConsoleKey)testNo;
                 }
 
-                if (testNo >= (int)ConsoleKey.NumPad1 && testNo <= (int)ConsoleKey.NumPad9)
+                if (testNo >= (int)ConsoleKey.NumPad1 && testNo <= ((int)ConsoleKey.NumPad0 + testMethods.Count))
                 {
                     testNo -= (int)ConsoleKey.NumPad1;
                     return (ConsoleKey)testNo;
@@ -73,15 +75,13 @@ namespace Sweet.BRETest
 
         static void Main(string[] args)
         {
-            List<Test> actions = new List<Test>();
-
-            actions.Add(new Test { Name = "FahrenheitToCelciusTest", Method = FahrenheitToCelciusTest });
-            actions.Add(new Test { Name = "CelciusToFahrenheitTest", Method = CelciusToFahrenheitTest });
-            actions.Add(new Test { Name = "IndexTest", Method = IndexTest });
-            actions.Add(new Test { Name = "ReflectionTest", Method = ReflectionTest });
-            actions.Add(new Test { Name = "TryCatchTest", Method = TryCatchTest });
-            actions.Add(new Test { Name = "GeneralTest", Method = GeneralTest });
-            actions.Add(new Test { Name = "SaveTest", Method = SaveTest });
+            testMethods.Add(new Test { Name = "FahrenheitToCelciusTest", Method = FahrenheitToCelciusTest });
+            testMethods.Add(new Test { Name = "CelciusToFahrenheitTest", Method = CelciusToFahrenheitTest });
+            testMethods.Add(new Test { Name = "IndexTest", Method = IndexTest });
+            testMethods.Add(new Test { Name = "ReflectionTest", Method = ReflectionTest });
+            testMethods.Add(new Test { Name = "TryCatchTest", Method = TryCatchTest });
+            testMethods.Add(new Test { Name = "GeneralTest", Method = GeneralTest });
+            testMethods.Add(new Test { Name = "SaveTest", Method = SaveTest });
 
             while (true)
             {
@@ -89,9 +89,9 @@ namespace Sweet.BRETest
 
                 Console.WriteLine("--------------------------------");
 
-                for (int i = 0; i < actions.Count; i++)
+                for (int i = 0; i < testMethods.Count; i++)
                 {
-                    Console.WriteLine("{0}. {1}", i + 1, actions[i].Name);
+                    Console.WriteLine("{0}. {1}", i + 1, testMethods[i].Name);
                 }
 
                 Console.WriteLine("--------------------------------");
@@ -104,7 +104,7 @@ namespace Sweet.BRETest
 
                 int testNo = (int)key;
 
-                Console.WriteLine("Test: " + actions[testNo].Name);
+                Console.WriteLine("Test: " + testMethods[testNo].Name);
                 Console.WriteLine("--------------------------------");
 
                 try
@@ -119,7 +119,7 @@ namespace Sweet.BRETest
                     sw.Start();
                     try
                     {
-                        actions[testNo].Method(out rs, out facts, out vars, out debugger);
+                        testMethods[testNo].Method(out rs, out facts, out vars, out debugger);
                     }
                     finally
                     {
