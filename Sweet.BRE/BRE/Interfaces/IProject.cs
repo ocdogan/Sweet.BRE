@@ -48,18 +48,18 @@ namespace Sweet.BRE
         IRuleset this[string rulesetName] { get; set; }
 
         IRuleset GetRuleset(string rulesetName);
-        DecisionTable GetTable(string tableName);
-        DecisionTree GetTree(string treeName);
+        DecisionTable GetDecisionTable(string tableName);
+        DecisionTree GetDecisionTree(string treeName);
 
         IRuleset DefineRuleset(string rulesetName);
-        DecisionTable DefineTable(string tableName);
-        DecisionTree DefineTree(string treeName);
+        DecisionTable DefineDecisionTable(string tableName);
+        DecisionTree DefineDecisionTree(string treeName);
 
         IProject AddRuleset(string rulesetName, IRuleset ruleset);
 
         bool ContainsRuleset(string rulesetName);
-        bool ContainsTable(string tableName);
-        bool ContainsTree(string treeName);
+        bool ContainsDecisionTable(string tableName);
+        bool ContainsDecisionTree(string treeName);
 
         IProject Clear();
         bool IsEqualTo(IProject prj);
@@ -70,8 +70,8 @@ namespace Sweet.BRE
         IProject UnregisterFunctionAlias(string alias);
 
         IProject RemoveRuleset(string rulesetName);
-        IProject RemoveTable(string tableName);
-        IProject RemoveTree(string treeName);
+        IProject RemoveDecisionTable(string tableName);
+        IProject RemoveDecisionTree(string treeName);
     }
 }
 

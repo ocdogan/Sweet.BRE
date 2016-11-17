@@ -533,7 +533,7 @@ namespace Sweet.BRETest
             IProject project = Project.As();
 
             // table
-            DecisionTable table = project.DefineTable("decisionTable1");
+            DecisionTable table = project.DefineDecisionTable("decisionTable1");
 
             table.Conditions.Add("@var1", DecisionValueType.Integer);
             table.Conditions.Add("@var2", DecisionValueType.Integer);
@@ -577,7 +577,7 @@ namespace Sweet.BRETest
 
             // tree
             // row1
-            DecisionConditionNode tc1 = project.DefineTree("tree1");
+            DecisionConditionNode tc1 = project.DefineDecisionTree("tree1");
             tc1.SetVariable("@var1").SetValues(new string[] { "0" });
 
             DecisionConditionNode tc2 = new DecisionConditionNode("@var2", new string[] { "0" });
@@ -738,7 +738,7 @@ namespace Sweet.BRETest
                 .RegisterFunctionAlias("Write to console", "PrintLine");
 
             // table
-            DecisionTable table = project.DefineTable("decisionTable1");
+            DecisionTable table = project.DefineDecisionTable("decisionTable1");
 
             table.Conditions.Add("@var1", DecisionValueType.Integer);
             table.Conditions.Add("@var2", DecisionValueType.Integer);
@@ -782,7 +782,7 @@ namespace Sweet.BRETest
 
             // tree
             // row1
-            DecisionConditionNode tc1 = project.DefineTree("tree1");
+            DecisionConditionNode tc1 = project.DefineDecisionTree("tree1");
             tc1.SetVariable("@var1").SetValues(new string[] { "0" });
 
             DecisionConditionNode tc2 = new DecisionConditionNode("@var2", new string[] { "0" });

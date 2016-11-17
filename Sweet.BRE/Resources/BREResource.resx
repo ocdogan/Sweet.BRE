@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CannotCallABlankRuleName" xml:space="preserve">
     <value>Cannot call a rule with blank name.</value>
@@ -186,10 +186,10 @@
   <data name="NamedRulesetAlreadyExistsInProject" xml:space="preserve">
     <value>A ruleset with name '{0}' already exists in project.</value>
   </data>
-  <data name="NamedTableAlreadyExistsInProject" xml:space="preserve">
+  <data name="NamedDecisionTableAlreadyExistsInProject" xml:space="preserve">
     <value>A table with name '{0}' already exists in project.</value>
   </data>
-  <data name="NamedTreeAlreadyExistsInProject" xml:space="preserve">
+  <data name="NamedDecisionTreeAlreadyExistsInProject" xml:space="preserve">
     <value>A tree with name '{0}' already exists in project.</value>
   </data>
   <data name="DocumentRootIsNotAsExpected" xml:space="preserve">
@@ -227,5 +227,26 @@
   </data>
   <data name="FunctionCanNotBeHandled" xml:space="preserve">
     <value>'{0}' is not a defined function or can not be handled with the given parameters.</value>
+  </data>
+  <data name="ObjectAlreadyExistsInList" xml:space="preserve">
+    <value>Object already exists in list.</value>
+  </data>
+  <data name="ObjectWithSameNameAlreadyExistsInList" xml:space="preserve">
+    <value>Object with the same name already exists in list.</value>
+  </data>
+  <data name="ExpectingRuleObject" xml:space="preserve">
+    <value>Expecting rule object. The given object is not a rule.</value>
+  </data>
+  <data name="DecisionTableAlreadyExistsInProject" xml:space="preserve">
+    <value>DecisionTable already exists in project.</value>
+  </data>
+  <data name="DecisionTreeAlreadyExistsInProject" xml:space="preserve">
+    <value>DecisionTree already exists in project.</value>
+  </data>
+  <data name="ExpectingDecisionTableObject" xml:space="preserve">
+    <value>Expecting DecisionTable object. The given object is not a DecisionTable.</value>
+  </data>
+  <data name="ExpectingDecisionTreeObject" xml:space="preserve">
+    <value>Expecting DecisionTree object. The given object is not a DecisionTree.</value>
   </data>
 </root>

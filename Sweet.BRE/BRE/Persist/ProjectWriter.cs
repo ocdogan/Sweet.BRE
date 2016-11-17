@@ -985,7 +985,7 @@ namespace Sweet.BRE
                     using (WriteElement("Table"))
                     {
                         WriteAttribute(StrName, name);
-                        WriteDecisionTable(project.GetTable(name));
+                        WriteDecisionTable(project.GetDecisionTable(name));
                     }
                 }
             }
@@ -995,7 +995,7 @@ namespace Sweet.BRE
             {
                 foreach (string name in project.DecisionTreeNames)
                 {
-                    WriteDecisionTree(project.GetTree(name), name);
+                    WriteDecisionTree(project.GetDecisionTree(name), name);
                 }
             }
 

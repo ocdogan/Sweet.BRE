@@ -29,25 +29,29 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public interface IRule : IStatement, ICloneable, IDisposable
+    public interface IRuleset : INamedObject, IStatement, ICloneable, IDisposable
     {
-        string Name { get; }
-        string Description { get; set; }
+        IRule this[string ruleName] { get; set; }
 
-        RulePriority Priority { get; set; }
-        IRuleset Ruleset { get; }
+        int Index { get; }
+        IProject Project { get; }
 
-        int SubPriority { get; set; }
+        IRule[] Rules { get; }
+        string[] RuleNames { get; }
 
-        BooleanStm Condition { get; }
-        ActionList Actions { get; }
+        int RuleCount { get; }
 
-        IRule SetDescription(string description);
-        IRule SetPriority(RulePriority priority);
-        IRule SetSubPriority(int subPriority);
+        IRule GetRule(string ruleName);
+        bool ContainsRule(string ruleName);
 
-        IRule When(BooleanStm condition);
-        IRule Do(params ActionStm[] doActions);
+        IRule DefineRule(string ruleName);
+        IRuleset AddRule(string ruleName, IRule rule);
+        IRuleset RemoveRule(string ruleName);
+        IRuleset Clear();
+
+        IRuleset SetDescription(string description);
+
+        bool IsEqualTo(IRuleset ruleset);
     }
 }
 

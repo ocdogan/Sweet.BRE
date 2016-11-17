@@ -123,7 +123,7 @@ namespace Sweet.BRE
                 throw new RuleException(BreResStrings.GetString("CannotFindAProjectInExecutionStack"));
             }
 
-            IStatement tableE = project.GetTable(table);
+            IStatement tableE = project.GetDecisionTable(table);
             if (ReferenceEquals(tableE, null))
             {
                 throw new RuleException(String.Format(BreResStrings.GetString("CannotFindANamedTable"), table));

@@ -128,7 +128,7 @@ namespace Sweet.BRE
                 throw new RuleException(BreResStrings.GetString("CannotFindAProjectInExecutionStack"));
             }
 
-            IStatement treeE = project.GetTree(tree);
+            IStatement treeE = project.GetDecisionTree(tree);
             if (ReferenceEquals(treeE, null))
             {
                 throw new RuleException(String.Format(BreResStrings.GetString("CannotFindANamedTree"), tree));

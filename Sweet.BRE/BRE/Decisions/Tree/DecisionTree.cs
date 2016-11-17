@@ -29,11 +29,102 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class DecisionTree : DecisionConditionNode, IStatement, IDecision
+    public sealed class DecisionTree : DecisionConditionNode, INamedObject, IStatement, IDecision, IDisposable
     {
+        private string _name;
+        private string _description;
+
+        private IProject _project;
+        private INamedObjectList _ownerList;
+
         internal DecisionTree()
             : base()
         {
+        }
+
+        internal DecisionTree(string name)
+            : this()
+        {
+            SetName(name);
+        }
+
+        public string Description
+        {
+            get
+            {
+                return _description;
+            }
+            set
+            {
+                SetDescription(value);
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+        }
+
+        public int Index
+        {
+            get
+            {
+                if (!ReferenceEquals(_ownerList, null))
+                {
+                    return _ownerList.IndexOf(this);
+                }
+                return -1;
+            }
+        }
+
+        public IProject Project
+        {
+            get { return _project; }
+        }
+
+        INamedObjectList INamedObject.List
+        {
+            get { return _ownerList; }
+        }
+
+        internal void SetOwnerList(INamedObjectList list)
+        {
+            _ownerList = list;
+        }
+
+        public DecisionTree SetDescription(string description)
+        {
+            _description = description;
+            return this;
+        }
+
+        internal void SetName(string name)
+        {
+            _name = (name != null ? name.Trim() : null);
+        }
+
+        internal void SetProject(IProject project)
+        {
+            _project = project;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(obj, this)) return 0;
+            if (ReferenceEquals(obj, null)) return -1;
+
+            DecisionTree dt = obj as DecisionTree;
+            if (ReferenceEquals(dt, null)) return -1;
+
+            return Name.CompareTo(dt.Name);
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
         }
 
         public override DecisionCell Copy()
@@ -54,7 +145,7 @@ namespace Sweet.BRE
 
             return result;
         }
-
+        
         internal override void SetOwner(IDecision owner)
         {
         }

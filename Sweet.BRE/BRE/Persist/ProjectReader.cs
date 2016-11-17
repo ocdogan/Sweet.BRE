@@ -574,7 +574,7 @@ namespace Sweet.BRE
                     if (elm == null)
                         continue;
 
-                    DecisionTable table = _project.DefineTable(elm.GetAttribute(StrName));
+                    DecisionTable table = _project.DefineDecisionTable(elm.GetAttribute(StrName));
                     _readStack.Push(table);
                     try
                     {
@@ -611,7 +611,7 @@ namespace Sweet.BRE
                         if (elm == null)
                             continue;
 
-                        DecisionTree tree = _project.DefineTree(elm.GetAttribute(StrName));
+                        DecisionTree tree = _project.DefineDecisionTree(elm.GetAttribute(StrName));
                         _readStack.Push(tree);
                         try
                         {

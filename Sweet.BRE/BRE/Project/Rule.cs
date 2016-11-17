@@ -40,6 +40,8 @@ namespace Sweet.BRE
         private Ruleset _ruleset;
         private BooleanStm _condition;
 
+        private INamedObjectList _ownerList;
+
         public Rule()
             : base()
         {
@@ -91,6 +93,18 @@ namespace Sweet.BRE
             }
         }
 
+        public int Index
+        {
+            get
+            {
+                if (!ReferenceEquals(_ownerList, null))
+                {
+                    return _ownerList.IndexOf(this);
+                }
+                return -1;
+            }
+        }
+
         public IRuleset Ruleset
         {
             get
@@ -111,6 +125,16 @@ namespace Sweet.BRE
             }
         }
 
+        INamedObjectList INamedObject.List
+        {
+            get { return _ownerList; }
+        }
+
+        internal void SetOwnerList(INamedObjectList list)
+        {
+            _ownerList = list;
+        }
+
         public IRule SetDescription(string description)
         {
             _description = description;
@@ -122,7 +146,6 @@ namespace Sweet.BRE
             _priority = priority;
             return this;
         }
-
 
         public IRule SetSubPriority(int subPriority)
         {
@@ -264,6 +287,28 @@ namespace Sweet.BRE
             }
 
             return base.Evaluate(context, args);
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return 0;
+            if (ReferenceEquals(obj, null)) return -1;
+
+            IRule irule = obj as IRule;
+            if (ReferenceEquals(irule, null)) return -1;
+
+            int px = ((10000 * (int)Priority)) + SubPriority;
+            int py = ((10000 * (int)irule.Priority)) + irule.SubPriority;
+
+            int result = px.CompareTo(py);
+            if (result == 0)
+            {
+                int ix = Index;
+                int iy = irule.Index;
+
+                result = ix.CompareTo(iy);
+            }
+            return result;
         }
     }
 }

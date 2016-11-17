@@ -30,8 +30,14 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class DecisionTable : IStatement, IDecision, IDisposable, ICloneable
+    public sealed class DecisionTable : IStatement, INamedObject, IDecision, IDisposable, ICloneable
     {
+        private string _name;
+        private string _description;
+
+        private IProject _project;
+        private INamedObjectList _ownerList;
+
         private DecisionColumnList _actions;
         private DecisionColumnList _conditions;
         private DecisionRowList _rows;
@@ -44,6 +50,75 @@ namespace Sweet.BRE
             _actions = new DecisionColumnList(this);
             _conditions = new DecisionColumnList(this);
             _rows = new DecisionRowList(this);
+        }
+
+        internal DecisionTable(string name)
+            : this()
+        {
+            SetName(name);
+        }
+
+        public string Description
+        {
+            get
+            {
+                return _description;
+            }
+            set
+            {
+                SetDescription(value);
+            }
+        }
+
+        public string Name
+        {
+            get
+            {
+                return _name;
+            }
+        }
+
+        public int Index
+        {
+            get
+            {
+                if (!ReferenceEquals(_ownerList, null))
+                {
+                    return _ownerList.IndexOf(this);
+                }
+                return -1;
+            }
+        }
+
+        public IProject Project
+        {
+            get { return _project; }
+        }
+
+        INamedObjectList INamedObject.List
+        {
+            get { return _ownerList; }
+        }
+
+        internal void SetOwnerList(INamedObjectList list)
+        {
+            _ownerList = list;
+        }
+
+        public DecisionTable SetDescription(string description)
+        {
+            _description = description;
+            return this;
+        }
+
+        internal void SetName(string name)
+        {
+            _name = (name != null ? name.Trim() : null);
+        }
+
+        internal void SetProject(IProject project)
+        {
+            _project = project;
         }
 
         public DecisionColumnList Actions
@@ -104,6 +179,17 @@ namespace Sweet.BRE
             }
 
             return cln;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(obj, this)) return 0;
+            if (ReferenceEquals(obj, null)) return -1;
+
+            DecisionTable dt = obj as DecisionTable;
+            if (ReferenceEquals(dt, null)) return -1;
+
+            return Name.CompareTo(dt.Name);
         }
 
         void IDisposable.Dispose()

@@ -29,25 +29,22 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public class Ruleset : ActionStm, IRuleset
+    public class Ruleset : ActionStm, INamedObject, IRuleset
     {
         private string _name;
         private string _description;
 
         private IProject _project;
+        private INamedObjectList _ownerList;
 
-        private IRule[] _ruleArray;
-        private string[] _ruleNames;
-        private List<IRule> _ruleList;
-        private Dictionary<string, IRule> _ruleIndex;
+        private NamedObjectList<IRule> _ruleList;
 
         private readonly object _syncLock = new object();
 
         public Ruleset()
             : base()
         {
-            _ruleList = new List<IRule>();
-            _ruleIndex = new Dictionary<string, IRule>();
+            SetRuleList(new NamedObjectList<IRule>());
         }
 
         internal Ruleset(string name)
@@ -64,46 +61,7 @@ namespace Sweet.BRE
             }
             set
             {
-                ruleName = NormalizeName(ruleName);
-
-                Validate(ruleName);
-                Validate(value);
-
-                if (!ReferenceEquals(value.Ruleset, null))
-                {
-                    value = (IRule)value.Clone();
-                }
-
-                Rule rule;
-                lock (_syncLock)
-                {
-                    _ruleArray = null;
-                    _ruleNames = null;
-
-                    IRule old;
-                    _ruleIndex.TryGetValue(ruleName, out old);
-
-                    if (!ReferenceEquals(old, value))
-                    {
-                        _ruleList.Remove(old);
-
-                        rule = old as Rule;
-                        if (!ReferenceEquals(rule, null))
-                        {
-                            rule.SetRuleset(null);
-                        }
-                    }
-
-                    rule = value as Rule;
-                    if (!ReferenceEquals(rule, null))
-                    {
-                        rule.SetRuleset(this);
-                        rule.SetName(ruleName);
-                    }
-
-                    _ruleIndex[ruleName] = value;
-                    _ruleList.Add(value);
-                }
+                _ruleList.Add(ruleName, value);
             }
         }
 
@@ -139,7 +97,7 @@ namespace Sweet.BRE
         {
             get
             {
-                return _ruleIndex.Count;
+                return _ruleList.Count;
             }
         }
 
@@ -147,37 +105,7 @@ namespace Sweet.BRE
         {
             get
             {
-                if (_ruleArray == null)
-                {
-                    lock (_syncLock)
-                    {
-                        if (_ruleArray == null)
-                        {
-                            _ruleList.Sort(delegate(IRule x, IRule y)
-                            {
-                                if (ReferenceEquals(x, y)) return 0;
-                                if (ReferenceEquals(x, null)) return 1;
-                                if (ReferenceEquals(y, null)) return -1;
-
-                                int px = ((10000 * (int)x.Priority)) + x.SubPriority;
-                                int py = ((10000 * (int)y.Priority)) + y.SubPriority;
-
-                                int result = px.CompareTo(py);
-                                if (result == 0)
-                                {
-                                    int ix = _ruleList.IndexOf(x);
-                                    int iy = _ruleList.IndexOf(y);
-
-                                    result = ix.CompareTo(iy);
-                                }
-                                return result;
-                            });
-
-                            _ruleArray = _ruleList.ToArray();
-                        }
-                    }
-                }
-                return _ruleArray;
+                return _ruleList.Objects;
             }
         }
 
@@ -185,52 +113,30 @@ namespace Sweet.BRE
         {
             get
             {
-                if (_ruleNames == null)
-                {
-                    lock (_syncLock)
-                    {
-                        if (_ruleNames == null)
-                        {
-                            string[] names = new string[_ruleIndex.Count];
-                            _ruleIndex.Keys.CopyTo(names, 0);
-
-                            _ruleNames = names;
-                        }
-                    }
-                }
-                return _ruleNames;
+                return _ruleList.Names;
             }
         }
 
-        public IRuleset AddRule(string ruleName, IRule rule)
+        public int Index
         {
-            ruleName = NormalizeName(ruleName);
-
-            Validate(ruleName);
-            Validate(rule);
-
-            if (!ReferenceEquals(rule.Ruleset, null))
+            get
             {
-                rule = (IRule)rule.Clone();
+                if (!ReferenceEquals(_ownerList, null))
+                {
+                    return _ownerList.IndexOf(this);
+                }
+                return -1;
             }
+        }
 
-            Rule rl = rule as Rule;
-            if (!ReferenceEquals(rl, null))
-            {
-                rl.SetRuleset(this);
-                rl.SetName(ruleName);
-            }
+        INamedObjectList INamedObject.List
+        {
+            get { return _ownerList; }
+        }
 
-            lock (_syncLock)
-            {
-                _ruleArray = null;
-                _ruleNames = null;
-
-                _ruleIndex.Add(ruleName, rule);
-                _ruleList.Add(rule);
-            }
-
-            return this;
+        internal void SetOwnerList(INamedObjectList list)
+        {
+            _ownerList = list;
         }
 
         public IRuleset SetDescription(string description)
@@ -261,28 +167,7 @@ namespace Sweet.BRE
 
         public IRuleset Clear()
         {
-            lock (_syncLock)
-            {
-                IRule[] rules = _ruleList.ToArray();
-
-                _ruleArray = null;
-                _ruleNames = null;
-
-                _ruleIndex.Clear();
-
-                if (rules.Length > 0)
-                {
-                    Rule rule;
-                    foreach (IRule irule in rules)
-                    {
-                        rule = irule as Rule;
-                        if (!ReferenceEquals(rule, null))
-                        {
-                            rule.SetRuleset(null);
-                        }
-                    }
-                }
-            }
+            _ruleList.Clear();
             return this;
         }
 
@@ -291,162 +176,24 @@ namespace Sweet.BRE
             Ruleset result = new Ruleset();
             result.SetDescription(_description);
 
+            NamedObjectList<IRule> list;
             lock (_syncLock)
             {
-                foreach (IRule rule in _ruleIndex.Values)
-                {
-                    result.AddRule(rule.Name, (IRule)rule.Clone());
-                }
+                list = (NamedObjectList<IRule>)_ruleList.Clone();
             }
-
+            result.SetRuleList(list);
             return result;
-        }
-
-        public bool ContainsRule(string ruleName)
-        {
-            ruleName = NormalizeName(ruleName);
-            lock (_syncLock)
-            {
-                return _ruleIndex.ContainsKey(ruleName);
-            }
-        }
-
-        public IRule DefineRule(string ruleName)
-        {
-            ruleName = NormalizeName(ruleName);
-
-            Validate(ruleName);
-
-            Rule value = Rule.As();
-
-            value.SetRuleset(this);
-            value.SetName(ruleName);
-
-            lock (_syncLock)
-            {
-                _ruleArray = null;
-                _ruleNames = null;
-
-                _ruleIndex.Add(ruleName, value);
-                _ruleList.Add(value);
-            }
-
-            return value;
         }
 
         public override void Dispose()
         {
-            lock (_syncLock)
-            {
-                // rules
-                IRule[] rules = _ruleList.ToArray();
-
-                _ruleArray = null;
-                _ruleNames = null;
-
-                _ruleIndex.Clear();
-                _ruleList.Clear();
-
-                if (rules.Length > 0)
-                {
-                    Rule rl;
-                    foreach (IRule rule in rules)
-                    {
-                        rl = rule as Rule;
-                        if (!ReferenceEquals(rl, null))
-                        {
-                            rl.SetRuleset(null);
-                            rl.Dispose();
-                        }
-                    }
-                }
-            }
-
+            _ruleList.Dispose();
             base.Dispose();
-        }
-
-        public IRule GetRule(string ruleName)
-        {
-            ruleName = NormalizeName(ruleName);
-            lock (_syncLock)
-            {
-                return _ruleIndex[ruleName];
-            }
         }
 
         public bool IsEqualTo(IRuleset ruleset)
         {
-            if (!ReferenceEquals(ruleset, null))
-            {
-                lock (_syncLock)
-                {
-                    if (!ReferenceEquals(ruleset, this) && (_ruleIndex.Count == ruleset.RuleCount))
-                    {
-                        foreach (string key in _ruleIndex.Keys)
-                        {
-                            IRule rule = ruleset.GetRule(key);
-                            if (ReferenceEquals(rule, null) || !object.Equals(rule, _ruleIndex[key]))
-                            {
-                                return false;
-                            }
-                        }
-                    }
-                }
-                return true;
-            }           
-            return false;
-        }
-
-        public IRuleset RemoveRule(string ruleName)
-        {
-            ruleName = NormalizeName(ruleName);
-            lock (_syncLock)
-            {
-                IRule irule;
-                if (_ruleIndex.TryGetValue(ruleName, out irule))
-                {
-                    _ruleArray = null;
-                    _ruleNames = null;
-
-                    _ruleIndex.Remove(ruleName);
-                    _ruleList.Remove(irule);
-
-                    Rule rule = irule as Rule;
-                    if (!ReferenceEquals(rule, null))
-                    {
-                        rule.SetRuleset(null);
-                    }
-                }
-            }
-            return this;
-        }
-
-        private void Validate(IRule rule)
-        {
-            if (ReferenceEquals(rule, null))
-            {
-                throw new ArgumentNullException("rule");
-            }
-
-            if (ReferenceEquals(rule.Ruleset, this))
-            {
-                throw new RuleException(BreResStrings.GetString("RuleAlreadyExistsInRuleset"));
-            }
-
-            string ruleName = NormalizeName(rule.Name);
-            if (ContainsRule(ruleName))
-            {
-                throw new RuleException(String.Format(BreResStrings.GetString("NamedRuleAlreadyExistsInRuleset"), ruleName));
-            }
-        }
-
-        private void Validate(string ruleName)
-        {
-            ruleName = NormalizeName(ruleName);
-            if (String.IsNullOrEmpty(ruleName))
-            {
-                throw new ArgumentNullException("ruleName");
-            }
+            return _ruleList.Equals(ruleset);
         }
 
         protected override bool ExecutionBroken(IEvaluationContext context)
@@ -456,10 +203,10 @@ namespace Sweet.BRE
 
         protected override object Evaluate(IEvaluationContext context, params object[] args)
         {
-            if (!ReferenceEquals(_ruleIndex, null) && (_ruleIndex.Count > 0))
+            if (!ReferenceEquals(_ruleList, null) && (_ruleList.Count > 0))
             {
                 IRule[] rules = Rules;
-                
+
                 foreach (IStatement e in rules)
                 {
                     e.Evaluate(context);
@@ -492,19 +239,168 @@ namespace Sweet.BRE
 
             builder.AppendLine();
 
-            int index = 0;
-            foreach (Rule rule in _ruleIndex.Values)
+            lock (_ruleList.SyncLock)
             {
-                index++;
-                if (index > 1)
-                    builder.AppendLine();
+                int index = 0;
+                foreach (Rule rule in _ruleList.Objects)
+                {
+                    index++;
+                    if (index > 1)
+                        builder.AppendLine();
 
-                builder.AppendLine(rule.ToString());
+                    builder.AppendLine(rule.ToString());
+                }
             }
 
             builder.Append(RuleConstants.END + " ");
 
             return builder.ToString();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (ReferenceEquals(obj, this)) return 0;
+            if (ReferenceEquals(obj, null)) return -1;
+
+            IRule rule = obj as IRule;
+            if (ReferenceEquals(rule, null)) return -1;
+
+            return Name.CompareTo(rule.Name);
+        }
+
+        internal void SetRuleList(NamedObjectList<IRule> list)
+        {
+            INamedObjectList oldList = _ruleList;
+            if (!ReferenceEquals(oldList, null))
+            {
+                oldList.OnAdd -= ruleListOnAdd;
+                oldList.OnDispose -= ruleListOnDispose;
+                oldList.OnRemove -= ruleListOnRemove;
+                oldList.OnValidate -= ruleListOnValidate;
+                oldList.OnValidateName -= ruleListOnValidateName;
+            }
+
+            _ruleList = list;
+            if (!ReferenceEquals(list, null))
+            {
+                list.OnAdd += ruleListOnAdd;
+                list.OnDispose += ruleListOnDispose;
+                list.OnRemove += ruleListOnRemove;
+                list.OnValidate += ruleListOnValidate;
+                list.OnValidateName += ruleListOnValidateName;
+            }
+        }
+
+        private string ValidateRuleName(string ruleName)
+        {
+            ruleName = NormalizeName(ruleName);
+            if (String.IsNullOrEmpty(ruleName))
+            {
+                throw new ArgumentNullException("ruleName");
+            }
+            return ruleName;
+        }
+
+        private void ruleListOnValidateName(INamedObjectList list, INamedObject obj, string name)
+        {
+            ValidateRuleName(name);
+        }
+
+        private void ruleListOnValidate(INamedObjectList list, INamedObject obj)
+        {
+            if (ReferenceEquals(obj, null))
+            {
+                throw new ArgumentNullException("rule");
+            }
+
+            IRule rule = obj as IRule;
+            if (ReferenceEquals(rule, null))
+            {
+                throw new RuleException(BreResStrings.GetString("ExpectingRuleObject"));
+            }
+
+            if (ReferenceEquals(rule.Ruleset, this))
+            {
+                throw new RuleException(BreResStrings.GetString("RuleAlreadyExistsInRuleset"));
+            }
+
+            string ruleName = NormalizeName(rule.Name);
+            if (ContainsRule(ruleName))
+            {
+                throw new RuleException(String.Format(BreResStrings.GetString("NamedRuleAlreadyExistsInRuleset"), ruleName));
+            }
+        }
+
+        private void ruleListOnRemove(INamedObjectList list, INamedObject obj)
+        {
+            Rule rl = obj as Rule;
+            if (!ReferenceEquals(rl, null))
+            {
+                rl.SetRuleset(null);
+                rl.SetOwnerList(null);
+            }
+        }
+
+        private void ruleListOnDispose(INamedObjectList list, INamedObject obj)
+        {
+            Rule rl = obj as Rule;
+            if (!ReferenceEquals(rl, null))
+            {
+                rl.SetRuleset(null);
+                rl.SetOwnerList(null);
+                rl.Dispose();
+            } 
+            else if (obj is IDisposable)
+            {
+                ((IDisposable)obj).Dispose();
+            }
+        }
+
+        private void ruleListOnAdd(INamedObjectList list, INamedObject obj, string name)
+        {
+            Rule rl = obj as Rule;
+            if (!ReferenceEquals(rl, null))
+            {
+                rl.SetRuleset(this);
+                rl.SetName(name);
+                rl.SetOwnerList(list);
+            }
+        }
+
+        public IRuleset AddRule(string ruleName, IRule rule)
+        {
+            _ruleList.Add(ruleName, rule);
+            return this;
+        }
+
+        public bool ContainsRule(string ruleName)
+        {
+            return _ruleList.Contains(ruleName);
+        }
+
+        public IRule DefineRule(string ruleName)
+        {
+            ruleName = ValidateRuleName(ruleName);
+            if (ContainsRule(ruleName))
+            {
+                throw new RuleException(String.Format(BreResStrings.GetString("NamedRuleAlreadyExistsInRuleset"), ruleName));
+            }
+
+            IRule value = Rule.As();
+            _ruleList.Add(ruleName, value);
+
+            return value;
+        }
+
+        public IRule GetRule(string ruleName)
+        {
+            return _ruleList.Get(ruleName);
+        }
+
+        public IRuleset RemoveRule(string ruleName)
+        {
+            _ruleList.Remove(ruleName);
+            return this;
         }
     }
 }
