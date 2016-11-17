@@ -411,10 +411,10 @@ namespace Sweet.BRE
                     throw new ArgumentNullException("context");
                 }
 
-                DebugEventArgs debugArgs = new DebugEventArgs(context, stm);
+                DebugEventArgs debugArgs = new DebugEventArgs(null, context, stm);
                 if ((args != null) && (args.Length > 0))
                 {
-                    debugArgs = new DebugEventArgs(context, stm, args);
+                    debugArgs = new DebugEventArgs(null, context, stm, args);
                 }
 
                 using (debugArgs)

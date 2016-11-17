@@ -537,10 +537,10 @@ namespace Sweet.BRE
         {
             if (_debugger != null)
             {
-                DebugEventArgs debugArgs = new DebugEventArgs(this, stm);
+                DebugEventArgs debugArgs = new DebugEventArgs(_debugger, this, stm);
                 if ((args != null) && (args.Length > 0))
                 {
-                    debugArgs = new DebugEventArgs(this, stm, args);
+                    debugArgs = new DebugEventArgs(_debugger, this, stm, args);
                 }
 
                 using (debugArgs)

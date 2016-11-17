@@ -32,7 +32,7 @@ namespace Sweet.BRE
     public class DefaultRuleDebugger : IRuleDebugger
     {
         private string _name;
-        private Action<object, DebugEventArgs> _handler;
+        private Action<DebugEventArgs> _handler;
 
         public DefaultRuleDebugger()
             : this(null, null)
@@ -45,12 +45,12 @@ namespace Sweet.BRE
             _name = name;
         }
 
-        public DefaultRuleDebugger(Action<object, DebugEventArgs> handler)
+        public DefaultRuleDebugger(Action<DebugEventArgs> handler)
             : this(null, handler)
         {
         }
 
-        public DefaultRuleDebugger(string name, Action<object, DebugEventArgs> handler)
+        public DefaultRuleDebugger(string name, Action<DebugEventArgs> handler)
         {
             _name = name;
             _handler = handler;
@@ -68,7 +68,7 @@ namespace Sweet.BRE
         {
             if (_handler != null)
             {
-                _handler(this, args);
+                _handler(args);
             }
         }
     }

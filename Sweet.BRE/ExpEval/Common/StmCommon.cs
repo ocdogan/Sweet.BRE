@@ -542,7 +542,18 @@ namespace Sweet.BRE
             string s = ToString(value);
 
             Guid result = defValue;
-            if (!Guid.TryParse(s, out result))
+            try
+            {
+                if (String.IsNullOrEmpty(s))
+                {
+                    result = Guid.Empty;
+                }
+                else
+                {
+                    result = new Guid(s);
+                }
+            }
+            catch (Exception)
             {
                 result = defValue;
             }

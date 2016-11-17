@@ -40,12 +40,14 @@ namespace Sweet.BRE
         private IStatement _statement;
         private IEvaluationContext _context;
 
-        internal DebugEventArgs(IEvaluationContext context, IStatement statement)
-            : this(context, statement, null)
+        private IRuleDebugger _debugger;
+
+        internal DebugEventArgs(IRuleDebugger debugger, IEvaluationContext context, IStatement statement)
+            : this(debugger, context, statement, null)
         {
         }
 
-        internal DebugEventArgs(IEvaluationContext context, IStatement statement, params object[] args)
+        internal DebugEventArgs(IRuleDebugger debugger, IEvaluationContext context, IStatement statement, params object[] args)
         {
             if (ReferenceEquals(context, null))
             {
@@ -54,6 +56,7 @@ namespace Sweet.BRE
             _args = args ?? EmptyArgs;
             _context = context;
             _statement = statement;
+            _debugger = debugger;
         }
 
         public object[] Args
@@ -61,6 +64,14 @@ namespace Sweet.BRE
             get
             {
                 return _args;
+            }
+        }
+
+        public IRuleDebugger Debugger
+        {
+            get
+            {
+                return _debugger;
             }
         }
 
@@ -102,6 +113,7 @@ namespace Sweet.BRE
             _context = null;
             _statement = null;
             _error = null;
+            _debugger = null;
         }
 
         internal void SetError(Exception exception)

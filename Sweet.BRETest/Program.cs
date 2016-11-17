@@ -192,7 +192,8 @@ namespace Sweet.BRETest
                             ec.StopOnError = true;
                             try
                             {
-                                sw.Restart();
+                                sw.Reset();
+                                sw.Start();
                                 ec.Evaluate(facts, vars);
                             }
                             finally
@@ -319,7 +320,7 @@ namespace Sweet.BRETest
                 .Set("fact1", list)
                 .Set("celcius", 18);
 
-            debugger = new DefaultRuleDebugger(delegate (object sender, DebugEventArgs e)
+            debugger = new DefaultRuleDebugger(delegate (DebugEventArgs e)
             {
                 Console.WriteLine(e.Status);
                 if (e.Error != null)
