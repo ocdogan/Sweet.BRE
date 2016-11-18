@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class CatchErrorStm : ActionContext
+    public sealed class CatchErrorStm : ScopeStm
     {
         private TryStm _owner;
         private StringStm _onError;

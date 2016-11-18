@@ -48,7 +48,14 @@ namespace Sweet.BRETest
             public ProjectMethod ProjectMethod;
         }
 
+        private class NativeTest
+        {
+            public string Name;
+            public Action RunMethod;
+        }
+
         private static List<Test> testMethods = new List<Test>();
+        private static List<NativeTest> nativeTestMethods = new List<NativeTest>();
 
         private static ConsoleKey GetTestKey()
         {
@@ -76,6 +83,32 @@ namespace Sweet.BRETest
             }
         }
 
+        private static ConsoleKey GetNativeTestKey()
+        {
+            while (true)
+            {
+                ConsoleKey key = Console.ReadKey(true).Key;
+
+                if (key == ConsoleKey.Escape)
+                {
+                    return key;
+                }
+
+                int testNo = (int)key;
+                if (testNo >= (int)ConsoleKey.D1 && testNo <= ((int)ConsoleKey.D0 + nativeTestMethods.Count))
+                {
+                    testNo -= (int)ConsoleKey.D1;
+                    return (ConsoleKey)testNo;
+                }
+
+                if (testNo >= (int)ConsoleKey.NumPad1 && testNo <= ((int)ConsoleKey.NumPad0 + nativeTestMethods.Count))
+                {
+                    testNo -= (int)ConsoleKey.NumPad1;
+                    return (ConsoleKey)testNo;
+                }
+            }
+        }
+
         private static ConsoleKey GetTypeKey()
         {
             while (true)
@@ -88,13 +121,13 @@ namespace Sweet.BRETest
                 }
 
                 int testNo = (int)key;
-                if (testNo == (int)ConsoleKey.D1 || testNo == (int)ConsoleKey.D2)
+                if (testNo == (int)ConsoleKey.D1 || testNo == (int)ConsoleKey.D2 || testNo == (int)ConsoleKey.D3)
                 {
                     testNo -= (int)ConsoleKey.D1;
                     return (ConsoleKey)testNo;
                 }
 
-                if (testNo == (int)ConsoleKey.NumPad1 || testNo == (int)ConsoleKey.NumPad2)
+                if (testNo == (int)ConsoleKey.NumPad1 || testNo == (int)ConsoleKey.NumPad2 || testNo == (int)ConsoleKey.NumPad3)
                 {
                     testNo -= (int)ConsoleKey.NumPad1;
                     return (ConsoleKey)testNo;
@@ -112,6 +145,9 @@ namespace Sweet.BRETest
             testMethods.Add(new Test { Name = "General Test", RunMethod = GeneralTest, ProjectMethod = GeneralTestProject });
             testMethods.Add(new Test { Name = "Save Test", RunMethod = SaveTest, ProjectMethod = SaveTestProject });
 
+            nativeTestMethods.Add(new NativeTest { Name = "Fahrenheit to Celcius Test", RunMethod = FahrenheitToCelciusNativeTest });
+            nativeTestMethods.Add(new NativeTest { Name = "Celcius to Fahrenheit Test", RunMethod = CelciusToFahrenheitNativeTest });
+
             while (true)
             {
                 Console.Clear();
@@ -119,7 +155,8 @@ namespace Sweet.BRETest
                 Console.WriteLine("Select an action:");
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine("1. Run project");
-                Console.WriteLine("2. Print project");
+                Console.WriteLine("2. Run native projects");
+                Console.WriteLine("3. Print project");
                 Console.WriteLine("--------------------------------");
                 Console.WriteLine("Press ESC to exit or select the test to run...");
                 Console.WriteLine();
@@ -133,9 +170,72 @@ namespace Sweet.BRETest
                 {
                     RunTests();
                 }
-                else {
+                else if (testNo == 1)
+                {
+                    RunNativeTests();
+                }
+                else
+                {
                     PrintTests();
                 }
+            }
+        }
+
+        private static void RunNativeTests()
+        {
+            while (true)
+            {
+                Console.Clear();
+
+                Console.WriteLine("RUN NATIVE");
+                Console.WriteLine("--------------------------------");
+
+                for (int i = 0; i < nativeTestMethods.Count; i++)
+                {
+                    Console.WriteLine("{0}. {1}", i + 1, nativeTestMethods[i].Name);
+                }
+
+                Console.WriteLine("--------------------------------");
+                Console.WriteLine("Press ESC to exit or select the test to run...");
+                Console.WriteLine();
+
+                ConsoleKey key = GetNativeTestKey();
+                if (key == ConsoleKey.Escape)
+                    break;
+
+                int testNo = (int)key;
+
+                Console.WriteLine("Test: " + nativeTestMethods[testNo].Name);
+                Console.WriteLine("--------------------------------");
+
+                try
+                {
+                    Stopwatch sw = new Stopwatch();
+
+                    sw.Start();
+                    try
+                    {
+                        nativeTestMethods[testNo].RunMethod();
+                    }
+                    finally
+                    {
+                        sw.Stop();
+                        Console.WriteLine();
+                    }
+
+                    Console.WriteLine("Eval time: {0} ms", sw.Elapsed.TotalMilliseconds);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Error:");
+                    Console.WriteLine(e);
+                }
+
+                Console.WriteLine("--------------------------------");
+
+                Console.WriteLine("Press ESC to exit, any key to continue...");
+                if (Console.ReadKey(true).Key == ConsoleKey.Escape)
+                    break;
             }
         }
 
@@ -332,6 +432,35 @@ namespace Sweet.BRETest
             rs = IndexTestProject().GetRuleset("main");
         }
 
+        private static void CelciusToFahrenheitNativeTest()
+        {
+            Dictionary<string, object> facts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            facts["celcius"] = 18;
+            facts["fahrenheit"] = 64;
+
+            object obj;
+            double celcius;
+            double fahrenheit;
+
+            facts.TryGetValue("celcius", out obj);
+
+            celcius = Convert.ToDouble(obj);
+            if (celcius == 18)
+            {
+                fahrenheit = Math.Round(((celcius * 9) / 5) + 32);
+                Console.WriteLine(String.Format("Fahrenheit: ", fahrenheit));
+            }
+
+            facts.TryGetValue("fahrenheit", out obj);
+
+            fahrenheit = Convert.ToDouble(obj);
+            if (fahrenheit == 64)
+            {
+                celcius = Math.Round((fahrenheit - 32) * 5 / 9);
+                Console.WriteLine(String.Format("Celcius: ", celcius));
+            }
+        }
+
         private static IProject CelciusToFahrenheitTestProject()
         {
             IProject project = Project.As();
@@ -382,6 +511,20 @@ namespace Sweet.BRETest
                 .Set("celcius", 18);
 
             rs = CelciusToFahrenheitTestProject().GetRuleset("main");
+        }
+
+        private static void FahrenheitToCelciusNativeTest()
+        {
+            Dictionary<string, object> facts = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+            facts["fahrenheit"] = 64.4;
+
+            object obj;
+            facts.TryGetValue("fahrenheit", out obj);
+
+            double fahrenheit = Convert.ToDouble(obj);
+            double celcius = Math.Round((fahrenheit - 32) * 5 / 9);
+
+            Console.WriteLine(celcius);
         }
 
         private static IProject FahrenheitToCelciusTestProject()

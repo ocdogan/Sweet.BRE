@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class TryStm : ActionContext
+    public sealed class TryStm : ScopeStm
     {
         private FinallyStm _finally;
         private List<CatchErrorStm> _handlerList;

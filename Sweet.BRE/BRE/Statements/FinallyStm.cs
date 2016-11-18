@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class FinallyStm : ActionContext
+    public sealed class FinallyStm : ScopeStm
     {
         private TryStm _try;
 

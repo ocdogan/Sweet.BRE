@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class SwitchStm : ActionContext
+    public sealed class SwitchStm : ScopeStm
     {
         private Statement _switchCase;
         private List<CaseStm> _caseList;

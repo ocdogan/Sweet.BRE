@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class IfThenStm : ActionContext
+    public sealed class IfThenStm : ScopeStm
     {
         private BooleanStm _condition;
         private IfThenStm _elseIf;

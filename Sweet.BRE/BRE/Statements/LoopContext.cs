@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public abstract class LoopContext : ActionContext
+    public abstract class LoopContext : ScopeStm
     {
         protected LoopContext()
             : base()
