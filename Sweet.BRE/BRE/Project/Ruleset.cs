@@ -129,6 +129,11 @@ namespace Sweet.BRE
             }
         }
 
+        public override bool Rescope
+        {
+            get { return true; }
+        }
+
         INamedObjectList INamedObject.List
         {
             get { return _ownerList; }

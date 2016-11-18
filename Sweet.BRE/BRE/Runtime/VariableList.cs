@@ -87,13 +87,14 @@ namespace Sweet.BRE
             return (name != null ? name.Trim() : String.Empty);
         }
 
-        protected void ValidateName(string name)
+        protected string ValidateName(string name)
         {
             name = NormalizeName(name);
             if (String.IsNullOrEmpty(name))
             {
                 throw new ArgumentNullException("name");
             }
+            return name;
         }
 
         public IVariableList Clear()
@@ -182,21 +183,24 @@ namespace Sweet.BRE
         {
             name = NormalizeName(name);
 
-            if (_objList.ContainsKey(name))
+            IVariable obj;
+            if (_objList.TryGetValue(name, out obj))
             {
-                Variable old = (Variable)_objList[name];
-                old.Update(value);
-
-                return;
+                Variable v = obj as Variable;
+                if (!ReferenceEquals(v, null))
+                {
+                    v.Update(value);
+                    return;
+                }
             }
 
-            IVariable obj = new Variable(name, value);
+            obj = new Variable(name, value);
 
             _list.Add(obj);
             _objList[name] = obj;
         }
 
-        public IVariableList Set(string name, bool value)
+        public virtual IVariableList Set(string name, bool value)
         {
             IVariable vr = Get(name);
             if (vr != null)
@@ -209,7 +213,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IVariableList Set(string name, char value)
+        public virtual IVariableList Set(string name, char value)
         {
             IVariable vr = Get(name);
             if (vr != null)
@@ -222,7 +226,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IVariableList Set(string name, DateTime value)
+        public virtual IVariableList Set(string name, DateTime value)
         {
             IVariable vr = Get(name);
             if (vr != null)
@@ -235,7 +239,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IVariableList Set(string name, double value)
+        public virtual IVariableList Set(string name, double value)
         {
             IVariable vr = Get(name);
             if (vr != null)
@@ -248,7 +252,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IVariableList Set(string name, long value)
+        public virtual IVariableList Set(string name, long value)
         {
             IVariable vr = Get(name);
             if (vr != null)
@@ -261,7 +265,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IVariableList Set(string name, string value)
+        public virtual IVariableList Set(string name, string value)
         {
             IVariable vr = Get(name);
             if (vr != null)
@@ -274,7 +278,7 @@ namespace Sweet.BRE
             return this;
         }
 
-        public IVariableList Set(string name, TimeSpan value)
+        public virtual IVariableList Set(string name, TimeSpan value)
         {
             IVariable vr = Get(name);
             if (vr != null)

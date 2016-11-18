@@ -32,5 +32,15 @@ namespace Sweet.BRE
     public interface IEvaluationScope : IVariableList
     {
         IEvaluationScope Parent { get; }
+
+        IEvaluationScope ScopeOf(string name);
+
+        IEvaluationScope Set(string name, bool forceCurrent, bool value);
+        IEvaluationScope Set(string name, bool forceCurrent, char value);
+        IEvaluationScope Set(string name, bool forceCurrent, DateTime value);
+        IEvaluationScope Set(string name, bool forceCurrent, double value);
+        IEvaluationScope Set(string name, bool forceCurrent, long value);
+        IEvaluationScope Set(string name, bool forceCurrent, string value);
+        IEvaluationScope Set(string name, bool forceCurrent, TimeSpan value);
     }
 }

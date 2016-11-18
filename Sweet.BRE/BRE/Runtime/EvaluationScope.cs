@@ -66,19 +66,38 @@ namespace Sweet.BRE
             base.Dispose();
         }
 
+        public IEvaluationScope ScopeOf(string name)
+        {
+            name = ValidateName(name);
+            if (!String.IsNullOrEmpty(name))
+            {
+                if (ObjList.ContainsKey(name))
+                {
+                    return this;
+                }
+
+                if (_parent != null)
+                {
+                    return _parent.ScopeOf(name);
+                }
+            }
+            return null;
+        }
+
         public override bool Contains(string name)
         {
-            ValidateName(name);
-            name = NormalizeName(name);
-
-            if (ObjList.ContainsKey(name))
+            name = ValidateName(name);
+            if (!String.IsNullOrEmpty(name))
             {
-                return true;
-            }
+                if (ObjList.ContainsKey(name))
+                {
+                    return true;
+                }
 
-            if (_parent != null)
-            {
-                return _parent.Contains(name);
+                if (_parent != null)
+                {
+                    return _parent.Contains(name);
+                }
             }
 
             return false;
@@ -86,19 +105,19 @@ namespace Sweet.BRE
 
         public override IVariable Get(string name)
         {
-            ValidateName(name);
-            name = NormalizeName(name);
-
-            if (ObjList.ContainsKey(name))
+            name = ValidateName(name);
+            if (!String.IsNullOrEmpty(name))
             {
-                return ObjList[name];
-            }
+                if (ObjList.ContainsKey(name))
+                {
+                    return ObjList[name];
+                }
 
-            if (_parent != null)
-            {
-                return _parent.Get(name);
+                if (_parent != null)
+                {
+                    return _parent.Get(name);
+                }
             }
-
             return null;
         }
 
@@ -111,6 +130,83 @@ namespace Sweet.BRE
             }
 
             return result;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, bool value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, char value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, DateTime value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, double value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, long value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, string value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
+        }
+
+        IEvaluationScope IEvaluationScope.Set(string name, bool forceCurrent, TimeSpan value)
+        {
+            if (forceCurrent)
+            {
+                Update(name, value);
+                return this;
+            }
+            Set(name, value);
+            return this;
         }
 
         public override IVariable[] ToArray()

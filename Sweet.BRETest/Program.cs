@@ -631,14 +631,12 @@ namespace Sweet.BRETest
                         EvaluateTreeStm.As("tree1")
                     )
                     .Do(
-                        ((FunctionStm)"Print")
+                        ((FunctionStm)"Printfln")
                             .Params(
-                                    ArithmeticGroupStm.As((StringStm)"@var1: ")
-                                        .Add((VariableStm)"@var1")
-                                        .Add((StringStm)", @var2: ")
-                                        .Add((VariableStm)"@var2")
-                                        .Add((StringStm)", @var3: ")
-                                        .Add((VariableStm)"@var3")
+                                    "@var1: {0}, @var2: {1}, @var3: {2}",
+                                    (VariableStm)"@var1",
+                                    (VariableStm)"@var2",
+                                    (VariableStm)"@var3"
                                    )
                     )
                     .Do(
@@ -674,23 +672,27 @@ namespace Sweet.BRETest
                                 ArithmeticGroupStm.As((VariableStm)"Count").Add(1)
                                 )
                         ,
-                        ((FunctionStm)"Print")
+                        ((FunctionStm)"PrintLine")
                             .Params(
                                     "Count: " + (VariableStm)"Count"
                                    )
                         ,
-                        ((FunctionStm)"Print")
+                        ((FunctionStm)"PrintLine")
                             .Params(
                                     "VarA: " + (VariableStm)"VarA"
                                    )
                         ,
-                        ((FunctionStm)"Print")
+                        ((FunctionStm)"Printfln")
                             .Params(
-                                    (DateStm)"12.10.2005" + (TimeStm)"11.00:00:00" + (VariableStm)"Count"
+                                    "Date: {0}, Time: {1}, Count: {2}",
+                                    (DateStm)"12.10.2005",
+                                    (TimeStm)"11.00:00:00",
+                                    (VariableStm)"Count"
                                     )
                         ,
-                        ((FunctionStm)"Print")
+                        ((FunctionStm)"PrintLine")
                             .Params(
+                                    "AddDate: " +
                                     ((FunctionStm)"AddDate")
                                         .Params(
                                                 (DateStm)"12.10.2005",

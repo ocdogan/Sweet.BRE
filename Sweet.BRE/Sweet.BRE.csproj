@@ -10,6 +10,8 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sweet.BRE</RootNamespace>
     <AssemblyName>Sweet.BRE</AssemblyName>
+    <!--<TargetFrameworkVersion>v4.5</TargetFrameworkVersion>-->
+    <!--<TargetFrameworkVersion>v4.0</TargetFrameworkVersion>-->
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkSubset>
@@ -22,8 +24,8 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <OutputPath>bin\Debug\NET$(TargetFrameworkVersion.Replace("v", "").Replace(".", ""))</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET$(TargetFrameworkVersion.Replace("v", "").Replace(".", "").PadRight(4, '0'));</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
@@ -32,8 +34,8 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <OutputPath>bin\Release\NET$(TargetFrameworkVersion.Replace("v", "").Replace(".", ""))</OutputPath>
+    <DefineConstants>NET$(TargetFrameworkVersion.Replace("v", "").Replace(".", "").PadRight(4, '0'));</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -106,6 +108,9 @@
     <Compile Include="BRE\Runtime\HaltException.cs" />
     <Compile Include="BRE\Runtime\IRuleDebugger.cs" />
     <Compile Include="BRE\Runtime\RuleEngineRuntime.cs" />
+    <Compile Include="BRE\Statements\DefineVariableStm.cs" />
+    <Compile Include="BRE\Statements\ScopeStm.cs" />
+    <Compile Include="ExpEval\Common\ScopeLevel.cs" />
     <Compile Include="BRE\Runtime\VariableList.cs" />
     <Compile Include="BRE\Runtime\Variable.cs" />
     <Compile Include="BRE\Statements\ContinueStm.cs" />

@@ -85,6 +85,11 @@ namespace Sweet.BRE
             get { return _project; }
         }
 
+        public bool Rescope
+        {
+            get { return false; }
+        }
+
         INamedObjectList INamedObject.List
         {
             get { return _ownerList; }

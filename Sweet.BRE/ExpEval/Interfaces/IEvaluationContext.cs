@@ -61,7 +61,13 @@ namespace Sweet.BRE
         void Return();
         void Continue();
 
+        void UpgradeScope();
+        void DowngradeScope();
+
+        IVariable GetVariable(string name);
+
         IEvaluationScope GetCurrentScope();
+        IEvaluationScope ScopeOfVariable(string name);
 
         void Evaluate();
         void Evaluate(IFactList facts);

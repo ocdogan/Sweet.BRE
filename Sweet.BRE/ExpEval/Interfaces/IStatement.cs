@@ -31,6 +31,7 @@ namespace Sweet.BRE
 {
     public interface IStatement
     {
+        bool Rescope { get; }
         object Evaluate(IEvaluationContext context, params object[] args);
     }
 }

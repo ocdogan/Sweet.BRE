@@ -103,8 +103,13 @@ namespace Sweet.BRE
         public static bool IsCriticalException(Exception e)
         {
             return (e is NullReferenceException) || (e is StackOverflowException) ||
-                (e is OutOfMemoryException) || (e is ThreadAbortException) || (e is ExecutionEngineException) ||
-                (e is IndexOutOfRangeException) || (e is AccessViolationException);
+                (e is OutOfMemoryException) || 
+                (e is ThreadAbortException) || 
+#if (NET3500 || NET3000 || NET2000)
+                (e is ExecutionEngineException) ||
+#endif
+                (e is IndexOutOfRangeException) || 
+                (e is AccessViolationException);
         }
 
         public static string ComposeContentType(string contentType, Encoding encoding, string action)

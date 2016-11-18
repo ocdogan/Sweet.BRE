@@ -37,6 +37,11 @@ namespace Sweet.BRE
         {
         }
 
+        public virtual bool Rescope
+        {
+            get { return false; }
+        }
+
         protected virtual bool ExecutionBroken(IEvaluationContext context)
         {
             return (context.Canceled || context.Halted);

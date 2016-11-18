@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class Rule : ActionContext, IRule
+    public sealed class Rule : ScopeStm, IRule
     {
         private string _name;
         private string _description;
@@ -123,6 +123,11 @@ namespace Sweet.BRE
             {
                 SetSubPriority(value);
             }
+        }
+
+        public override bool Rescope
+        {
+            get { return true; }
         }
 
         INamedObjectList INamedObject.List

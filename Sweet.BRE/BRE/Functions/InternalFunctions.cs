@@ -39,6 +39,7 @@ namespace Sweet.BRE
     {
         private delegate object Fn(FunctionEventArgs e, params object[] args);
 
+        private static readonly List<FunctionInfo> _info = new List<FunctionInfo>();
         private static readonly Dictionary<string, Fn> _functions = new Dictionary<string, Fn>();
 
         #region Constants
@@ -100,9 +101,15 @@ namespace Sweet.BRE
 
         #endregion Constants
 
-        private List<FunctionInfo> _info;
-
         static InternalFunctions()
+        {
+            CreateInfo();
+            RegisterFunctions();
+        }
+
+        #region Function Registration
+
+        private static void RegisterFunctions()
         {
             _functions[STR_COMPARE] = Compare;
 
@@ -178,21 +185,7 @@ namespace Sweet.BRE
             _functions[STR_TRACERT] = WriteToTrace;
         }
 
-        public InternalFunctions()
-        {
-            _info = new List<FunctionInfo>();
-            DefineMethods();
-        }
-
-        public FunctionInfo[] HandledFunctions
-        {
-            get
-            {
-                return _info.ToArray();
-            }
-        }
-
-        private void DefineMethods()
+        private static void CreateInfo()
         {
             _info.AddRange(
                 new FunctionInfo[] { 
@@ -320,6 +313,16 @@ namespace Sweet.BRE
                             .AddAlias("Tracert")
                 }
                 );
+        }
+
+        #endregion Function Registration
+
+        public FunctionInfo[] HandledFunctions
+        {
+            get
+            {
+                return _info.ToArray();
+            }
         }
 
         public void Eval(FunctionEventArgs e)

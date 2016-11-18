@@ -37,6 +37,7 @@ namespace Sweet.BRE
 
         private delegate object Fn(FunctionEventArgs e, params object[] args);
 
+        private static readonly List<FunctionInfo> _info = new List<FunctionInfo>();
         private static readonly Dictionary<string, Fn> _functions = new Dictionary<string, Fn>();
 
         #region Constants
@@ -64,9 +65,15 @@ namespace Sweet.BRE
 
         #endregion Constants
 
-        private List<FunctionInfo> _info;
-
         static ArrayFunctions()
+        {
+            CreateInfo();
+            RegisterFunctions();
+        }
+
+        #region Function Registration
+
+        private static void RegisterFunctions()
         {
             _functions[STR_CONTAINS] = Contains;
             _functions[STR_HAS] = Contains;
@@ -91,23 +98,10 @@ namespace Sweet.BRE
             _functions[STR_LEN] = Length;
             _functions[STR_LENGTH] = Length;
             _functions[STR_LENOF] = Length;
-            _functions[STR_LENGTHOF] = Length;         }
-
-        public ArrayFunctions()
-        {
-            _info = new List<FunctionInfo>();
-            DefineMethods();
+            _functions[STR_LENGTHOF] = Length;
         }
 
-        public FunctionInfo[] HandledFunctions
-        {
-            get
-            {
-                return _info.ToArray();
-            }
-        }
-
-        private void DefineMethods()
+        private static void CreateInfo()
         {
             _info.AddRange(
                 new FunctionInfo[] { 
@@ -151,6 +145,15 @@ namespace Sweet.BRE
                 );
         }
 
+        #endregion Function Registration
+
+        public FunctionInfo[] HandledFunctions
+        {
+            get
+            {
+                return _info.ToArray();
+            }
+        }
 
         public void Eval(FunctionEventArgs e)
         {

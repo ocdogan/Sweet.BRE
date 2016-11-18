@@ -257,7 +257,7 @@ namespace Sweet.BRE
         {
             _callStack.Push(stm);
 
-            if (stm is Rule)
+            if (stm.Rescope)
             {
                 _scopeStack.Push(new EvaluationScope(_scopeStack.Peek()));
             }
@@ -281,13 +281,31 @@ namespace Sweet.BRE
             Debug(stm, DebugStatus.Evaluating, null, args);
         }
 
-        private void UpdateScopes(object obj)
+        void IEvaluationContext.UpgradeScope()
         {
-            if (obj is Rule)
+            _scopeStack.Push(new EvaluationScope(_scopeStack.Peek()));
+        }
+
+        void IEvaluationContext.DowngradeScope()
+        {
+            EvaluationScope scope = _scopeStack.Pop();
+            if (!ReferenceEquals(scope, null))
             {
-                EvaluationScope scope = _scopeStack.Pop();
                 scope.SetParent(null);
                 scope.Dispose();
+            }
+        }
+
+        private void UpdateScopes(IStatement statement)
+        {
+            if (!ReferenceEquals(statement, null) && statement.Rescope)
+            {
+                EvaluationScope scope = _scopeStack.Pop();
+                if (!ReferenceEquals(scope, null))
+                {
+                    scope.SetParent(null);
+                    scope.Dispose();
+                }
             }
         }
 
@@ -326,6 +344,26 @@ namespace Sweet.BRE
             return _exceptionStack.Peek();
         }
 
+        IEvaluationScope IEvaluationContext.ScopeOfVariable(string name)
+        {
+            IEvaluationScope scope = _scopeStack.Peek();
+            if (!ReferenceEquals(scope, null))
+            {
+                return scope.ScopeOf(name);
+            }
+            return null;
+        }
+
+        IVariable IEvaluationContext.GetVariable(string name)
+        {
+            IEvaluationScope scope = _scopeStack.Peek();
+            if (!ReferenceEquals(scope, null))
+            {
+                return scope.Get(name);
+            }
+            return null;
+        }
+
         void IEvaluationContext.HandleError(Exception e, out bool handled)
         {
             handled = false;
@@ -334,9 +372,9 @@ namespace Sweet.BRE
             Debug(null, DebugStatus.Error, e, null);
         }
 
-        void IEvaluationContext.EvaluationCompleted(IStatement stm, params object[] args)
+        void IEvaluationContext.EvaluationCompleted(IStatement statement, params object[] args)
         {
-            int index = _callStack.IndexOf(stm);
+            int index = _callStack.IndexOf(statement);
             if (index > -1)
             {
                 int count = _callStack.Count - index;
@@ -345,10 +383,10 @@ namespace Sweet.BRE
                 {
                     _callStack.RemoveAt(index);
 
-                    UpdateScopes(stm);
+                    UpdateScopes(statement);
                     if (NeedsStateUpdate())
                     {
-                        UpdateStates(stm);
+                        UpdateStates(statement);
                     }
                 }
                 else if (count > 1)
@@ -360,19 +398,19 @@ namespace Sweet.BRE
                     {
                         range.Reverse();
 
-                        foreach (IStatement obj in range)
+                        foreach (IStatement subStatement in range)
                         {
-                            UpdateScopes(obj);
+                            UpdateScopes(subStatement);
                             if (NeedsStateUpdate())
                             {
-                                UpdateStates(obj);
+                                UpdateStates(subStatement);
                             }
                         }
                     }
                 }
             }
 
-            Debug(stm, DebugStatus.Evaluated, null, args);
+            Debug(statement, DebugStatus.Evaluated, null, args);
         }
 
         void IEvaluationContext.Evaluate()
