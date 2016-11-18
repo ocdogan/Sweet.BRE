@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class Rule : ScopeStm, IRule
+    public sealed class Rule : BaseScopeStm, IRule
     {
         private string _name;
         private string _description;

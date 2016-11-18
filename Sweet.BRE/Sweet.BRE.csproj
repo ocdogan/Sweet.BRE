@@ -216,6 +216,7 @@
     <Compile Include="BRE\Interfaces\IRule.cs" />
     <Compile Include="BRE\Interfaces\IRuleset.cs" />
     <Compile Include="BRE\Interfaces\IProject.cs" />
+    <Compile Include="BRE\Statements\BaseScopeStm.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\BREResource.resx">

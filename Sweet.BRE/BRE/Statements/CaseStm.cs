@@ -29,7 +29,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class CaseStm : ScopeStm
+    public sealed class CaseStm : BaseScopeStm
     {
         private SwitchStm _switchE;
         private List<Statement> _caseList;

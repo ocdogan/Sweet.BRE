@@ -30,7 +30,7 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public sealed class IfThenStm : ScopeStm
+    public sealed class IfThenStm : BaseScopeStm
     {
         private BooleanStm _condition;
         private IfThenStm _elseIf;
@@ -267,7 +267,7 @@ namespace Sweet.BRE
 
             if (!ReferenceEquals(_elseIf, null))
             {
-                builder.AppendFormat("{0} {1} ", RuleConstants.ELSE, _elseIf.ToString());
+                builder.AppendFormat("{0} {1} ", RuleConstants.ELSE, _elseIf);
             }
 
             return builder.ToString();

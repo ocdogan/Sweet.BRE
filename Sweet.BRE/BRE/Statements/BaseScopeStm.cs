@@ -29,26 +29,15 @@ using System.Text;
 
 namespace Sweet.BRE
 {
-    public class ScopeStm : BaseScopeStm
+    public abstract class BaseScopeStm : ActionContext
     {
-        internal ScopeStm()
+        internal BaseScopeStm()
             : base()
         { }
 
-        public static ScopeStm As()
+        public override bool Rescope
         {
-            return new ScopeStm();
-        }
-
-        public override string ToString()
-        {
-            StringBuilder builder = new StringBuilder();
-
-            builder.AppendLine(RuleConstants.BEGIN + " ");
-            builder.Append(base.ToString());
-            builder.Append(RuleConstants.END + " ");
-
-            return builder.ToString();
+            get { return true; }
         }
     }
 }
