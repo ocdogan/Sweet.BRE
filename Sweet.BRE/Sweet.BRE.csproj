@@ -77,6 +77,7 @@
     <Compile Include="BRE\Decisions\Tree\TreeEvaluator.cs" />
     <Compile Include="BRE\Functions\ArrayFunctions.cs" />
     <Compile Include="BRE\Functions\DateFunctions.cs" />
+    <Compile Include="BRE\Functions\PredefFunctions.cs" />
     <Compile Include="BRE\Functions\StringFunctions.cs" />
     <Compile Include="BRE\Functions\MathFunctions.cs" />
     <Compile Include="BRE\Functions\FunctionInfo.cs" />
