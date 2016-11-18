@@ -308,14 +308,23 @@ namespace Sweet.BRE
             long to = StmCommon.ToInteger((!ReferenceEquals(_to, null) ? ((IStatement)_to).Evaluate(context) : 1), 1);
 
             IEvaluationScope scope = context.GetCurrentScope();
+            scope.Set(variableName, true, 0);
 
             for (long i = from; ((step < 0) ? (i > to) : (i < to)); i = i + step)
             {
                 scope.Set(variableName, i);
 
-                base.Evaluate(context);
-                if (ExecutionBroken(context))
-                    return null;
+                context.UpgradeScope();
+                try
+                {
+                    base.Evaluate(context);
+                    if (ExecutionBroken(context))
+                        return null;
+                }
+                finally
+                {
+                    context.DowngradeScope();
+                }
             }
 
             return null;

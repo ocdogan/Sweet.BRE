@@ -139,7 +139,15 @@ namespace Sweet.BRE
                 if (!StmCommon.ToBoolean(o1, true))
                     break;
 
-                base.Evaluate(context);
+                context.UpgradeScope();
+                try
+                {
+                    base.Evaluate(context);
+                }
+                finally
+                {
+                    context.DowngradeScope();
+                }
             }
 
             return null;

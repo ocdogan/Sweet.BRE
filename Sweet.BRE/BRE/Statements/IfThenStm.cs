@@ -288,7 +288,15 @@ namespace Sweet.BRE
 
             if (!ReferenceEquals(_elseIf, null) && !ExecutionBroken(context))
             {
-                ((IStatement)_elseIf).Evaluate(context);
+                context.UpgradeScope();
+                try
+                {
+                    ((IStatement)_elseIf).Evaluate(context);
+                }
+                finally
+                {
+                    context.DowngradeScope();
+                }
             }
 
             return null;

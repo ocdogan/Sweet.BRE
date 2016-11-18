@@ -827,9 +827,12 @@ namespace Sweet.BRETest
                         ,
                         ((FunctionStm)"Printfln")
                             .Params(
-                                    "Date: {0}, Time: {1}, Count: {2}",
-                                    (DateStm)"12.10.2005",
-                                    (TimeStm)"11.00:00:00",
+                                    "Date: {0}, Count: {1}",
+                                    ((FunctionStm)"AddTimeToDate")
+                                        .Params(
+                                            (DateStm)"12.10.2005",
+                                            (TimeStm)"1.23:45:56"
+                                            ),
                                     (VariableStm)"Count"
                                     )
                         ,
