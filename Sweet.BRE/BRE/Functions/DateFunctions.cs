@@ -408,7 +408,7 @@ namespace Sweet.BRE
 
                 if (args.Length >= 2)
                 {
-                    result += StmCommon.ToTime(args[1]);
+                    result = result.Add(StmCommon.ToTime(args[1]));
                 }
 
                 return result;
@@ -432,7 +432,7 @@ namespace Sweet.BRE
 
                 if (args.Length >= 2)
                 {
-                    result -= StmCommon.ToTime(args[1]);
+                    result = result.Subtract(StmCommon.ToTime(args[1])); 
                 }
 
                 return result;
