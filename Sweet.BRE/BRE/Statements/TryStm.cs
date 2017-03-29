@@ -233,20 +233,22 @@ namespace Sweet.BRE
             if (base.Actions.Count > 0)
             {
                 builder.Append(base.ToString());
+                CommonHelper.LineFeedIfNeeded(builder);
             }
 
-            foreach (CatchErrorStm handler in _handlerList)
+            for (int i = 0; i < _handlerList.Count; i++)
             {
-                builder.AppendLine(handler.ToString());
+                builder.Append(_handlerList[i].ToString());
+                CommonHelper.LineFeedIfNeeded(builder);
             }
 
             if (!ReferenceEquals(_finally, null) && (_finally.Actions.Count > 0))
             {
                 builder.AppendFormat("{0} ", _finally.ToString());
-                builder.AppendLine();
+                CommonHelper.LineFeedIfNeeded(builder);
             }
 
-            builder.Append(RuleConstants.END + " ");
+            builder.Append(RuleConstants.ENDTRY + " ");
 
             return builder.ToString();
         }

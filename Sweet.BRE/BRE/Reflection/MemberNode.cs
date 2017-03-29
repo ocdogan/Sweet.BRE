@@ -117,7 +117,9 @@ namespace Sweet.BRE
 
         public override string ToString()
         {
-            return String.Format("{0}, {1}", _type.ToString(), Value);
+            string value = Value;
+            return String.Format("{0}, {1}", _type.ToString(), 
+                String.IsNullOrEmpty(value) ? RuleConstants.NULL : value);
         }
     }
 }

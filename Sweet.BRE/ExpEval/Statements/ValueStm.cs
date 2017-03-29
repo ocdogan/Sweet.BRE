@@ -72,7 +72,7 @@ namespace Sweet.BRE
 
         public override string ToString()
         {
-            if ((_value is string) && (_value == null))
+            if (_value == null)
             {
                 return StmConstants.NULL;
             }

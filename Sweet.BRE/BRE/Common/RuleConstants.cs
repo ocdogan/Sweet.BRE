@@ -34,8 +34,13 @@ namespace Sweet.BRE
         public const string NULL = "NULL";
 
         public const string RULE = "Rule";
+        public const string ENDRULE = "End Rule";
+
         public const string RULESET = "Ruleset";
+        public const string ENDRULESET = "End Ruleset";
+
         public const string PROJECT = "Project";
+        public const string ENDPROJECT = "End Project";
 
         public const string EVALTREE = "EvalTree";
         public const string EVALTABLE = "EvalTable";
@@ -49,12 +54,17 @@ namespace Sweet.BRE
         public const string SWITCH = "Switch";
         public const string CASE = "Case";
         public const string DEFAULT = "Default";
+        public const string ENDCASE = "End Case";
+        public const string ENDSWITCH = "End Switch";
 
         public const string SET = "Set";
 
         public const string TRY = "Try";
-        public const string HANDLE_ERROR = "OnError";
+        public const string ONERROR = "OnError";
         public const string FINALLY = "Finally";
+        public const string ENDTRY = "End Try";
+        public const string ENDONERROR = "End OnError";
+        public const string ENDFINALLY = "End Finally";
 
         public const string HALT = "Halt";
         public const string BREAK = "Break";
@@ -69,6 +79,7 @@ namespace Sweet.BRE
         public const string FROM = "From";
         public const string TO = "To";
         public const string STEP = "Step";
+        public const string ENDLOOP = "End Loop";
 
         public const string DO = "Do";
         public const string WHILE = "While";
@@ -80,5 +91,6 @@ namespace Sweet.BRE
         public const string THEN = "Then";
         public const string ELSE = "Else";
         public const string OTHERWISE = "Otherwise";
+        public const string ENDIF = "End If";
     }
 }

@@ -46,6 +46,8 @@ namespace Sweet.BRE
 
             builder.AppendLine(RuleConstants.BEGIN + " ");
             builder.Append(base.ToString());
+
+            CommonHelper.LineFeedIfNeeded(builder);
             builder.Append(RuleConstants.END + " ");
 
             return builder.ToString();

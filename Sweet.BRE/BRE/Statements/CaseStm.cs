@@ -178,7 +178,7 @@ namespace Sweet.BRE
             if (_caseList.Count == 0)
             {
                 builder.AppendFormat("{0}: ", RuleConstants.DEFAULT);
-                builder.AppendLine();
+                CommonHelper.LineFeedIfNeeded(builder);
             }
             else
             {
@@ -186,12 +186,14 @@ namespace Sweet.BRE
                 {
                     builder.AppendFormat("{0} {1}: ", 
                         RuleConstants.CASE, StmCommon.PrepareToString(stm));
-                    builder.AppendLine();
+                    CommonHelper.LineFeedIfNeeded(builder);
                 }
             }
 
             builder.Append(base.ToString());
-            builder.Append(RuleConstants.END + " ");
+            
+            CommonHelper.LineFeedIfNeeded(builder);
+            builder.Append(RuleConstants.ENDCASE + " ");
 
             return builder.ToString();
         }

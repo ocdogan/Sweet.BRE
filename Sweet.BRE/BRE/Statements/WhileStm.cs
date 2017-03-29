@@ -118,7 +118,8 @@ namespace Sweet.BRE
             builder.AppendLine();
             builder.Append(base.ToString());
 
-            builder.Append(RuleConstants.END + " ");
+            CommonHelper.LineFeedIfNeeded(builder);
+            builder.Append(RuleConstants.ENDLOOP + " ");
 
             return builder.ToString();
         }

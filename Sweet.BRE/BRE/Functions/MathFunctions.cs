@@ -558,13 +558,13 @@ namespace Sweet.BRE
                 double d1 = StmCommon.ToDouble(args[0]);
 
                 long decimals = 0;
-                if (len == 2)
+                if (len >= 2)
                 {
                     decimals = StmCommon.ToInteger(args[1]);
                 }
 
                 MidpointRounding mode = MidpointRounding.ToEven;
-                if (len == 3)
+                if (len >= 3)
                 {
                     string s = StmCommon.ToString(args[2]);
                     s = ((s != null) ? s.Trim() : s);

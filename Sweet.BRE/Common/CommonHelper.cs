@@ -1454,5 +1454,35 @@ namespace Sweet.BRE
 
             return Path.GetFullPath(path);
         }
+
+        public static void LineFeedIfNeeded(StringBuilder builder)
+        {
+            if (builder != null)
+            {
+                int len = builder.Length;
+                if (len > 0)
+                {
+                    char ch;
+                    bool append = true;
+                    for (int i = len - 1; i > -1; i--)
+                    {
+                        ch = builder[i];
+                        if (!char.IsWhiteSpace(ch))
+                            break;
+
+                        if ((ch == '\r') || (ch == '\n'))
+                        {
+                            append = false;
+                            break;
+                        }
+                    }
+
+                    if (append)
+                    {
+                        builder.AppendLine();
+                    }
+                }
+            }
+        }
     }
 }

@@ -106,21 +106,23 @@ namespace Sweet.BRE
         {
             StringBuilder builder = new StringBuilder();
 
-            var strOnError = StmCommon.PrepareToString(_onError);
+            string strOnError = null;
+            if (_onError.Value != null)
+            {
+                strOnError = StmCommon.PrepareToString(_onError);
+            }
+
             if (String.IsNullOrEmpty(strOnError))
             {
-                builder.Append(RuleConstants.HANDLE_ERROR);
-                builder.Append(' ');
+                builder.Append(RuleConstants.ONERROR);
             }
             else
             {
-                builder.AppendFormat("{0} '{1}' ", RuleConstants.HANDLE_ERROR, strOnError);
+                builder.AppendFormat("{0} '{1}'", RuleConstants.ONERROR, strOnError);
             }
 
-            builder.AppendLine();
-
+            CommonHelper.LineFeedIfNeeded(builder);
             builder.Append(base.ToString());
-            builder.Append(RuleConstants.END + " ");
 
             return builder.ToString();
         }

@@ -345,7 +345,11 @@ namespace Sweet.BRE
 
             if (useQuotation && (result != null) && (value is StringStm))
             {
-                result = "\"" + result.Replace("\"", "\\\"") + "\"";
+                StringStm stm = (StringStm)value;
+                if (stm.Value != null)
+                {
+                    result = "\"" + result.Replace("\"", "\\\"") + "\"";
+                }
             }
 
             return (result != null ? result : String.Empty);

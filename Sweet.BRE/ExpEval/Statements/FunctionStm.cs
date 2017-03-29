@@ -173,30 +173,57 @@ namespace Sweet.BRE
 
             builder.Append(name);
 
-            if ((_parameters == null) || (_parameters.Count == 0))
+            if (_parameters == null)
             {
                 builder.Append("()");
             }
             else
             {
-                builder.Append('(');
-
-                for (int i = 0; i < _parameters.Count; i++)
+                int count = _parameters.Count;
+                if (count == 0)
                 {
-                    Statement param = _parameters[i];
-                    if (ReferenceEquals(param, null))
+                    builder.Append("()");
+                }
+                else
+                {
+                    StringBuilder subBuilder = new StringBuilder();
+
+                    for (int i = 0; i < count; i++)
                     {
-                        param = Statement.Null;
+                        Statement param = _parameters[i];
+                        if (ReferenceEquals(param, null))
+                        {
+                            param = Statement.Null;
+                        }
+
+                        subBuilder.Append(StmCommon.PrepareToString(param));
+                        if (i < count - 1)
+                        {
+                            subBuilder.Append(", ");
+                        }
                     }
 
-                    builder.Append(StmCommon.PrepareToString(param));
-                    if (i < _parameters.Count - 1)
+                    bool setParanthesis = true;
+                    if (count == 1)
                     {
-                        builder.Append(", ");
+                        int len = subBuilder.Length;
+                        if (len > 1 && subBuilder[0] == '(' && subBuilder[len - 1] == ')')
+                        {
+                            setParanthesis = false;
+                        }
+                    }
+
+                    if (!setParanthesis)
+                    {
+                        builder.Append(subBuilder.ToString());
+                    }
+                    else
+                    {
+                        builder.Append('(');
+                        builder.Append(subBuilder.ToString());
+                        builder.Append(')');
                     }
                 }
-
-                builder.Append(')');
             }
 
             return builder.ToString();

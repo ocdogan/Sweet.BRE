@@ -43,6 +43,10 @@ namespace Sweet.BRE
 
         private static Dictionary<string, MethodInfo> _methodCache;
 
+        private static readonly BindingFlags InstanceInvokeMethodFlags = 
+            BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | 
+            BindingFlags.Instance | BindingFlags.InvokeMethod;
+
         static ReflectionEvaluator()
         {
             _methodCache = new Dictionary<string, MethodInfo>();
@@ -175,29 +179,29 @@ namespace Sweet.BRE
             bool useArguments = false;
 
             MemberNode sibling = node.NextSibling;
+            bool hasArgument = (sibling != null) && (sibling.Arguments.Count > 0);
 
             bool isMethod = ((sibling != null) && (sibling.Type == MemberType.Parenthesis));
-            bool isIndexer = ((sibling != null) && (sibling.Type == MemberType.Indexer) &&
-                (sibling.Arguments.Count > 0));
-
             if (isMethod)
             {
                 useArguments = true;
             }
             else 
             {
-                member = "get_" + node.Value;
-                if (isIndexer && (node.Value == "Item"))
+                bool isIndexer = ((member == "Item") && hasArgument && (sibling.Type == MemberType.Indexer));
+                if (isIndexer)
                 {
                     useArguments = true;
                 }
+
+                member = "get_" + member;
             }
 
             if (useArguments)
             {
                 PushMember(sibling);
 
-                if ((sibling != null) && (sibling.Arguments.Count > 0))
+                if (hasArgument)
                 {
                     object obj = EvaluateArgs(sibling);
 
@@ -205,13 +209,15 @@ namespace Sweet.BRE
                     if ((obj != null) && obj.GetType().IsArray)
                     {
                         Array arr = (Array)obj;
-                        if (arr.Length == 0)
+                        
+                        int len = arr.Length;
+                        if (len == 0)
                         {
                             args = new object[0];
                         }
                         else
                         {
-                            object[] objArr = new object[arr.Length];
+                            object[] objArr = new object[len];
                             Array.Copy(arr, objArr, arr.Length);
 
                             args = objArr;
@@ -220,45 +226,47 @@ namespace Sweet.BRE
                 }
             }
 
-            object result = null;
-
             MethodInfo method = GetMethodInfo(instance, member, args);
             if (method != null)
             {
-                BindingFlags flags = BindingFlags.IgnoreCase | BindingFlags.Public |
-                   BindingFlags.NonPublic | BindingFlags.Instance |
-                   BindingFlags.InvokeMethod;
-
-                result = method.Invoke(instance, flags, null, args, null);
+                return method.Invoke(instance, InstanceInvokeMethodFlags, null, args, null);
             }
 
-            return result;
+            return null;
         }
 
         private object[] EvaluateArgs(MemberNode node)
         {
-            object[] args = new object[node.Arguments.Count];
-
-            BeginFrame();
-            try
+            IList<MemberNode> argList = node.Arguments;
+            if (argList != null)
             {
-                int i = 0;
-                foreach (MemberNode arg in node.Arguments)
+                int len = argList.Count;
+                if (len > 0)
                 {
-                    args[i++] = Evaluate(arg);
-                    if (_break)
+                    object[] result = new object[len];
+
+                    BeginFrame();
+                    try
                     {
-                        args = null;
-                        break;
+                        for (int i = 0; i < len; i++)
+                        {
+                            result[i] = Evaluate(argList[i]);
+                            if (_break)
+                            {
+                                result = null;
+                                break;
+                            }
+                        }
                     }
+                    finally
+                    {
+                        EndFrame();
+                    }
+
+                    return result;
                 }
             }
-            finally
-            {
-                EndFrame();
-            }
-
-            return args;
+            return new object[0];
         }
 
         private object EvaluateArgument(MemberNode node)
@@ -312,11 +320,7 @@ namespace Sweet.BRE
                     MethodInfo method = GetMethodInfo(instance, member, args);
                     if (method != null)
                     {
-                        BindingFlags flags = BindingFlags.IgnoreCase | BindingFlags.Public |
-                           BindingFlags.NonPublic | BindingFlags.Instance |
-                           BindingFlags.InvokeMethod;
-
-                        result = method.Invoke(instance, flags, null, args, null);
+                        result = method.Invoke(instance, InstanceInvokeMethodFlags, null, args, null);
                     }
                 }
             }
@@ -407,29 +411,31 @@ namespace Sweet.BRE
         {
             object result = _thisObj;
 
-            if ((_nodes != null) && (_nodes.Length > 0))
+            if (_nodes != null)
             {
-                StartEvaluate();
-
-                object[] arr = new object[_nodes.Length];
-
-                int i = 0;
-                foreach (MemberNode node in _nodes)
+                int len = _nodes.Length;
+                if (len > 0)
                 {
-                    BeginFrame();
-                    try
+                    StartEvaluate();
+
+                    object[] resultArray = new object[len];
+
+                    for (int i = 0; i < len; i++)
                     {
-                        arr[i++] = Evaluate(_nodes[0]);
+                        BeginFrame();
+                        try
+                        {
+                            resultArray[i] = Evaluate(_nodes[i]);
+                        }
+                        finally
+                        {
+                            EndFrame();
+                        }
                     }
-                    finally
-                    {
-                        EndFrame();
-                    }
+
+                    return ((resultArray.Length == 1) ? resultArray[0] : resultArray);
                 }
-
-                return ((arr.Length == 1) ? arr[0] : arr);
             }
-
             return result;
         }
 

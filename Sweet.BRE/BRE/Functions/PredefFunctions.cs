@@ -6,208 +6,208 @@ namespace Sweet.BRE
 {
     public static class Predef
     {
-        public static FunctionStm ArrayContains() { return "Contains"; }
+        public static FunctionStm ArrayContains(params Statement[] parameters) { return ((FunctionStm)"Contains").Params(parameters); }
 
-        public static FunctionStm ArrayCount() { return "Count"; }
+        public static FunctionStm ArrayCount(params Statement[] parameters) { return ((FunctionStm)"Count").Params(parameters); }
 
-        public static FunctionStm ArrayIndexOf() { return "IndexOf"; }
+        public static FunctionStm ArrayIndexOf(params Statement[] parameters) { return ((FunctionStm)"IndexOf").Params(parameters); }
 
-        public static FunctionStm ArrayLastIndexOf() { return "LastIndexOf"; }
+        public static FunctionStm ArrayLastIndexOf(params Statement[] parameters) { return ((FunctionStm)"LastIndexOf").Params(parameters); }
 
-        public static FunctionStm ArrayLength() { return "Length"; }
+        public static FunctionStm ArrayLength(params Statement[] parameters) { return ((FunctionStm)"Length").Params(parameters); }
 
-        public static FunctionStm AddDate() { return "AddDate"; }
+        public static FunctionStm AddDate(params Statement[] parameters) { return ((FunctionStm)"AddDate").Params(parameters); }
 
-        public static FunctionStm AddTime() { return "AddTime"; }
+        public static FunctionStm AddTime(params Statement[] parameters) { return ((FunctionStm)"AddTime").Params(parameters); }
 
-        public static FunctionStm AddTimeToDate() { return "AddTimeToDate"; }
+        public static FunctionStm AddTimeToDate(params Statement[] parameters) { return ((FunctionStm)"AddTimeToDate").Params(parameters); }
 
-        public static FunctionStm SubtractTimeFromDate() { return "SubTimeFromDate"; }
+        public static FunctionStm SubtractTimeFromDate(params Statement[] parameters) { return ((FunctionStm)"SubTimeFromDate").Params(parameters); }
 
-        public static FunctionStm Date() { return "Date"; }
+        public static FunctionStm Date(params Statement[] parameters) { return ((FunctionStm)"Date").Params(parameters); }
 
-        public static FunctionStm MaxDate() { return "MaxDate"; }
+        public static FunctionStm MaxDate(params Statement[] parameters) { return ((FunctionStm)"MaxDate").Params(parameters); }
 
-        public static FunctionStm MinDate() { return "MinDate"; }
+        public static FunctionStm MinDate(params Statement[] parameters) { return ((FunctionStm)"MinDate").Params(parameters); }
 
-        public static FunctionStm MaxTime() { return "MaxTime"; }
+        public static FunctionStm MaxTime(params Statement[] parameters) { return ((FunctionStm)"MaxTime").Params(parameters); }
 
-        public static FunctionStm MinTime() { return "MinTime"; }
+        public static FunctionStm MinTime(params Statement[] parameters) { return ((FunctionStm)"MinTime").Params(parameters); }
 
-        public static FunctionStm Now() { return "Now"; }
+        public static FunctionStm Now(params Statement[] parameters) { return ((FunctionStm)"Now").Params(parameters); }
 
-        public static FunctionStm Time() { return "Time"; }
+        public static FunctionStm Time(params Statement[] parameters) { return ((FunctionStm)"Time").Params(parameters); }
 
-        public static FunctionStm DayName() { return "DayName"; }
+        public static FunctionStm DayName(params Statement[] parameters) { return ((FunctionStm)"DayName").Params(parameters); }
 
-        public static FunctionStm IsLeapYear() { return "IsLeapYear"; }
+        public static FunctionStm IsLeapYear(params Statement[] parameters) { return ((FunctionStm)"IsLeapYear").Params(parameters); }
 
-        public static FunctionStm MonthName() { return "MonthName"; }
+        public static FunctionStm MonthName(params Statement[] parameters) { return ((FunctionStm)"MonthName").Params(parameters); }
 
-        public static FunctionStm YearOf() { return "Year"; }
+        public static FunctionStm YearOf(params Statement[] parameters) { return ((FunctionStm)"Year").Params(parameters); }
 
-        public static FunctionStm MonthOf() { return "Month"; }
+        public static FunctionStm MonthOf(params Statement[] parameters) { return ((FunctionStm)"Month").Params(parameters); }
 
-        public static FunctionStm DayOf() { return "Day"; }
+        public static FunctionStm DayOf(params Statement[] parameters) { return ((FunctionStm)"Day").Params(parameters); }
 
-        public static FunctionStm HourOf() { return "Hour"; }
+        public static FunctionStm HourOf(params Statement[] parameters) { return ((FunctionStm)"Hour").Params(parameters); }
 
-        public static FunctionStm MinuteOf() { return "Minute"; }
+        public static FunctionStm MinuteOf(params Statement[] parameters) { return ((FunctionStm)"Minute").Params(parameters); }
 
-        public static FunctionStm SecondOf() { return "Second"; }
+        public static FunctionStm SecondOf(params Statement[] parameters) { return ((FunctionStm)"Second").Params(parameters); }
 
-        public static FunctionStm MilliSecondOf() { return "MilliSecond"; }
+        public static FunctionStm MilliSecondOf(params Statement[] parameters) { return ((FunctionStm)"MilliSecond").Params(parameters); }
 
-        public static FunctionStm LocalDate() { return "LocalDate"; }
+        public static FunctionStm LocalDate(params Statement[] parameters) { return ((FunctionStm)"LocalDate").Params(parameters); }
 
-        public static FunctionStm UtcDate() { return "UtcDate"; }
+        public static FunctionStm UtcDate(params Statement[] parameters) { return ((FunctionStm)"UtcDate").Params(parameters); }
 
-        public static FunctionStm Compare() { return "Compare"; }
+        public static FunctionStm Compare(params Statement[] parameters) { return ((FunctionStm)"Compare").Params(parameters); }
 
-        public static FunctionStm Debug() { return "Debug"; }
+        public static FunctionStm Debug(params Statement[] parameters) { return ((FunctionStm)"Debug").Params(parameters); }
 
-        public static FunctionStm Environment() { return "Environment"; }
+        public static FunctionStm Environment(params Statement[] parameters) { return ((FunctionStm)"Environment").Params(parameters); }
 
-        public static FunctionStm Equals() { return "Equals"; }
+        public static FunctionStm Equals(params Statement[] parameters) { return ((FunctionStm)"Equals").Params(parameters); }
 
-        public static FunctionStm IsNull() { return "IsNull"; }
+        public static FunctionStm IsNull(params Statement[] parameters) { return ((FunctionStm)"IsNull").Params(parameters); }
 
-        public static FunctionStm IsNumber() { return "IsNumber"; }
+        public static FunctionStm IsNumber(params Statement[] parameters) { return ((FunctionStm)"IsNumber").Params(parameters); }
 
-        public static FunctionStm Log() { return "Log"; }
+        public static FunctionStm Log(params Statement[] parameters) { return ((FunctionStm)"Log").Params(parameters); }
 
-        public static FunctionStm NewGuid() { return "NewGuid"; }
+        public static FunctionStm NewGuid(params Statement[] parameters) { return ((FunctionStm)"NewGuid").Params(parameters); }
 
-        public static FunctionStm Print() { return "Print"; }
+        public static FunctionStm Print(params Statement[] parameters) { return ((FunctionStm)"Print").Params(parameters); }
 
-        public static FunctionStm Printf() { return "Printf"; }
+        public static FunctionStm Printf(params Statement[] parameters) { return ((FunctionStm)"Printf").Params(parameters); }
 
-        public static FunctionStm PrintLine() { return "PrintLine"; }
+        public static FunctionStm PrintLine(params Statement[] parameters) { return ((FunctionStm)"PrintLine").Params(parameters); }
 
-        public static FunctionStm PrintLn() { return "PrintLine"; }
+        public static FunctionStm PrintLn(params Statement[] parameters) { return ((FunctionStm)"PrintLine").Params(parameters); }
 
-        public static FunctionStm Printfln() { return "Printfln"; }
+        public static FunctionStm Printfln(params Statement[] parameters) { return ((FunctionStm)"Printfln").Params(parameters); }
 
-        public static FunctionStm Write() { return "Print"; }
+        public static FunctionStm Write(params Statement[] parameters) { return ((FunctionStm)"Print").Params(parameters); }
 
-        public static FunctionStm Writef() { return "Printf"; }
+        public static FunctionStm Writef(params Statement[] parameters) { return ((FunctionStm)"Printf").Params(parameters); }
 
-        public static FunctionStm WriteLine() { return "PrintLine"; }
+        public static FunctionStm WriteLine(params Statement[] parameters) { return ((FunctionStm)"PrintLine").Params(parameters); }
 
-        public static FunctionStm WriteLn() { return "PrintLine"; }
+        public static FunctionStm WriteLn(params Statement[] parameters) { return ((FunctionStm)"PrintLine").Params(parameters); }
 
-        public static FunctionStm Writefln() { return "Printfln"; }
+        public static FunctionStm Writefln(params Statement[] parameters) { return ((FunctionStm)"Printfln").Params(parameters); }
 
-        public static FunctionStm Sleep() { return "Sleep"; }
+        public static FunctionStm Sleep(params Statement[] parameters) { return ((FunctionStm)"Sleep").Params(parameters); }
 
-        public static FunctionStm ToBoolean() { return "ToBoolean"; }
+        public static FunctionStm ToBoolean(params Statement[] parameters) { return ((FunctionStm)"ToBoolean").Params(parameters); }
 
-        public static FunctionStm ToDate() { return "ToDate"; }
+        public static FunctionStm ToDate(params Statement[] parameters) { return ((FunctionStm)"ToDate").Params(parameters); }
 
-        public static FunctionStm ToDouble() { return "ToDouble"; }
+        public static FunctionStm ToDouble(params Statement[] parameters) { return ((FunctionStm)"ToDouble").Params(parameters); }
 
-        public static FunctionStm ToGuid() { return "ToGuid"; }
+        public static FunctionStm ToGuid(params Statement[] parameters) { return ((FunctionStm)"ToGuid").Params(parameters); }
 
-        public static FunctionStm ToInteger() { return "ToInteger"; }
+        public static FunctionStm ToInteger(params Statement[] parameters) { return ((FunctionStm)"ToInteger").Params(parameters); }
 
-        public static FunctionStm ToString() { return "ToString"; }
+        public new static FunctionStm ToString(params Statement[] parameters) { return ((FunctionStm)"ToString").Params(parameters); }
 
-        public static FunctionStm ToTime() { return "ToTime"; }
+        public static FunctionStm ToTime(params Statement[] parameters) { return ((FunctionStm)"ToTime").Params(parameters); }
 
-        public static FunctionStm Trace() { return "Trace"; }
+        public static FunctionStm Trace(params Statement[] parameters) { return ((FunctionStm)"Trace").Params(parameters); }
 
-        public static FunctionStm Abs() { return "Abs"; }
+        public static FunctionStm Abs(params Statement[] parameters) { return ((FunctionStm)"Abs").Params(parameters); }
 
-        public static FunctionStm Atan() { return "Atan"; }
+        public static FunctionStm Atan(params Statement[] parameters) { return ((FunctionStm)"Atan").Params(parameters); }
 
-        public static FunctionStm Avg() { return "Avg"; }
+        public static FunctionStm Avg(params Statement[] parameters) { return ((FunctionStm)"Avg").Params(parameters); }
 
-        public static FunctionStm Ceiling() { return "Ceiling"; }
+        public static FunctionStm Ceiling(params Statement[] parameters) { return ((FunctionStm)"Ceiling").Params(parameters); }
 
-        public static FunctionStm Cos() { return "Cos"; }
+        public static FunctionStm Cos(params Statement[] parameters) { return ((FunctionStm)"Cos").Params(parameters); }
 
-        public static FunctionStm Cosh() { return "Cosh"; }
+        public static FunctionStm Cosh(params Statement[] parameters) { return ((FunctionStm)"Cosh").Params(parameters); }
 
-        public static FunctionStm Floor() { return "Floor"; }
+        public static FunctionStm Floor(params Statement[] parameters) { return ((FunctionStm)"Floor").Params(parameters); }
 
-        public static FunctionStm Logarithm() { return "Logarithm"; }
+        public static FunctionStm Logarithm(params Statement[] parameters) { return ((FunctionStm)"Logarithm").Params(parameters); }
 
-        public static FunctionStm Log10() { return "Log10"; }
+        public static FunctionStm Log10(params Statement[] parameters) { return ((FunctionStm)"Log10").Params(parameters); }
 
-        public static FunctionStm Logarithm10() { return "Logarithm10"; }
+        public static FunctionStm Logarithm10(params Statement[] parameters) { return ((FunctionStm)"Logarithm10").Params(parameters); }
 
-        public static FunctionStm Mean() { return "Mean"; }
+        public static FunctionStm Mean(params Statement[] parameters) { return ((FunctionStm)"Mean").Params(parameters); }
 
-        public static FunctionStm Median() { return "Median"; }
+        public static FunctionStm Median(params Statement[] parameters) { return ((FunctionStm)"Median").Params(parameters); }
 
-        public static FunctionStm Max() { return "Max"; }
+        public static FunctionStm Max(params Statement[] parameters) { return ((FunctionStm)"Max").Params(parameters); }
 
-        public static FunctionStm Min() { return "Min"; }
+        public static FunctionStm Min(params Statement[] parameters) { return ((FunctionStm)"Min").Params(parameters); }
 
-        public static FunctionStm MaxFloat() { return "MaxFloat"; }
+        public static FunctionStm MaxFloat(params Statement[] parameters) { return ((FunctionStm)"MaxFloat").Params(parameters); }
 
-        public static FunctionStm MaxInteger() { return "MaxInteger"; }
+        public static FunctionStm MaxInteger(params Statement[] parameters) { return ((FunctionStm)"MaxInteger").Params(parameters); }
 
-        public static FunctionStm MinFloat() { return "MinFloat"; }
+        public static FunctionStm MinFloat(params Statement[] parameters) { return ((FunctionStm)"MinFloat").Params(parameters); }
 
-        public static FunctionStm MinInteger() { return "MinInteger"; }
+        public static FunctionStm MinInteger(params Statement[] parameters) { return ((FunctionStm)"MinInteger").Params(parameters); }
 
-        public static FunctionStm Pi() { return "Pi"; }
+        public static FunctionStm Pi(params Statement[] parameters) { return ((FunctionStm)"Pi").Params(parameters); }
 
-        public static FunctionStm Pow() { return "Pow"; }
+        public static FunctionStm Pow(params Statement[] parameters) { return ((FunctionStm)"Pow").Params(parameters); }
 
-        public static FunctionStm Round() { return "Round"; }
+        public static FunctionStm Round(params Statement[] parameters) { return ((FunctionStm)"Round").Params(parameters); }
 
-        public static FunctionStm Sin() { return "Sin"; }
+        public static FunctionStm Sin(params Statement[] parameters) { return ((FunctionStm)"Sin").Params(parameters); }
 
-        public static FunctionStm Sum() { return "Sum"; }
+        public static FunctionStm Sum(params Statement[] parameters) { return ((FunctionStm)"Sum").Params(parameters); }
 
-        public static FunctionStm Sqrt() { return "Sqrt"; }
+        public static FunctionStm Sqrt(params Statement[] parameters) { return ((FunctionStm)"Sqrt").Params(parameters); }
 
-        public static FunctionStm Tan() { return "Tan"; }
+        public static FunctionStm Tan(params Statement[] parameters) { return ((FunctionStm)"Tan").Params(parameters); }
 
-        public static FunctionStm Truncate() { return "Truncate"; }
+        public static FunctionStm Truncate(params Statement[] parameters) { return ((FunctionStm)"Truncate").Params(parameters); }
 
-        public static FunctionStm Concat() { return "Concat"; }
+        public static FunctionStm Concat(params Statement[] parameters) { return ((FunctionStm)"Concat").Params(parameters); }
 
-        public static FunctionStm EndsWith() { return "EndsWith"; }
+        public static FunctionStm EndsWith(params Statement[] parameters) { return ((FunctionStm)"EndsWith").Params(parameters); }
 
-        public static FunctionStm Format() { return "Format"; }
+        public static FunctionStm Format(params Statement[] parameters) { return ((FunctionStm)"Format").Params(parameters); }
 
-        public static FunctionStm Insert() { return "Insert"; }
+        public static FunctionStm Insert(params Statement[] parameters) { return ((FunctionStm)"Insert").Params(parameters); }
 
-        public static FunctionStm IsNullOrEmpty() { return "IsNullOrEmpty"; }
+        public static FunctionStm IsNullOrEmpty(params Statement[] parameters) { return ((FunctionStm)"IsNullOrEmpty").Params(parameters); }
 
-        public static FunctionStm Join() { return "Join"; }
+        public static FunctionStm Join(params Statement[] parameters) { return ((FunctionStm)"Join").Params(parameters); }
 
-        public static FunctionStm PadLeft() { return "PadLeft"; }
+        public static FunctionStm PadLeft(params Statement[] parameters) { return ((FunctionStm)"PadLeft").Params(parameters); }
 
-        public static FunctionStm PadRight() { return "PadRight"; }
+        public static FunctionStm PadRight(params Statement[] parameters) { return ((FunctionStm)"PadRight").Params(parameters); }
 
-        public static FunctionStm Remove() { return "Remove"; }
+        public static FunctionStm Remove(params Statement[] parameters) { return ((FunctionStm)"Remove").Params(parameters); }
 
-        public static FunctionStm Replace() { return "Replace"; }
+        public static FunctionStm Replace(params Statement[] parameters) { return ((FunctionStm)"Replace").Params(parameters); }
 
-        public static FunctionStm Split() { return "Split"; }
+        public static FunctionStm Split(params Statement[] parameters) { return ((FunctionStm)"Split").Params(parameters); }
 
-        public static FunctionStm StartsWith() { return "StartsWith"; }
+        public static FunctionStm StartsWith(params Statement[] parameters) { return ((FunctionStm)"StartsWith").Params(parameters); }
 
-        public static FunctionStm StrContains() { return "StrContains"; }
+        public static FunctionStm StrContains(params Statement[] parameters) { return ((FunctionStm)"StrContains").Params(parameters); }
 
-        public static FunctionStm StrIndexOf() { return "StrIndexOf"; }
+        public static FunctionStm StrIndexOf(params Statement[] parameters) { return ((FunctionStm)"StrIndexOf").Params(parameters); }
 
-        public static FunctionStm StrLastIndexOf() { return "StrLastIndexOf"; }
+        public static FunctionStm StrLastIndexOf(params Statement[] parameters) { return ((FunctionStm)"StrLastIndexOf").Params(parameters); }
 
-        public static FunctionStm Substring() { return "Substring"; }
+        public static FunctionStm Substring(params Statement[] parameters) { return ((FunctionStm)"Substring").Params(parameters); }
 
-        public static FunctionStm ToLower() { return "ToLower"; }
+        public static FunctionStm ToLower(params Statement[] parameters) { return ((FunctionStm)"ToLower").Params(parameters); }
 
-        public static FunctionStm ToUpper() { return "ToUpper"; }
+        public static FunctionStm ToUpper(params Statement[] parameters) { return ((FunctionStm)"ToUpper").Params(parameters); }
 
-        public static FunctionStm Trim() { return "Trim"; }
+        public static FunctionStm Trim(params Statement[] parameters) { return ((FunctionStm)"Trim").Params(parameters); }
 
-        public static FunctionStm TrimEnd() { return "TrimEnd"; }
+        public static FunctionStm TrimEnd(params Statement[] parameters) { return ((FunctionStm)"TrimEnd").Params(parameters); }
 
-        public static FunctionStm TrimStart() { return "TrimStart"; }
+        public static FunctionStm TrimStart(params Statement[] parameters) { return ((FunctionStm)"TrimStart").Params(parameters); }
     }
 }

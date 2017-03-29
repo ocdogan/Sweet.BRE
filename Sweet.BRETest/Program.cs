@@ -382,8 +382,7 @@ namespace Sweet.BRETest
                     .DefineRule("2").Do(
                         ((FunctionStm)"Write to console")
                             .Params(
-                                Predef.Round()
-                                    .Params(
+                                Predef.Round(
                                         DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
                                         2,
                                         "awayFromZero"
@@ -470,26 +469,22 @@ namespace Sweet.BRETest
                     .DefineRule("1")
                     .When((FactStm)"celcius" == 18)
                     .Do(
-                        Predef.PrintLine()
-                            .Params(
+                        Predef.PrintLine(
                                 "Fahrenheit: ",
-                                Predef.Round()
-                                    .Params(
-                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
-                                        2,
-                                        "awayFromZero"
-                                    )
+                                Predef.Round(
+                                    DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                    2,
+                                    "awayFromZero"
+                                )
                             )
                     )
                 .Ruleset
                     .DefineRule("2")
                     .When((FactStm)"fahrenheit" == (NumericStm)64)
                     .Do(
-                        Predef.PrintLine()
-                            .Params(
+                        Predef.PrintLine(
                                 "Celcius: ",
-                                Predef.Round()
-                                    .Params(
+                                Predef.Round(
                                         MultiplyStm.As((FactStm)"fahrenheit" - 32, 5) / 9,
                                         2,
                                         "awayFromZero"
@@ -535,15 +530,13 @@ namespace Sweet.BRETest
                 .DefineRuleset("main")
                     .DefineRule("main")
                     .Do(
-                        Predef.Print()
-                            .Params(
-                                Predef.Round()
-                                    .Params(
-                                        MultiplyStm.As((FactStm)"fahrenheit" - 32, 5) / 9,
-                                        2,
-                                        "awayFromZero"
-                                    )
+                        Predef.Print(
+                            Predef.Round(
+                                (((FactStm)"fahrenheit" - 32) * 5) / 9, // MultiplyStm.As((FactStm)"fahrenheit" - 32, 5) / 9
+                                2,
+                                "AwayFromZero"
                             )
+                        )
                     )
                     ;
             return project;
@@ -569,24 +562,21 @@ namespace Sweet.BRETest
                 .DefineRuleset("main")
                     .DefineRule("1")
                     .Do(
-                        Predef.PrintLine()
-                            .Params(
-                                Predef.Format()
-                                    .Params(
-                                        (FactStm)"fact3",
-                                        "s"
-                                    )
+                        Predef.PrintLine(
+                            Predef.Format(
+                                "%fact3?", // "%fact3?" equals (FactStm)"fact3"
+                                "s"
                             )
+                        )
                     )
                 .Ruleset
                     .DefineRule("2")
                     .Do(
-                        Predef.PrintLine()
-                            .Params(
-                                ReflectionStm.As((FactStm)"fact1",
-                                    "[2].ToString('s').Replace('T', ' ').Split($0)[1].ToCharArray()[2]",
-                                    (FactStm)"fact2")
-                            )
+                        Predef.PrintLine(
+                            ReflectionStm.As("%fact1?", // "%fact1?" equals (FactStm)"fact1"
+                                "[2].ToString('s').Replace('T', ' ').Split($0)[1].ToCharArray()[2]",
+                                "%fact2?") // "%fact2?" equals (FactStm)"fact2"
+                        )
                     )
                     ;
             return project;
@@ -617,38 +607,33 @@ namespace Sweet.BRETest
                 .DefineRuleset("main")
                    .DefineRule("CelciusToFahrenheit")
                     .Do(
-                        Predef.Print()
-                            .Params(
-                                Predef.Round()
-                                    .Params(
-                                        DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
-                                        2,
-                                        "awayFromZero"
-                                    )
+                        Predef.Print(
+                                Predef.Round(
+                                    DivideStm.As((FactStm)"celcius" * 9, 5) + 32,
+                                    2,
+                                    "awayFromZero"
+                                )
                             )
-                          )
+                       )
                     .Ruleset
                     .DefineRule("TryCatch")
                     .Do(
                         TryStm.As()
                             .Do(
-                                Predef.Print()
-                                    .Params(
+                                Predef.Print(
                                         (StringStm)"Fact1: " + ReflectionStm.As((FactStm)"fact1", "ToString()")
                                     ),
                                 RaiseErrorStm.As("test")
                             )
                             .OnError(
-                                Predef.Print()
-                                    .Params(
+                                Predef.Print(
                                         "Status: " + ReflectionStm.As(Statement.Null, "Status")
                                     ),
                                 SetFactStm.As("error")
                                     .Set(
                                         ReflectionStm.As(ContextStm.As(), "GetLastError()")
                                     ),
-                                Predef.Print()
-                                    .Params(
+                                Predef.Print(
                                         ReflectionStm.As((FactStm)"error", (string)null)
                                     )
                             )
@@ -774,13 +759,12 @@ namespace Sweet.BRETest
                         EvaluateTreeStm.As("tree1")
                     )
                     .Do(
-                        Predef.Printfln()
-                            .Params(
-                                    "@var1: {0}, @var2: {1}, @var3: {2}",
-                                    (VariableStm)"@var1",
-                                    (VariableStm)"@var2",
-                                    (VariableStm)"@var3"
-                                   )
+                        Predef.Printfln(
+                                "@var1: {0}, @var2: {1}, @var3: {2}",
+                                (VariableStm)"@var1",
+                                (VariableStm)"@var2",
+                                (VariableStm)"@var3"
+                            )
                     )
                     .Do(
                         ContinueStm.As(
@@ -815,38 +799,32 @@ namespace Sweet.BRETest
                                 ArithmeticGroupStm.As((VariableStm)"Count").Add(1)
                                 )
                         ,
-                        Predef.PrintLine()
-                            .Params(
-                                    "Count: " + (VariableStm)"Count"
-                                   )
+                        Predef.PrintLine(
+                                "Count: " + (VariableStm)"Count"
+                                )
                         ,
-                        Predef.PrintLine()
-                            .Params(
-                                    "VarA: " + (VariableStm)"VarA"
-                                   )
+                        Predef.PrintLine(
+                                "VarA: " + (VariableStm)"VarA"
+                                )
                         ,
-                        Predef.Printfln()
-                            .Params(
-                                    "Date: {0}, Count: {1}",
-                                    Predef.AddTimeToDate()
-                                        .Params(
-                                            (DateStm)"12.10.2005",
-                                            (TimeStm)"1.23:45:56"
-                                            ),
-                                    (VariableStm)"Count"
-                                    )
+                        Predef.Printfln(
+                                "Date: {0}, Count: {1}",
+                                Predef.AddTimeToDate(
+                                        (DateStm)"12.10.2005",
+                                        (TimeStm)"1.23:45:56"
+                                        ),
+                                (VariableStm)"Count"
+                                )
                         ,
-                        Predef.PrintLine()
-                            .Params(
-                                    "AddDate: " +
-                                    Predef.AddDate()
-                                        .Params(
-                                                (DateStm)"12.10.2005",
-                                                -2,
-                                                -1,
-                                                 3
-                                               )
-                                   )
+                        Predef.PrintLine(
+                                "AddDate: " +
+                                Predef.AddDate(
+                                        (DateStm)"12.10.2005",
+                                        -2,
+                                        -1,
+                                        3
+                                        )
+                                )
                     )
                 )
                 ;
@@ -988,8 +966,7 @@ namespace Sweet.BRETest
                                 )
                         )
                         .Do(
-                            Predef.Print()
-                                .Params(
+                            Predef.Print(
                                     ReflectionStm.As((FactStm)"fact1", "ToString()")
                                     )
                             , RaiseErrorStm.As("test")
@@ -998,15 +975,13 @@ namespace Sweet.BRETest
                             SetFactStm.As("error").Set(
                                 ReflectionStm.As(ContextStm.As(), "GetLastError()")
                             )
-                            , Predef.PrintLine()
-                                .Params(
+                            , Predef.PrintLine(
                                     (StringStm)"Error: " + ReflectionStm.As((FactStm)"error", ".")
                                     )
                             )
                 )
                 .Do(
-                    Predef.PrintLn()
-                        .Params(
+                    Predef.PrintLn(
                             ItemOfStm.As((FactStm)"fact1", 2)
                         )
                 )
@@ -1016,13 +991,12 @@ namespace Sweet.BRETest
                         EvaluateTableStm.As("DecisionTable1")
                     )
                     .Do(
-                        Predef.WriteLine()
-                            .Params(
-                                    ArithmeticGroupStm.As((StringStm)"@var1: ")
-                                        .Add((VariableStm)"@var1")
-                                        .Add((StringStm)", @var2: ")
-                                        .Add((VariableStm)"@var2")
-                                   )
+                        Predef.WriteLine(
+                                ArithmeticGroupStm.As((StringStm)"@var1: ")
+                                    .Add((VariableStm)"@var1")
+                                    .Add((StringStm)", @var2: ")
+                                    .Add((VariableStm)"@var2")
+                                )
                     )
                     .Do(
                         ContinueStm.As(
@@ -1057,31 +1031,26 @@ namespace Sweet.BRETest
                                 ArithmeticGroupStm.As((VariableStm)"Count").Add(1)
                                 )
                         ,
-                        Predef.WriteLn()
-                            .Params(
-                                    "Count: " + (VariableStm)"Count"
-                                   )
+                        Predef.WriteLn(
+                                "Count: " + (VariableStm)"Count"
+                                )
                         ,
-                        Predef.PrintLn()
-                            .Params(
-                                    "VarA: " + (VariableStm)"VarA"
-                                   )
+                        Predef.PrintLn(
+                                "VarA: " + (VariableStm)"VarA"
+                                )
                         ,
-                        Predef.PrintLn()
-                            .Params(
-                                    (DateStm)"12.10.2005" + (TimeStm)"11.00:00:00" + (VariableStm)"Count"
-                                    )
+                        Predef.PrintLn(
+                                (DateStm)"12.10.2005" + (TimeStm)"11.00:00:00" + (VariableStm)"Count"
+                                )
                         ,
-                        Predef.PrintLn()
-                            .Params(
-                                    Predef.AddDate()
-                                        .Params(
-                                                (DateStm)"12.10.2005",
-                                                -2,
-                                                -1,
-                                                 3
-                                               )
-                                   )
+                        Predef.PrintLn(
+                                Predef.AddDate(
+                                        (DateStm)"12.10.2005",
+                                        -2,
+                                        -1,
+                                            3
+                                        )
+                                )
                     )
                 )
                 ;

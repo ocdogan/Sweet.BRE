@@ -262,15 +262,17 @@ namespace Sweet.BRE
                 builder.AppendFormat("If {0} Then", _condition);
             }
 
-            builder.AppendLine();
+            CommonHelper.LineFeedIfNeeded(builder);
             builder.Append(base.ToString());
 
             if (hasCondition)
             {
-                builder.AppendLine(RuleConstants.END + " ");
+                CommonHelper.LineFeedIfNeeded(builder); 
+                builder.AppendLine(RuleConstants.ENDIF + " ");
             }
 
-            builder.Append(RuleConstants.END + " ");
+            CommonHelper.LineFeedIfNeeded(builder); 
+            builder.Append(RuleConstants.ENDRULE + " ");
 
             return builder.ToString();
         }

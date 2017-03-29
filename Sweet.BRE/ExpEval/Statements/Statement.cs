@@ -343,6 +343,21 @@ namespace Sweet.BRE
 
         public static implicit operator Statement(string value)
         {
+            if (value != null)
+            {
+                int len = value.Length;
+                if ((len > 2) && (value[len - 1] == '?'))
+                {
+                    if (value[0] == '%')
+                    {
+                        return new FactStm(value.Substring(1, len-2));
+                    }
+                    if (value[0] == '@')
+                    {
+                        return new VariableStm(value.Substring(1, len - 2));
+                    }
+                }
+            }
             return new StringStm(value);
         }
 

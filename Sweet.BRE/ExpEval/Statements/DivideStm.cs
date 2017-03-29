@@ -67,7 +67,6 @@ namespace Sweet.BRE
             }
 
             return d1 / d2;
-
         }
     }
 }

@@ -242,7 +242,7 @@ namespace Sweet.BRE
             builder.AppendFormat("{0}({1}) ", RuleConstants.RULESET,
                 (_name != null ? _name : String.Empty));
 
-            builder.AppendLine();
+            CommonHelper.LineFeedIfNeeded(builder); 
 
             lock (_ruleList.SyncLock)
             {
@@ -253,11 +253,13 @@ namespace Sweet.BRE
                     if (index > 1)
                         builder.AppendLine();
 
-                    builder.AppendLine(rule.ToString());
+                    builder.Append(rule.ToString());
+                    CommonHelper.LineFeedIfNeeded(builder);
                 }
             }
 
-            builder.Append(RuleConstants.END + " ");
+            CommonHelper.LineFeedIfNeeded(builder);
+            builder.Append(RuleConstants.ENDRULESET + " ");
 
             return builder.ToString();
         }

@@ -242,7 +242,8 @@ namespace Sweet.BRE
 
             foreach (CaseStm ce in _caseList)
             {
-                builder.AppendLine(ce.ToString());
+                builder.Append(ce.ToString());
+                CommonHelper.LineFeedIfNeeded(builder);
             }
 
             if (base.Actions.Count > 0)
@@ -251,7 +252,8 @@ namespace Sweet.BRE
                 builder.Append(base.ToString());
             }
 
-            builder.Append(RuleConstants.END + " ");
+            CommonHelper.LineFeedIfNeeded(builder);
+            builder.Append(RuleConstants.ENDSWITCH + " ");
 
             return builder.ToString();
         }
